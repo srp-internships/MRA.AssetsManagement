@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.ResponseCompression;
 
+using MRA.AssetsManagement.Application;
+using MRA.AssetsManagement.Infrastructure;
+using MRA.AssetsManagement.Infrastructure.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,6 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<MongoDbOption>(
+    builder.Configuration.GetSection("MongoDb"));
+
+builder.Services
+    .AddApplication()
+    .AddInfrastructure();
 
 var app = builder.Build();
 

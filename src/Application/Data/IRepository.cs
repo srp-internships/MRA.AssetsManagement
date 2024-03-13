@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 
 using MRA.AssetsManagement.Domain.Common;
 
-namespace MRA.AssetsManagement.Application.Abstractions;
+namespace MRA.AssetsManagement.Application.Data;
 
 public interface IRepository<T> where T : IEntity
 {

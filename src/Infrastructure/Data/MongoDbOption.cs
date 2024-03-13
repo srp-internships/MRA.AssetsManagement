@@ -1,3 +1,7 @@
 namespace MRA.AssetsManagement.Infrastructure.Data;
 
-public record MongoDbOption();
+public class MongoDbOption
+{
+    public string? ConnectionString { get; set; }
+    public string? DatabaseName { get; set; }
+}

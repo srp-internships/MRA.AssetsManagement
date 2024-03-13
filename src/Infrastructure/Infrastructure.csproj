@@ -13,4 +13,13 @@
       <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Application\Application.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\" />
+      <Folder Include="Identity\" />
+    </ItemGroup>
+
 </Project>

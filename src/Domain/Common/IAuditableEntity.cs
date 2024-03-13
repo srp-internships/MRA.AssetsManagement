@@ -1,6 +1,6 @@
 namespace MRA.AssetsManagement.Domain.Common;
 
-public abstract class AuditableEntity : IEntity
+public interface IAuditableEntity : IEntity
 {
     public string? CreatedBy { get; set; }
 

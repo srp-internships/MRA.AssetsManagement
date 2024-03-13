@@ -1,6 +1,6 @@
 namespace MRA.AssetsManagement.Domain.Common;
 
-public abstract class BaseEntity
+public interface IEntity
 {
-    public required string Id { get; set; }
+    public string Id { get; set; }
 }
