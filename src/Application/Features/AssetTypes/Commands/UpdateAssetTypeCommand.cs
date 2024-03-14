@@ -10,7 +10,6 @@ public class UpdateAssetTypeCommand : IRequest
     public string Name { get; set; } = null!;
     public string ShortName { get; set; } = null!;
     public string Icon { get; set; } = null!;
-    public bool Archived { get; set; }
 }
 
 public class UpdateAssetTypeCommandHandler : IRequestHandler<UpdateAssetTypeCommand>

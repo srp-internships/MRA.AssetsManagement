@@ -12,7 +12,6 @@ public class CreateAssetTypeCommand : IRequest<AssetType>
     public string Name { get; set; } = null!;
     public string ShortName { get; set; } = null!;
     public string Icon { get; set; } = null!;
-    public bool Archived { get; set; } = false;
 }
 
 public class CreateAssetTypeCommandHandler : IRequestHandler<CreateAssetTypeCommand, AssetType>
