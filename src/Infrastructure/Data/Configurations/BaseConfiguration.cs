@@ -12,7 +12,7 @@ public abstract class BaseConfiguration<T> where T : IEntity
     {
         BsonClassMap.RegisterClassMap<T>(RegisterClassMap);
         Collection = database.GetCollection<T>(collectionName);
-        CreateIndexIfRequired();
+        Configure();
     }
     
     public IMongoCollection<T> Collection { get; }
@@ -25,6 +25,6 @@ public abstract class BaseConfiguration<T> where T : IEntity
         classMap.MapIdMember(x => x.Id).SetIdGenerator(StringObjectIdGenerator.Instance);
     }
 
-    protected abstract void CreateIndexIfRequired();
+    protected abstract void Configure();
 
 }

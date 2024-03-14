@@ -7,6 +7,6 @@ public class CreateAssetTypeCommandValidator : AbstractValidator<CreateAssetType
     public CreateAssetTypeCommandValidator()
     {
         RuleFor(x => x.Name).NotNull().NotEmpty().Length(2, 128);
-        RuleFor(x => x.ShortName).NotNull().NotEmpty().Length(2, 32);
+        RuleFor(x => x.ShortName).NotNull().NotEmpty().Length(1, 6);
     }
 }

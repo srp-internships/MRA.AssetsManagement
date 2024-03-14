@@ -20,7 +20,7 @@ public class AssetTypeConfiguration : BaseConfiguration<AssetType>
         classMap.MapMember(x => x.Archived).SetElementName("archived");
     }
 
-    protected override void CreateIndexIfRequired()
+    protected override void Configure()
     {
         var nameIndex = Builders<AssetType>.IndexKeys.Ascending(x => x.Name);
         var shortNameIndex = Builders<AssetType>.IndexKeys.Ascending(x => x.ShortName);

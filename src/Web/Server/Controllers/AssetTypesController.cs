@@ -24,10 +24,9 @@ public class AssetTypesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(CreateAssetTypeCommand command)
+    public async Task<ActionResult<AssetType>> Post(CreateAssetTypeCommand command)
     {
-        await _mediator.Send(command);
-        return Ok();
+        return Ok(await _mediator.Send(command));
     }
 
     [HttpPut]

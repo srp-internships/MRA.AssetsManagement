@@ -13,12 +13,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSwaggerGen();
 
-
+builder.Services.Configure<MongoDbOption>(
+    builder.Configuration.GetSection("MongoDb"));
 
 builder.Services
     .AddApplication()
-    .AddInfrastructure()
-    .AddWebUIServices(builder.Configuration);
+    .AddInfrastructure();
 
 var app = builder.Build();
 
