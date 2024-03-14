@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using MRA.AssetsManagement.Application;
 using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
+using MRA.AssetsManagement.Web.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,12 +13,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSwaggerGen();
 
-builder.Services.Configure<MongoDbOption>(
-    builder.Configuration.GetSection("MongoDb"));
+
 
 builder.Services
     .AddApplication()
-    .AddInfrastructure();
+    .AddInfrastructure()
+    .AddWebUIServices(builder.Configuration);
 
 var app = builder.Build();
 
