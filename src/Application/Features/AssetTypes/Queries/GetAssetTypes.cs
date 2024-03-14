@@ -14,6 +14,7 @@ public class GetAssetTypesListQuery : IRequestHandler<GetAssetTypesQuery, IReadO
     {
         _context = context;
     }
+    
     public Task<IReadOnlyCollection<AssetType>> Handle(GetAssetTypesQuery request, CancellationToken cancellationToken)
     {
         return _context.AssetTypes.GetAllAsync();

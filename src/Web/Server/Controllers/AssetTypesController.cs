@@ -13,21 +13,22 @@ namespace MRA.AssetsManagement.Web.Server.Controllers;
 public class AssetTypesController : ControllerBase
 {
     private readonly IMediator _mediator;
+
     public AssetTypesController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [HttpGet]
-    public async Task<IEnumerable<AssetType>> Get()
+    public async Task<ActionResult<IEnumerable<AssetType>>> Get()
     {
-        return await _mediator.Send(new GetAssetTypesQuery());
+        return Ok(await _mediator.Send(new GetAssetTypesQuery()));
     }
-    
+
     [HttpPost]
-    public async Task<IActionResult> Post(AssetType type)
+    public async Task<IActionResult> Post(CreateAssetTypeCommand command)
     {
-        await _mediator.Send(new CreateAssetTypeCommand(type));
+        await _mediator.Send(command);
         return Ok();
     }
 }
