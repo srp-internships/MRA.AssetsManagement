@@ -31,4 +31,11 @@ public class AssetTypesController : ControllerBase
         await _mediator.Send(command);
         return Ok();
     }
+
+    [HttpPut]
+    public async Task<IActionResult> Update(UpdateAssetTypeCommand command)
+    {
+        await _mediator.Send(command);
+        return Ok();
+    }
 }
