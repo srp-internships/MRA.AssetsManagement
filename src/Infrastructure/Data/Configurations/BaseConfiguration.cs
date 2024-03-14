@@ -8,10 +8,11 @@ namespace MRA.AssetsManagement.Infrastructure.Data.Configurations;
 
 public abstract class BaseConfiguration<T> where T : IEntity
 {
-    protected BaseConfiguration(IMongoDatabase database, string connectionName)
+    protected BaseConfiguration(IMongoDatabase database, string collectionName)
     {
         BsonClassMap.RegisterClassMap<T>(RegisterClassMap);
-        Collection = database.GetCollection<T>(connectionName);
+        Collection = database.GetCollection<T>(collectionName);
+        CreateIndexIfRequired();
     }
     
     public IMongoCollection<T> Collection { get; }
@@ -23,5 +24,7 @@ public abstract class BaseConfiguration<T> where T : IEntity
     {
         classMap.MapIdMember(x => x.Id).SetIdGenerator(StringObjectIdGenerator.Instance);
     }
+
+    protected abstract void CreateIndexIfRequired();
 
 }
