@@ -13,21 +13,45 @@ namespace MRA.AssetsManagement.Web.Server.Controllers;
 public class AssetTypesController : ControllerBase
 {
     private readonly IMediator _mediator;
+
     public AssetTypesController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [HttpGet]
-    public async Task<IEnumerable<AssetType>> Get()
+    public async Task<ActionResult<IEnumerable<AssetType>>> Get()
     {
-        return await _mediator.Send(new GetAssetTypesQuery());
+        return Ok(await _mediator.Send(new GetAssetTypesQuery()));
     }
-    
+
     [HttpPost]
-    public async Task<IActionResult> Post(AssetType type)
+    public async Task<ActionResult<AssetType>> Post(CreateAssetTypeCommand command)
     {
-        await _mediator.Send(new CreateAssetTypeCommand(type));
+        var uri = new Uri($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/" +
+                          $"{ControllerContext.ActionDescriptor.ControllerName}");
+
+        return Created(uri, await _mediator.Send(command));
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update(UpdateAssetTypeCommand command)
+    {
+        await _mediator.Send(command);
+        return Ok();
+    }
+
+    [HttpPatch("archive/{id}")]
+    public async Task<IActionResult> Archive(string id)
+    {
+        await _mediator.Send(new ArchiveAssetTypeCommand(id));
+        return Ok();
+    }
+
+    [HttpPatch("restore/{id}")]
+    public async Task<IActionResult> Restore(string id)
+    {
+        await _mediator.Send(new RestoreAssetTypeCommand(id));
         return Ok();
     }
 }

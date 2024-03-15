@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using MRA.AssetsManagement.Application;
 using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
+using MRA.AssetsManagement.Web.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
