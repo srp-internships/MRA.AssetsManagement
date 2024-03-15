@@ -6,11 +6,11 @@ namespace MRA.AssetsManagement.Application.Data;
 
 public interface IRepository<T> where T : IEntity
 {
-    Task<IReadOnlyCollection<T>> GetAllAsync();
-    Task<IReadOnlyCollection<T>> GetAllAsync(Expression<Func<T, bool>> filter);
-    Task<T> GetAsync(string id);
-    Task<T> GetAsync(Expression<Func<T, bool>> filter);
-    Task CreateAsync(T entity);
-    Task RemoveAsync(string id);
-    Task UpdateAsync(T entity);
+    Task<IReadOnlyCollection<T>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyCollection<T>> GetAllAsync(Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default);
+    Task<T> GetAsync(string id, CancellationToken cancellationToken = default);
+    Task<T> GetAsync(Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default);
+    Task CreateAsync(T entity, CancellationToken cancellationToken = default);
+    Task RemoveAsync(string id, CancellationToken cancellationToken = default);
+    Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
 }

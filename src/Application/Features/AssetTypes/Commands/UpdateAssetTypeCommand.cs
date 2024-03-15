@@ -25,13 +25,13 @@ public class UpdateAssetTypeCommandHandler : IRequestHandler<UpdateAssetTypeComm
     
     public async Task Handle(UpdateAssetTypeCommand request, CancellationToken cancellationToken)
     {
-        var assetType = await _context.AssetTypes.GetAsync(request.Id);
+        var assetType = await _context.AssetTypes.GetAsync(request.Id, cancellationToken);
         
         if (assetType is null)
             throw new Exception("AssetType with provided Id was not found.");
         
         _mapper.Map(request, assetType);
 
-        await _context.AssetTypes.UpdateAsync(assetType);
+        await _context.AssetTypes.UpdateAsync(assetType, cancellationToken);
     }
 }

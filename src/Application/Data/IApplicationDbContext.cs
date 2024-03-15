@@ -5,4 +5,5 @@ namespace MRA.AssetsManagement.Application.Data;
 public interface IApplicationDbContext
 {
     public IRepository<AssetType> AssetTypes { get; }
+    public IRepository<Tag> Tags { get; }
 }
