@@ -17,6 +17,4 @@ public class TagConfiguration : BaseConfiguration<Tag>
         classMap.MapMember(x => x.Name).SetElementName("name");
         classMap.MapMember(x => x.Color).SetElementName("color");
     }
-
-    protected override void Configure() { }
 }
