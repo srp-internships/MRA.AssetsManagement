@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.ResponseCompression;
+
+using Microsoft.Extensions.Options;
 
 using MRA.AssetsManagement.Application;
 using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
-using MRA.AssetsManagement.Web.Server;
+using MRA.AssetsManagement.Infrastructure.Data.Seeder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,8 @@ builder.Services
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+bool isDevelopment = app.Environment.IsDevelopment();
+if (isDevelopment)
 {
     app.UseWebAssemblyDebugging();
     app.UseSwagger();
@@ -34,6 +36,16 @@ else
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var databaseOption = scope.ServiceProvider.GetService<IOptions<MongoDbOption>>();
+    if (databaseOption is not null && databaseOption.Value.Seeder) {
+        var seedService = scope.ServiceProvider.GetService<IDataSeeder>();
+        await seedService!.SeedData(isDevelopment);
+    }
 }
 
 app.UseHttpsRedirection();

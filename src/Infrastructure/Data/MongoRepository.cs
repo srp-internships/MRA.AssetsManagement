@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Domain.Common;
@@ -38,13 +39,13 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         return await _collection.Find(filter).FirstOrDefaultAsync();
     }
 
-    public async Task CreateAsync(T entity)
+    public async Task CreateAsync(params T[] entity)
     {
         if (entity == null)
         {
             throw new ArgumentNullException(nameof(entity));
         }
-        await _collection.InsertOneAsync(entity);
+        await _collection.InsertManyAsync(entity);
     }
 
     public async Task UpdateAsync(T entity)
@@ -55,6 +56,11 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         }
         FilterDefinition<T> filter = _filterBuilder.Eq(e => e.Id, entity.Id);
         await _collection.ReplaceOneAsync(filter, entity);
+    }
+
+    public Task<bool> Any(Expression<Func<T, bool>>? filter = default)
+    {
+        return filter is null ? _collection.AsQueryable().AnyAsync() : _collection.AsQueryable().AnyAsync(filter);
     }
 
     public async Task RemoveAsync(string id)
