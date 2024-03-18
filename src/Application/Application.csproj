@@ -30,8 +30,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\Employees\Command\" />
-      <Folder Include="Features\Employees\Queries\" />
+      <Folder Include="Common\Identity\" />
+      <Folder Include="Features\Services\" />
     </ItemGroup>
 
 </Project>

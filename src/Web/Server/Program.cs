@@ -1,20 +1,13 @@
-
 using Microsoft.Extensions.Options;
 using Blazored.LocalStorage;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 using MRA.AssetsManagement.Application;
 using MRA.AssetsManagement.Infrastructure;
-using MRA.AssetsManagement.Infrastructure.Common.Security;
 using MRA.AssetsManagement.Infrastructure.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
-using MRA.AssetsManagement.Infrastructure.Identity.Services;
-using MRA.AssetsManagement.Web.Client;
 
 using Swashbuckle.AspNetCore.Filters;
 
@@ -39,8 +32,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.Configure<MongoDbOption>(
 builder.Configuration.GetSection("MongoDb"));
-
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
