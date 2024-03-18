@@ -1,10 +1,22 @@
 
 using Microsoft.Extensions.Options;
+using Blazored.LocalStorage;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 using MRA.AssetsManagement.Application;
 using MRA.AssetsManagement.Infrastructure;
+using MRA.AssetsManagement.Infrastructure.Common.Security;
 using MRA.AssetsManagement.Infrastructure.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
+using MRA.AssetsManagement.Infrastructure.Identity.Services;
+using MRA.AssetsManagement.Web.Client;
+
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,14 +24,40 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        Description = """Standard Authorization header using the Bearer scheme. Exampel: "{token}" """,
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+    c.OperationFilter<SecurityRequirementsOperationFilter>(); 
+});
 
 builder.Services.Configure<MongoDbOption>(
-    builder.Configuration.GetSection("MongoDb"));
+builder.Configuration.GetSection("MongoDb"));
 
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8
+            .GetBytes(builder.Configuration.GetSection("JWT:Secret").Value!)),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    });
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddHttpContextAccessor();
 builder.Services
     .AddApplication()
     .AddInfrastructure();
+
 
 var app = builder.Build();
 
@@ -52,9 +90,10 @@ app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
-
 app.UseRouting();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
