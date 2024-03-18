@@ -28,7 +28,7 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Tag>
     {
         var tag = _mapper.Map<Tag>(request);
 
-        await _context.Tags.CreateAsync(tag, cancellationToken);
+        await _context.Tags.CreateAsync(cancellationToken, tag);
 
         return tag;
     }

@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
-
 using MongoDB.Driver;
-
+using MongoDB.Driver.Linq;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Domain.Common;
 
@@ -38,13 +37,13 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         return await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task CreateAsync(params T[] entity)
+    public async Task CreateAsync(CancellationToken cancellationToken, params T[] entity)
     {
         if (entity == null)
         {
             throw new ArgumentNullException(nameof(entity));
         }
-        await _collection.InsertManyAsync(entity);
+        await _collection.InsertManyAsync(entity, cancellationToken: cancellationToken);
     }
 
     public async Task UpdateAsync(T entity, CancellationToken cancellationToken = default)
@@ -57,9 +56,9 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         await _collection.ReplaceOneAsync(filter, entity, cancellationToken: cancellationToken);
     }
     
-    public Task<bool> Any(Expression<Func<T, bool>>? filter = default)
+    public Task<bool> Any(Expression<Func<T, bool>>? filter = default, CancellationToken cancellationToken = default)
     {
-        return filter is null ? _collection.AsQueryable().AnyAsync() : _collection.AsQueryable().AnyAsync(filter);
+        return filter is null ? _collection.AsQueryable().AnyAsync() : _collection.AsQueryable().AnyAsync(filter, cancellationToken);
     }
 
     public async Task RemoveAsync(string id, CancellationToken cancellationToken = default)
