@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MRA.AssetsManagement.Application.Data;
+using MRA.AssetsManagement.Domain.Common;
 using MRA.AssetsManagement.Domain.Entities;
 using MRA.AssetsManagement.Infrastructure.Data.Configurations;
 
@@ -10,18 +11,24 @@ namespace MRA.AssetsManagement.Infrastructure.Data;
 
 public class MongoDbContext : IApplicationDbContext
 {
+    private readonly IMongoDatabase _database;
+
     public MongoDbContext(IOptions<MongoDbOption> options)
     {
         var client = new MongoClient(options.Value.ConnectionString);
-        IMongoDatabase database = client.GetDatabase(options.Value.DatabaseName);
-        
-        var assetConfig = new AssetTypeConfiguration(database);
-        var tagConfig = new TagConfiguration(database);
-        var mongoRepository = new MongoRepository<AssetType>(assetConfig.Collection);
-        AssetTypes = mongoRepository;
-        Tags = new MongoRepository<Tag>(tagConfig.Collection);
+        _database = client.GetDatabase(options.Value.DatabaseName);
+
+        AssetTypes = GetRepository<AssetTypeConfiguration, AssetType>();
+        Tags = GetRepository<TagConfiguration, Tag>();
     }
 
     public IRepository<AssetType> AssetTypes { get; }
     public IRepository<Tag> Tags { get; }
+
+    private MongoRepository<TEntity> GetRepository<TConfiguration, TEntity>() where TConfiguration : BaseConfiguration<TEntity>
+                                                                            where TEntity : IEntity
+    {
+        var config = (TConfiguration) Activator.CreateInstance(typeof(TConfiguration), args: [_database])!;
+        return new MongoRepository<TEntity>(config.Collection);
+    }
 }
