@@ -5,9 +5,11 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 using MRA.AssetsManagement.Application;
+using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
+using MRA.AssetsManagement.Infrastructure.Identity.Services;
 
 using Swashbuckle.AspNetCore.Filters;
 
@@ -48,7 +50,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services
     .AddApplication()
     .AddInfrastructure();
-
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 var app = builder.Build();
 
