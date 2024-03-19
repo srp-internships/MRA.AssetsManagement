@@ -10,7 +10,8 @@ public interface IRepository<T> where T : IEntity
     Task<IReadOnlyCollection<T>> GetAllAsync(Expression<Func<T, bool>> filter);
     Task<T> GetAsync(string id);
     Task<T> GetAsync(Expression<Func<T, bool>> filter);
-    Task CreateAsync(T entity);
+    Task CreateAsync(params T[] entity);
     Task RemoveAsync(string id);
     Task UpdateAsync(T entity);
+    Task<bool> Any(Expression<Func<T, bool>>? filter = default);
 }

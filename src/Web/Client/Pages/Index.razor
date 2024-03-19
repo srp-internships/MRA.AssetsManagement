@@ -1,9 +1,58 @@
 ﻿@page "/"
-
-<PageTitle>Dashboard</PageTitle>
+@using MRA.Identity.Application.Contract.User.Responses
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.AspNetCore.Components.Authorization
+@using Blazored.LocalStorage
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager 
+@inject ILocalStorageService LocalStorageService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IConfiguration Configuration
+<PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<SurveyPrompt Title="How is Blazor working for you?"/>
+<a href="@(Configuration["IdentityClient"] + "login?callback=https://localhost:7098")">Login</a>
+
+<button @onclick="FetchSecret">Get secret</button>
+
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        JwtTokenResponse token = new();
+        var currentUri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        if (QueryHelpers.ParseQuery(currentUri.Query).TryGetValue("atoken", out var atoken))
+        {
+            token.AccessToken = atoken;
+        }
+
+        if (QueryHelpers.ParseQuery(currentUri.Query).TryGetValue("rtoken", out var rtoken))
+        {
+            token.RefreshToken = rtoken;
+        }
+
+        if (QueryHelpers.ParseQuery(currentUri.Query).TryGetValue("vdate", out var vdate))
+        {
+            DateTime oDate = Convert.ToDateTime(vdate);
+            token.AccessTokenValidateTo = oDate;
+            await LocalStorageService.SetItemAsync("authToken", token);
+            await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            if (QueryHelpers.ParseQuery(currentUri.Query).TryGetValue("page", out var page))
+                NavigationManager.NavigateTo($"/{page}");
+            else
+                NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private async Task FetchSecret()
+    {
+        var result = await HttpClient.GetStringAsync("api/Auth");
+    }
+}

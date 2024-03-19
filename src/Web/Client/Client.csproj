@@ -9,15 +9,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.2" />
+    <PackageReference Include="AWSSDK.Core" Version="3.7.100.14" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.2" PrivateAssets="all" />
     <PackageReference Include="MRA.BlazorComponents" Version="1.8.0" />
     <PackageReference Include="MudBlazor" Version="6.17.0" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.2" />
+    <PackageReference Include="MRA.BlazorComponents" Version="1.7.0" />
+    <PackageReference Include="MRA.Identity.Application.Contract" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
