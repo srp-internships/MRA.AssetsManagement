@@ -1,15 +1,25 @@
+using System.Text.Json.Serialization;
+
 using Microsoft.AspNetCore.ResponseCompression;
 
 using MRA.AssetsManagement.Application;
 using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
 using MRA.AssetsManagement.Web.Server;
+using MRA.AssetsManagement.Web.Server.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ApiExceptionFilterAttribute>();
+}).AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+
+
+
 builder.Services.AddRazorPages();
 builder.Services.AddSwaggerGen();
 
@@ -21,6 +31,8 @@ builder.Services
     .AddInfrastructure();
 
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
