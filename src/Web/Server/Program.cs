@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 using Microsoft.Extensions.Options;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +12,7 @@ using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
 using MRA.AssetsManagement.Infrastructure.Identity.Services;
+using MRA.AssetsManagement.Web.Server.Filters;
 
 using Swashbuckle.AspNetCore.Filters;
 
@@ -17,7 +20,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<ApiExceptionFilterAttribute>();
+}).AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddSwaggerGen(c =>
@@ -32,8 +39,7 @@ builder.Services.AddSwaggerGen(c =>
     c.OperationFilter<SecurityRequirementsOperationFilter>(); 
 });
 
-builder.Services.Configure<MongoDbOption>(
-builder.Configuration.GetSection("MongoDb"));
+builder.Services.Configure<MongoDbOption>(builder.Configuration.GetSection("MongoDb"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
@@ -45,7 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateIssuer = false,
         ValidateAudience = false
     });
-builder.Services.AddBlazoredLocalStorage();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services
     .AddApplication()
