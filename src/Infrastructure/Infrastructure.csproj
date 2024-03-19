@@ -15,7 +15,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Application\Application.csproj" />
-      <ProjectReference Include="..\Web\Client\Client.csproj" />
     </ItemGroup>
 
     <ItemGroup>
