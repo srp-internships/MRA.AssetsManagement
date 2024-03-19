@@ -1,5 +1,6 @@
 using MediatR;
 
+using MRA.AssetsManagement.Application.Common.Exceptions;
 using MRA.AssetsManagement.Application.Data;
 
 namespace MRA.AssetsManagement.Application.Features.Tags.Commands;
@@ -19,8 +20,8 @@ public class DeleteTagCommandHandler : IRequestHandler<DeleteTagCommand, bool>
     {
         var tag = await _context.Tags.GetAsync(request.Id, cancellationToken);
 
-        if (tag is null) 
-            return false;
+        if (tag is null)
+            throw new NotFoundException("Tag with provided Id was not found.");
         
         await _context.Tags.RemoveAsync(request.Id, cancellationToken);
 

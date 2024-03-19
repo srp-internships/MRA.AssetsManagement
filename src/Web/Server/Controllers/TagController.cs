@@ -42,8 +42,8 @@ public class TagController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {
-        var success = await Mediator.Send(new DeleteTagCommand(id), cancellationToken);
+        await Mediator.Send(new DeleteTagCommand(id), cancellationToken);
 
-        return success ? NoContent() : NotFound();
+        return NoContent();
     }
 }
