@@ -22,6 +22,14 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
       <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+      <PackageReference Include="MRA.Configurations" Version="2.0.5" />
+      <PackageReference Include="MRA.Identity.Application.Contract" Version="1.0.2" />
+      <PackageReference Include="MRApiCommon" Version="1.0.9" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\Identity\" />
+      <Folder Include="Features\Services\" />
     </ItemGroup>
 
 </Project>
