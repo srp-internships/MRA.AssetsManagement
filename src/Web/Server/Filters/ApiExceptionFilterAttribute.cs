@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 
+using MRA.AssetsManagement.Application.Common.Exceptions;
+
 namespace MRA.AssetsManagement.Web.Server.Filters
 {
     public class ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger) : ExceptionFilterAttribute
@@ -11,6 +13,7 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             {
                 { Exception: BadHttpRequestException } => HandleBadRequest(context),
                 { Exception: UnauthorizedAccessException } => HandleUnauthorizedAccessException(context),
+                { Exception: NotFoundException } => HandleNotFoundException(context),
                 { ModelState: { IsValid: false } } => HandleInvalidModelStateException(context),
                 _ => HandleUnknownException(context)
             };
@@ -62,9 +65,7 @@ namespace MRA.AssetsManagement.Web.Server.Filters
 
             return true;
         }
-
-
-
+        
         private bool HandleUnauthorizedAccessException(ExceptionContext context)
         {
             ProblemDetails details = new ProblemDetails
@@ -80,6 +81,18 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             return true;
         }
 
+        public bool HandleNotFoundException(ExceptionContext context)
+        {
+            ProblemDetails details = new()
+            {
+                Status = StatusCodes.Status404NotFound,
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                Title = context.Exception.Message,
+            };
 
+            context.Result = new NotFoundObjectResult(details);
+
+            return true;
+        }
     }
 }
