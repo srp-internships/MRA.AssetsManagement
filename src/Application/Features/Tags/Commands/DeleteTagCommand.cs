@@ -4,9 +4,9 @@ using MRA.AssetsManagement.Application.Data;
 
 namespace MRA.AssetsManagement.Application.Features.Tags.Commands;
 
-public record DeleteTagCommand(string Id) : IRequest;
+public record DeleteTagCommand(string Id) : IRequest<bool>;
 
-public class DeleteTagCommandHandler : IRequestHandler<DeleteTagCommand>
+public class DeleteTagCommandHandler : IRequestHandler<DeleteTagCommand, bool>
 {
     private readonly IApplicationDbContext _context;
 
@@ -15,13 +15,15 @@ public class DeleteTagCommandHandler : IRequestHandler<DeleteTagCommand>
         _context = context;
     }
     
-    public async Task Handle(DeleteTagCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
     {
         var tag = await _context.Tags.GetAsync(request.Id, cancellationToken);
-        
-        if (tag is null)
-            throw new Exception("Tag with provided Id was not found.");
 
+        if (tag is null) 
+            return false;
+        
         await _context.Tags.RemoveAsync(request.Id, cancellationToken);
+
+        return true;
     }
 }
