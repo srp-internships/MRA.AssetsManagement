@@ -18,8 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Common\" />
-      <Folder Include="Identity\" />
+      <Folder Include="Common\Security\" />
     </ItemGroup>
 
 </Project>

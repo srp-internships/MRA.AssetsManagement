@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -9,13 +9,16 @@
         <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' "/>
-    <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' "/>
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
-    </ItemGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.0" />
+  </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\Application\Application.csproj"/>
@@ -23,5 +26,6 @@
         <ProjectReference Include="..\Client\Client.csproj"/>
         <ProjectReference Include="..\Shared\Shared.csproj"/>
     </ItemGroup>
+
 
 </Project>

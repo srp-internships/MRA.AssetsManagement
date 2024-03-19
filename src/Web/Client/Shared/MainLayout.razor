@@ -1,17 +1,39 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+<MudLayout>
+    <NavMenu OnToggle="@(() => open = !open)" />
+    <MudDrawer @bind-Open="@open" Elevation="2">
+        <MudDrawerHeader Class="d-flex justify-center">
+            <MudLink Href="/" Underline="Underline.None" Typo="Typo.h5">MRA Assets</MudLink>
+        </MudDrawerHeader>
+        <MudDrawerContainer>
+            <MudDivider />
+        </MudDrawerContainer>
+        <MudPaper Width="250px" Elevation="0" Class="py-3">
+           <MudNavMenu Color="Color.Info">
+               <MudNavLink Href="/assets" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Assignment">Assets</MudNavLink>
+               <MudNavLink Href="/employees" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AssignmentInd">Employees</MudNavLink>
+               <MudNavGroup Icon="@Icons.Material.Filled.Settings" Title="Settings" Expanded="false">
+                   <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Category"  Href="/settings/asset-types">Asset types</MudNavLink>
+                   <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Tag"  Href="/settings/tags">Tags</MudNavLink>
+               </MudNavGroup>
+           </MudNavMenu>
+        </MudPaper>
+    </MudDrawer>
+    <MudMainContent Class="pt-16">
+        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="mt-4">
+           @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+
+@code {
+    bool open = true;
+    bool isExpanded = false;
+
+}
