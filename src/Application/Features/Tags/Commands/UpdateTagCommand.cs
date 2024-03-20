@@ -2,7 +2,9 @@ using AutoMapper;
 
 using MediatR;
 
+using MRA.AssetsManagement.Application.Common.Exceptions;
 using MRA.AssetsManagement.Application.Data;
+using MRA.AssetsManagement.Domain.Entities;
 
 namespace MRA.AssetsManagement.Application.Features.Tags.Commands;
 
@@ -29,7 +31,7 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand>
         var tag = await _context.Tags.GetAsync(request.Id, cancellationToken);
         
         if (tag is null)
-            throw new Exception("Tag with provided Id was not found.");
+            throw new NotFoundEntityException(nameof(Tag), request.Id);
         
         _mapper.Map(request, tag);
         

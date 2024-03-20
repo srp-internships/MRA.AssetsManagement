@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
-
 using MRA.AssetsManagement.Application.Common.Exceptions;
 
 namespace MRA.AssetsManagement.Web.Server.Filters
@@ -13,7 +12,7 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             {
                 { Exception: BadHttpRequestException } => HandleBadRequest(context),
                 { Exception: UnauthorizedAccessException } => HandleUnauthorizedAccessException(context),
-                { Exception: NotFoundException } => HandleNotFoundException(context),
+                { Exception: NotFoundEntityException } => HandleNotFoundException(context),
                 { ModelState: { IsValid: false } } => HandleInvalidModelStateException(context),
                 _ => HandleUnknownException(context)
             };

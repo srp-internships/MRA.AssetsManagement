@@ -5,7 +5,7 @@ using MRA.AssetsManagement.Domain.Entities;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-public class TagController : ApiControllerBase
+public class TagsController : ApiControllerBase
 {
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
