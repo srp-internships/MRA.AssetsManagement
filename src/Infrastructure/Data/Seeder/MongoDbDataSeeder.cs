@@ -17,10 +17,10 @@ public class MongoDbDataSeeder : IDataSeeder
     public MongoDbDataSeeder(IApplicationDbContext context, ILogger<MongoDbDataSeeder> logger)
     {
         _logger = logger;
-        _entitySeeders = 
-            [
-                new AssetTypeEntitySeeder(context.AssetTypes)
-            ];
+        // _entitySeeders = 
+        //     [
+        //         new AssetTypeEntitySeeder(context.AssetTypes)
+        //     ];
     }
     
     public async Task SeedData(bool isDevelopment)

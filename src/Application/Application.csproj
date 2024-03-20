@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Common\Identity\" />
+      <Folder Include="Common\Services\" />
       <Folder Include="Features\Services\" />
     </ItemGroup>
 
