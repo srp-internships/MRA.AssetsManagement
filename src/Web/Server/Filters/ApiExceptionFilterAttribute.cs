@@ -91,7 +91,7 @@ namespace MRA.AssetsManagement.Web.Server.Filters
                 Title = context.Exception.Message,
             };
             
-            Log.Error(context.Exception, details.Title);
+            logger.LogError(context.Exception, details.Title);
             context.Result = new NotFoundObjectResult(details);
 
             return true;
