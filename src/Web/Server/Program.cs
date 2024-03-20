@@ -14,6 +14,8 @@ using MRA.AssetsManagement.Infrastructure.Data.Seeder;
 using MRA.AssetsManagement.Infrastructure.Identity.Services;
 using MRA.AssetsManagement.Web.Server.Filters;
 
+using Serilog;
+
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,6 +59,9 @@ builder.Services
     .AddApplication()
     .AddInfrastructure();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Host.UseSerilog();
+
+Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
 
 var app = builder.Build();
 
@@ -85,6 +90,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();

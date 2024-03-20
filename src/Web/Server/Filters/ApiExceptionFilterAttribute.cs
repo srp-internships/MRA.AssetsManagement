@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Common.Exceptions;
 
+using Serilog;
+
 namespace MRA.AssetsManagement.Web.Server.Filters
 {
     public class ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger) : ExceptionFilterAttribute
@@ -88,7 +90,8 @@ namespace MRA.AssetsManagement.Web.Server.Filters
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
                 Title = context.Exception.Message,
             };
-
+            
+            Log.Error(context.Exception, details.Title);
             context.Result = new NotFoundObjectResult(details);
 
             return true;
