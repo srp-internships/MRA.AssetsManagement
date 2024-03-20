@@ -13,11 +13,11 @@ public class AssetTypeEntitySeeder : EntitySeeder<AssetType>
     {
         if (await _repository.Any()) return;
 
-        await _repository.CreateAsync(
+        await _repository.CreateAsync(default,
             new AssetType() { Name = "PC", ShortName = "PC", Icon = "pc" },
             new AssetType() { Name = "Laptop", ShortName = "LPT", Icon = "laptop" },
             new AssetType() { Name = "Chair", ShortName = "CHR", Icon = "chair" },
             new AssetType() { Name = "Monitor", ShortName = "MTR", Icon = "monitor" }
-            );
+        );
     }
 }

@@ -29,7 +29,7 @@ public class CreateAssetTypeCommandHandler : IRequestHandler<CreateAssetTypeComm
     {
         var assetType = _mapper.Map<AssetType>(request);
 
-        await _context.AssetTypes.CreateAsync(assetType);
+        await _context.AssetTypes.CreateAsync(cancellationToken, assetType);
         return assetType;
     }
 }
