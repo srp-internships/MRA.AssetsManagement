@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-﻿using MediatR;
-
-=======
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
