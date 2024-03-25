@@ -1,49 +1,76 @@
-﻿using MRA.AssetsManagement.Domain.Entities;
-
-using Newtonsoft.Json;
+﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using Microsoft.Extensions.Configuration;
+using MRA.AssetsManagement.Domain.Entities;
 
 namespace MRA.AssetsManagement.Infrastructure.Identity.Services;
 
 public class EmployeeService : IEmployeeService
 {
-    public Task<List<Employee>> GetAll()
+    private readonly HttpClient _http;
+    private readonly IConfiguration _configuration;
+
+    public EmployeeService(HttpClient http,IConfiguration configuration)
     {
-        throw new NotImplementedException();
+        _http = http;
+        _configuration = configuration;
+    }
+    public async Task<List<EmployeeResponse>> GetAll(string token)
+    {
+        
+        SetAuthorizationHeader(token);
+        var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>("https://localhost:7245/api/User/GetListUsers/ByFilter");
+        return response;
     }
 
-    public Task<Employee> GetById(string id)
+    public async Task<EmployeeResponse> GetById(string id,string token)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<Employee> GetByEmail(string email)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Employee> Create(Employee employee)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> Delete(string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<List<RegisterEmployee>> GetEmployeesAsync(string filePath)
-    {
-        try
+        SetAuthorizationHeader(token);
+        var response = await _http.GetFromJsonAsync<EmployeeResponse>($"https://localhost:7245/api/User/{id}");
+        
+        if (response != null)
         {
-            string jsonContent = await File.ReadAllTextAsync("C:Users\\User\\Desktop\\Employees.txt");
-
-            List<RegisterEmployee> employees = JsonConvert.DeserializeObject<List<RegisterEmployee>>(jsonContent);
-
-            return employees;
+            return response;
         }
-        catch (Exception ex)
+        else
         {
-            throw new ApplicationException($"Ошибка при чтении файла: {ex.Message}");
+            throw new Exception("Error: Unable to retrieve user data.");
         }
+    }
+
+    public async Task<EmployeeResponse> GetByEmail(string email,string token)
+    {
+        SetAuthorizationHeader(token);
+        var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>($"https://localhost:7245/api/User/GetListUsers/ByFilter?Email={email}");
+        
+        if (response != null)
+        {
+            return response.FirstOrDefault();
+        }
+        else
+        {
+            throw new Exception("Error: Unable to retrieve user data.");
+        }
+    }
+
+    public async Task<string> Create(RegisterEmployee registerEmployee, string token)
+    {
+        SetAuthorizationHeader(token);
+        var response = await _http.PostAsJsonAsync("https://localhost:7245/api/Auth/register", registerEmployee);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var userId = await response.Content.ReadAsStringAsync();
+            return userId;
+        }
+        else
+        {
+            throw new HttpRequestException($"Failed to create employee. Status code: {response.StatusCode}");
+        }
+    }
+    private void SetAuthorizationHeader(string token)
+    {
+        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", 
+            token.Replace("Bearer ",""));
     }
 }

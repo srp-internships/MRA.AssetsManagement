@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+using MRA.AssetsManagement.Application.Features.Employees.Handlers;
 using MRA.AssetsManagement.Domain.Entities;
 using MRA.AssetsManagement.Web.Server.Controllers;
 using Newtonsoft.Json;
@@ -21,35 +23,79 @@ public class EmployeesController : ApiControllerBase
     [HttpPost("seed")]
     public async Task<ActionResult<string>> SeedEmployeeData()
     {
-        string pathJson = _configuration.GetValue<string>("SeeedEmployeePath");
-        string jsonContent = System.IO.File.ReadAllText(pathJson);
-        List<RegisterEmployee> registerEmployeeCommands = JsonConvert.DeserializeObject<List<RegisterEmployee>>(jsonContent);
-       
-        var response = await _mediator.Send(new SeedEmployeeCommand(registerEmployeeCommands));
-        return Ok(response);
+        try
+        {
+            string pathJson = _configuration.GetValue<string>("SeeedEmployeePath");
+            string jsonContent = System.IO.File.ReadAllText(pathJson);
+            List<RegisterEmployee> registerEmployeeCommands = JsonConvert.DeserializeObject<List<RegisterEmployee>>(jsonContent);
+            var response = await _mediator.Send(new SeedEmployeeCommand(registerEmployeeCommands));
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+        
     }
 
     [HttpGet("getAll")]
-    public async Task<List<EmployeeResponse>> GetAll()
+    public async Task<ActionResult<List<EmployeeResponse>>> GetAll()
     {
-        var token = HttpContext.Request.Headers.Authorization.ToString();
-        var response = await _mediator.Send(new GetEmployeesQuery(token));
-        return response;
+        try
+        {
+            var token = HttpContext.Request.Headers.Authorization.ToString();
+            var response = await _mediator.Send(new GetEmployeesQuery(token));
+            return response;
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
     
     [HttpGet("getById")]
     [Authorize]
-    public async Task<EmployeeResponse> GetById(string id)
+    public async Task<ActionResult<EmployeeResponse>> GetById(string id)
     {
-        var token = HttpContext.Request.Headers.Authorization.ToString();
-        var response = await _mediator.Send(new GetEmployeeByIdQuery(id,token));
-        return response;
+        try
+        {
+            var token = HttpContext.Request.Headers.Authorization.ToString();
+            var response = await _mediator.Send(new GetEmployeeByIdQuery(id,token));
+            return response;
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
+    [HttpGet("getByEmail")]
+    [Authorize]
+    public async Task<ActionResult<EmployeeResponse>> GetByEmail(string email)
+    {
+        try
+        {
+            var token = HttpContext.Request.Headers.Authorization.ToString();
+            var response = await _mediator.Send(new GetEmployeeByEmailQuery(email,token));
+            return response;
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
     }
     
     [HttpPost("create")]
-    public async Task<string> Create(RegisterEmployee registerEmployee)
+    public async Task<ActionResult<string>> Create(RegisterEmployee registerEmployee)
     {
-        var token = HttpContext.Request.Headers.Authorization.ToString();
-        return await _mediator.Send(new CreateEmployeeCommand(registerEmployee,token));
+        try
+        {
+            var token = HttpContext.Request.Headers.Authorization.ToString();
+            return await _mediator.Send(new CreateEmployeeCommand(registerEmployee,token));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+        
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using MediatR;
+﻿using MediatR;
 using MRA.AssetsManagement.Domain.Entities;
 
 public class GetEmployeeByIdQuery : IRequest<EmployeeResponse>
@@ -14,30 +12,17 @@ public class GetEmployeeByIdQuery : IRequest<EmployeeResponse>
         _token = token;
     }
 }
-
 public class GetEmployeeByIdQueryHandler : IRequestHandler<GetEmployeeByIdQuery, EmployeeResponse>
 {
-    private readonly HttpClient _http;
-
-    public GetEmployeeByIdQueryHandler(HttpClient http)
+    private readonly IEmployeeService _employeeService;
+    public GetEmployeeByIdQueryHandler(IEmployeeService employeeService)
     {
-        _http = http;
+        _employeeService = employeeService;
     }
 
     public async Task<EmployeeResponse> Handle(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
     {
-        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", 
-            request._token.Replace("Bearer ",""));
-        
-        var response = await _http.GetFromJsonAsync<EmployeeResponse>($"https://localhost:7245/api/User/{request._id}");
-        
-        if (response != null)
-        {
-            return response;
-        }
-        else
-        {
-            throw new Exception("Error: Unable to retrieve user data.");
-        }
+        var response = await _employeeService.GetById(request._id, request._token);
+        return response;
     }
 }

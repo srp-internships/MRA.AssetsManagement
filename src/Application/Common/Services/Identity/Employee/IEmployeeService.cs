@@ -2,11 +2,8 @@
 
 public interface IEmployeeService
 {
-    Task<List<Employee>> GetAll();
-    Task<Employee> GetById(string id);
-    Task<Employee> GetByEmail(string email);
-    Task<Employee> Create(Employee employee);
-    Task<bool> Delete(string id);
-    Task<List<RegisterEmployee>> GetEmployeesAsync(string filePath);
-
+    Task<List<EmployeeResponse>> GetAll(string token);
+    Task<EmployeeResponse> GetById(string id,string token);
+    Task<EmployeeResponse> GetByEmail(string email, string token);
+    Task<string> Create(RegisterEmployee registerEmployee,string token);
 }
