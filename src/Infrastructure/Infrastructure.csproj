@@ -11,7 +11,6 @@
 
     <ItemGroup>
       <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
-      <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup>
