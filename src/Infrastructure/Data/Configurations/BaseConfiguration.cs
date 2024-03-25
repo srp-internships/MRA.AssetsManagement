@@ -25,6 +25,5 @@ public abstract class BaseConfiguration<T> where T : IEntity
         classMap.MapIdMember(x => x.Id).SetIdGenerator(StringObjectIdGenerator.Instance);
     }
 
-    protected abstract void Configure();
-
+    protected virtual void Configure() { }
 }
