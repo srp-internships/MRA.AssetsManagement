@@ -11,39 +11,43 @@ else
 {
     <MudItem xs="12" sm="7">
         <MudPaper Class="pa-4">
-            <MudForm>
-                <MudGrid>
-                    <MudItem Class="mb-2">
-                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary" IconColor="Color.Default" Size="Size.Large">Save</MudButton>
+            <MudGrid>
+                <MudItem Class="mb-2">
+                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary" IconColor="Color.Default" Size="Size.Medium">Save</MudButton>
                     </MudItem>
-                    <MudItem>
-                        <MudSwitch @bind-Value="@assetType.Archived" Color="Color.Secondary">
-                            <span>@(assetType.Archived ? "Archived" : "Unarchived")</span>
-                        </MudSwitch>
-                    </MudItem>
-                </MudGrid>
-
-                <MudTextField Class="mt-3" T="string" @bind-Value="@assetType.Name" Variant=Variant.Outlined Label="Name" Required="true" RequiredError="Name is required!"  />
+                <MudItem>
+                    @if (assetType.Archived)
+                    {
+                        <MudButton Variant="Variant.Filled" @onclick="Archived" StartIcon="@Icons.Material.Filled.Archive" Color="Color.Secondary" IconColor="Color.Default" Size="Size.Medium">Archived</MudButton>
+                    }
+                    else
+                    {
+                        <MudButton Variant="Variant.Filled" @onclick="Archived" StartIcon="@Icons.Material.Filled.Unarchive" Color="Color.Secondary" IconColor="Color.Default" Size="Size.Medium">Unarchived</MudButton>
+                    }
+                </MudItem>
+            </MudGrid>
+            <MudForm Disabled=@assetType.Archived>
+                <MudTextField Class="mt-3" T="string" @bind-Value="@assetType.Name" Variant=Variant.Outlined Label="Name" Required="true" RequiredError="Name is required!"/>
                 <MudItem Class="d-flex mt-3">
-                    <MudTextField T="string" @bind-Value="@assetType.ShortName" Variant=Variant.Outlined Label="Short name" Required="true" RequiredError="Short name is required!" />
-                    <MudCheckBox T="bool" Value="autoGenerateShortName" Label="Generate Short name" ValueChanged="@(e => AutoGenerateShortName((bool)e))"></MudCheckBox>
+                    <MudTextField T="string" @bind-Value="@assetType.ShortName" Variant=Variant.Outlined Label="Short name" Required="true" RequiredError="Short name is required!"/>
+                    <MudCheckBox Class="mt-2" T="bool" Value="autoGenerateShortName" Label="Generate Short name" ValueChanged="@(e => AutoGenerateShortName())"></MudCheckBox>
                 </MudItem>
                 <MudSelect Value="@assetTypeIcon" Label="Icon" Variant="Variant.Outlined" Class="mt-3">
                     <MudSelectItem Value="@("Computer")" Class="select-item">
                         <div class="icon-container">
-                            <MudIcon Icon="@Icons.Material.Outlined.Computer" class="mr-1" />
+                            <MudIcon Icon="@Icons.Material.Outlined.Computer" class="mr-1"/>
                             <span>Computer</span>
                         </div>
                     </MudSelectItem>
                     <MudSelectItem Value="@("Laptop")">
                         <div class="icon-container">
-                            <MudIcon Icon="@Icons.Material.Outlined.LaptopMac" class="mr-1" />
+                            <MudIcon Icon="@Icons.Material.Outlined.LaptopMac" class="mr-1"/>
                             <span>Laptop</span>
                         </div>
                     </MudSelectItem>
                     <MudSelectItem Value="@("Monitor")">
                         <div class="icon-container">
-                            <MudIcon Icon="@Icons.Material.Outlined.DesktopWindows" class="mr-1" />
+                            <MudIcon Icon="@Icons.Material.Outlined.DesktopWindows" class="mr-1"/>
                             <span class="icon-text">Monitor</span>
                         </div>
                     </MudSelectItem>
@@ -76,7 +80,7 @@ else
     }
 
 
-    private void AutoGenerateShortName(bool flag)
+    private void AutoGenerateShortName()
     {
         if (assetType.Name != null  && assetType.Name != string.Empty)
         {
@@ -88,5 +92,10 @@ else
         {
             autoGenerateShortName = false;
         }
+    }
+    
+    private void Archived()
+    {
+        assetType.Archived = !assetType.Archived;
     }
 }

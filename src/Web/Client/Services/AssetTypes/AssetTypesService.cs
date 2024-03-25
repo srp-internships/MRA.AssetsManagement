@@ -18,8 +18,6 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
             _snackbar = snackbar;
         }
 
-        public event Action OnChange;
-
         public string GenerateShortName(string name)
         {
             return ContractString(StringWithoutVowels(name));
@@ -27,7 +25,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 
         public async Task<AssetType> GetAssetTypeById(string id)
         {
-            var response = await _httpClient.GetFromJsonAsync<List<AssetType>>("https://localhost:7098/assettypes");
+            var response = await _httpClient.GetFromJsonAsync<IEnumerable<AssetType>>("https://localhost:7098/api/assettypes");
             _snackbar.ShowIfError(response, "Error was occured.");
             var assetType = response.Result!.FirstOrDefault(at => at.Id == id);
 
@@ -36,9 +34,9 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 
         public async Task<List<AssetType>> GetAssetTypes()
         {
-            var response = await _httpClient.GetFromJsonAsync<List<AssetType>>("https://localhost:7098/assettypes");
+            var response = await _httpClient.GetFromJsonAsync<List<AssetType>>("https://localhost:7098/api/assettypes");
             _snackbar.ShowIfError(response, "Error was occured.");
-            OnChange?.Invoke();
+
             return response.Result!;
         }
 
