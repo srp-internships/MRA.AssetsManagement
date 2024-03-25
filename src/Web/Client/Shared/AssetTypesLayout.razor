@@ -1,14 +1,13 @@
 ﻿@inherits LayoutComponentBase
 @layout MainLayout
 @inject IAssetTypesService AssetTypesService
-@inject NavigationManager NavigationManager
 <MudGrid>
     <MudItem md="3">
         <MudPaper Class="pa-2">
             <MudStack Spacing="4">
                 <MudStack Row="true">
                     <MudTextField @bind-Value="@_normalText" Label="Search" Margin="Margin.Dense" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" OnClick="New"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" Href="settings/asset-types/new"></MudIconButton>
                 </MudStack>
                 <MudDivider />
                 <MudNavMenu Bordered="true">
@@ -22,7 +21,7 @@
                     {
                         @foreach (var assetsType in assetTypes)
                         {
-                            <MudNavLink Href="@($"/asset-types/{assetsType.Id}")" Icon="@assetsType.Icon">
+                            <MudNavLink Href="@($"/settings/asset-types/{assetsType.Id}")" Icon="@assetsType.Icon">
                                 @assetsType.Name
                             </MudNavLink>
                         }
@@ -48,11 +47,5 @@
     {
         assetTypes = await AssetTypesService.GetAssetTypes();
     }
-
-    private void New()
-    {
-        NavigationManager.NavigateTo("/asset-types/new");
-    }
-
 
 }
