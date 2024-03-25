@@ -7,17 +7,8 @@ using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 {
-    public class AssetTypesService : IAssetTypesService
+    public class AssetTypesService(IHttpClientService httpClient, ISnackbar snackbar, IConfiguration configuration) : IAssetTypesService
     {
-        private readonly IHttpClientService _httpClient;
-        private readonly ISnackbar _snackbar;
-
-        public AssetTypesService(IHttpClientService httpClient, ISnackbar snackbar)
-        {
-            _httpClient = httpClient;
-            _snackbar = snackbar;
-        }
-
         public string GenerateShortName(string name)
         {
             return ContractString(StringWithoutVowels(name));
@@ -25,8 +16,8 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 
         public async Task<AssetType> GetAssetTypeById(string id)
         {
-            var response = await _httpClient.GetFromJsonAsync<IEnumerable<AssetType>>("https://localhost:7098/api/assettypes");
-            _snackbar.ShowIfError(response, "Error was occured.");
+            var response = await httpClient.GetFromJsonAsync<IEnumerable<AssetType>>("https://localhost:7098/api/assettypes");
+            snackbar.ShowIfError(response, "Error was occured.");
             var assetType = response.Result!.FirstOrDefault(at => at.Id == id);
 
             return assetType!;
@@ -34,8 +25,8 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 
         public async Task<List<AssetType>> GetAssetTypes()
         {
-            var response = await _httpClient.GetFromJsonAsync<List<AssetType>>("https://localhost:7098/api/assettypes");
-            _snackbar.ShowIfError(response, "Error was occured.");
+            var response = await httpClient.GetFromJsonAsync<List<AssetType>>("https://localhost:7098/api/assettypes");
+            snackbar.ShowIfError(response, "Error was occured.");
 
             return response.Result!;
         }

@@ -13,16 +13,16 @@ else
         <MudPaper Class="pa-4">
             <MudGrid>
                 <MudItem Class="mb-2">
-                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary" IconColor="Color.Default" Size="Size.Medium">Save</MudButton>
+                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary"  Size="Size.Medium">Save</MudButton>
                     </MudItem>
                 <MudItem>
                     @if (assetType.Archived)
                     {
-                        <MudButton Variant="Variant.Filled" @onclick="Archived" StartIcon="@Icons.Material.Filled.Archive" Color="Color.Secondary" IconColor="Color.Default" Size="Size.Medium">Archived</MudButton>
+                        <MudButton Variant="Variant.Filled" @onclick="Archived" StartIcon="@Icons.Material.Filled.Archive" Color="Color.Secondary" Size="Size.Medium">Archived</MudButton>
                     }
                     else
                     {
-                        <MudButton Variant="Variant.Filled" @onclick="Archived" StartIcon="@Icons.Material.Filled.Unarchive" Color="Color.Secondary" IconColor="Color.Default" Size="Size.Medium">Unarchived</MudButton>
+                        <MudButton Variant="Variant.Filled" @onclick="Archived" StartIcon="@Icons.Material.Filled.Unarchive" Color="Color.Secondary" Size="Size.Medium">Unarchived</MudButton>
                     }
                 </MudItem>
             </MudGrid>
