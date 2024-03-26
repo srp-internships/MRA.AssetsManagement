@@ -1,4 +1,3 @@
-global using MRA.AssetsManagement.Web.Shared;
 using Blazored.LocalStorage;
 
 using Microsoft.AspNetCore.Components.Authorization;

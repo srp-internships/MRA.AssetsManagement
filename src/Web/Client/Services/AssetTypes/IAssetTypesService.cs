@@ -1,4 +1,4 @@
-﻿using MRA.AssetsManagement.Web.Client.Pages.Settings;
+﻿using MRA.AssetsManagement.Web.Shared;
 
 namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 {
