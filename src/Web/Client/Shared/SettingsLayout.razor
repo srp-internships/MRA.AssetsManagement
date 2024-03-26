@@ -21,7 +21,8 @@
                     {
                         @foreach (var assetsType in assetTypes)
                         {
-                            <MudNavLink Href="@($"/settings/asset-types/{assetsType.Id}")" Icon="@assetsType.Icon">
+                            <MudNavLink  Href="@($"/settings/asset-types/{assetsType.Id}")" Icon="@Icons.Material.Outlined.Rectangle">
+
                                 @assetsType.Name
                             </MudNavLink>
                         }
