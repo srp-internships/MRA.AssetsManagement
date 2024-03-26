@@ -6,12 +6,10 @@ namespace MRA.AssetsManagement.Application.Features.Employees.Handlers;
 public class GetEmployeeByEmailQuery : IRequest<EmployeeResponse>
 {
     public readonly string _email;
-    public readonly string _token;
 
-    public GetEmployeeByEmailQuery(string email, string token)
+    public GetEmployeeByEmailQuery(string email)
     {
         _email = email;
-        _token = token;
     }
 }
 
@@ -26,7 +24,7 @@ public class GetEmployeeByEmailQueryHandler : IRequestHandler<GetEmployeeByEmail
 
     public async Task<EmployeeResponse> Handle(GetEmployeeByEmailQuery request, CancellationToken cancellationToken)
     {
-        var response = await _employeeService.GetByEmail(request._email, request._token);
+        var response = await _employeeService.GetByEmail(request._email);
         return response;
     }
 }

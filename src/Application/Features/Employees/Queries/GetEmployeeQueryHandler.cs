@@ -3,12 +3,6 @@ using MRA.AssetsManagement.Domain.Entities;
 
 public class GetEmployeesQuery : IRequest<List<EmployeeResponse>>
 {
-    public readonly string _token;
-
-    public GetEmployeesQuery(string token)
-    {
-        _token = token;
-    }   
 }
 
 public class GetEmployeeQueryHandler : IRequestHandler<GetEmployeesQuery,List<EmployeeResponse>>
@@ -20,8 +14,7 @@ public class GetEmployeeQueryHandler : IRequestHandler<GetEmployeesQuery,List<Em
     }
     public async Task<List<EmployeeResponse>> Handle(GetEmployeesQuery request, CancellationToken cancellationToken)
     {
-
-        var response = await _employeeService.GetAll(request._token);
+        var response = await _employeeService.GetAll();
         return response;
     }
 }

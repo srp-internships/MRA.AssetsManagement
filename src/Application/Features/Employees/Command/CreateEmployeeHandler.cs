@@ -4,12 +4,10 @@ using MRA.AssetsManagement.Domain.Entities;
 public class CreateEmployeeCommand : IRequest<string>
 {
     public RegisterEmployee RegisterEmployee { get; }
-    public string Token { get; }
 
-    public CreateEmployeeCommand(RegisterEmployee registerEmployee, string token)
+    public CreateEmployeeCommand(RegisterEmployee registerEmployee)
     {
         RegisterEmployee = registerEmployee;
-        Token = token;
     }
 }
 
@@ -23,7 +21,7 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
 
     public async Task<string> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var response = await _employeeService.Create(request.RegisterEmployee, request.Token);
+        var response = await _employeeService.Create(request.RegisterEmployee);
         return response;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using MediatR;
 using MRA.AssetsManagement.Domain.Entities;
+
 public class SeedEmployeeCommand : IRequest<string>
 {
     public readonly List<RegisterEmployee> _registerEmployeeCommands;

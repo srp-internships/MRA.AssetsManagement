@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using MRA.AssetsManagement.Domain.Entities;
 
@@ -9,25 +10,32 @@ public class EmployeeService : IEmployeeService
 {
     private readonly HttpClient _http;
     private readonly IConfiguration _configuration;
+    private readonly string token;
 
-    public EmployeeService(HttpClient http,IConfiguration configuration)
+    public EmployeeService(HttpClient http,
+        IHttpContextAccessor httpContextAccessor,
+        IConfiguration configuration)
     {
         _http = http;
         _configuration = configuration;
+        token = httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer", "");
     }
-    public async Task<List<EmployeeResponse>> GetAll(string token)
+
+    public async Task<List<EmployeeResponse>> GetAll()
     {
-        
-        SetAuthorizationHeader(token);
-        var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>("https://localhost:7245/api/User/GetListUsers/ByFilter");
+
+        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var response =
+            await _http.GetFromJsonAsync<List<EmployeeResponse>>(
+                "https://localhost:7245/api/User/GetListUsers/ByFilter");
         return response;
     }
 
-    public async Task<EmployeeResponse> GetById(string id,string token)
+    public async Task<EmployeeResponse> GetById(string id)
     {
-        SetAuthorizationHeader(token);
+        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         var response = await _http.GetFromJsonAsync<EmployeeResponse>($"https://localhost:7245/api/User/{id}");
-        
+
         if (response != null)
         {
             return response;
@@ -38,11 +46,13 @@ public class EmployeeService : IEmployeeService
         }
     }
 
-    public async Task<EmployeeResponse> GetByEmail(string email,string token)
+    public async Task<EmployeeResponse> GetByEmail(string email)
     {
-        SetAuthorizationHeader(token);
-        var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>($"https://localhost:7245/api/User/GetListUsers/ByFilter?Email={email}");
-        
+        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var response =
+            await _http.GetFromJsonAsync<List<EmployeeResponse>>(
+                $"https://localhost:7245/api/User/GetListUsers/ByFilter?Email={email}");
+
         if (response != null)
         {
             return response.FirstOrDefault();
@@ -53,9 +63,9 @@ public class EmployeeService : IEmployeeService
         }
     }
 
-    public async Task<string> Create(RegisterEmployee registerEmployee, string token)
+    public async Task<string> Create(RegisterEmployee registerEmployee)
     {
-        SetAuthorizationHeader(token);
+        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         var response = await _http.PostAsJsonAsync("https://localhost:7245/api/Auth/register", registerEmployee);
 
         if (response.IsSuccessStatusCode)
@@ -67,10 +77,5 @@ public class EmployeeService : IEmployeeService
         {
             throw new HttpRequestException($"Failed to create employee. Status code: {response.StatusCode}");
         }
-    }
-    private void SetAuthorizationHeader(string token)
-    {
-        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", 
-            token.Replace("Bearer ",""));
     }
 }
