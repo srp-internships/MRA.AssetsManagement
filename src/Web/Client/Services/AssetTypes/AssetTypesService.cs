@@ -10,6 +10,8 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 {
     public class AssetTypesService(IHttpClientService httpClient, ISnackbar snackbar) : IAssetTypesService
     {
+        public event Action? OnChange;
+        public IEnumerable<AssetType> AssetTypes { get; set; }
         public string GenerateShortName(string name)
         {
             return ContractString(StringWithoutVowels(name));
@@ -20,16 +22,15 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
             var response = await httpClient.GetFromJsonAsync<IEnumerable<AssetType>>("http://localhost:5203/api/assettypes");
             snackbar.ShowIfError(response, "Error was occured.");
             var assetType = response.Result!.FirstOrDefault(at => at.Id == id);
-
+            OnChange?.Invoke();
             return assetType!;
         }
 
-        public async Task<List<AssetType>> GetAssetTypes()
+        public async Task GetAssetTypes()
         {
             var response = await httpClient.GetFromJsonAsync<List<AssetType>>("http://localhost:5203/api/assettypes");
             snackbar.ShowIfError(response, "Error was occured.");
-
-            return response.Result!;
+            AssetTypes = response.Result!;
         }
 
 
@@ -68,6 +69,35 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
             }
 
             return result;
+        }
+
+        public async Task Create(CreateAssetTypeDto newAssetType)
+        {
+            var response = await httpClient.PostAsJsonAsync("http://localhost:5203/api/assettypes", newAssetType);
+            await GetAssetTypes();
+            OnChange?.Invoke();
+        }
+
+        public async Task Archive(string id)
+        {
+            var response = await httpClient.PutAsJsonAsync($"http://localhost:5203/api/assettypes/archive/{id}", null!);
+            await GetAssetTypes();
+            OnChange?.Invoke();
+        }
+
+        public async Task Restore(string id)
+        {
+            var response = await httpClient.PutAsJsonAsync($"http://localhost:5203/api/assettypes/restore/{id}", null!);
+            await GetAssetTypes();
+            OnChange?.Invoke();
+        }
+
+        public async Task Update(AssetType assetType)
+        {
+            var response = await httpClient.PutAsJsonAsync("http://localhost:5203/api/assettypes", assetType);
+            await GetAssetTypes();
+            OnChange?.Invoke();
+
         }
     }
 }
