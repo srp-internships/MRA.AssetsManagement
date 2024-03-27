@@ -11,7 +11,7 @@
                     <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" Href="settings/asset-types"></MudIconButton>
                 </MudStack>
                 <MudDivider />
-                <MudNavMenu Style="overflow: auto; height: 500px" Bordered="true">
+                <MudNavMenu Bordered="true">
                     @if (AssetTypesService.AssetTypes == null)
                     {
                         <MudSkeleton Animation="Animation.Wave" />
