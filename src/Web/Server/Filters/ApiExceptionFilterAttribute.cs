@@ -12,7 +12,7 @@ namespace MRA.AssetsManagement.Web.Server.Filters
         {
             context.ExceptionHandled = context switch
             {
-                { Exception: BadHttpRequestException } => HandleBadRequest(context),
+                { Exception: ValidationException } => HandleValidationException(context),
                 { Exception: UnauthorizedAccessException } => HandleUnauthorizedAccessException(context),
                 { Exception: NotFoundEntityException } => HandleNotFoundException(context),
                 { ModelState: { IsValid: false } } => HandleInvalidModelStateException(context),
@@ -22,18 +22,17 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             base.OnException(context);
         }
 
-        public bool HandleBadRequest(ExceptionContext context)
+        public bool HandleValidationException(ExceptionContext context)
         {
-            ProblemDetails details = new ProblemDetails
+            var exception = (ValidationException)context.Exception;
+            ProblemDetails details = new ValidationProblemDetails(exception.Errors)
             {
-                Status = StatusCodes.Status400BadRequest,
                 Title = "Bad Request.",
-                Detail = "Bad request!",
+                Detail = "One or more validation errors was occured",
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1"
             };
 
-            context.Result = new ObjectResult(details) { StatusCode = StatusCodes.Status400BadRequest };
-            logger.LogError(context.Exception, nameof(HandleBadRequest));
+            context.Result = new BadRequestObjectResult(details);
 
             return true;
         }
@@ -49,7 +48,6 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             };
 
             context.Result = new ObjectResult(details) { StatusCode = StatusCodes.Status500InternalServerError };
-            logger.LogError(context.Exception, nameof(HandleUnknownException));
 
             return true;
         }
@@ -91,7 +89,6 @@ namespace MRA.AssetsManagement.Web.Server.Filters
                 Title = context.Exception.Message,
             };
             
-            logger.LogError(context.Exception, details.Title);
             context.Result = new NotFoundObjectResult(details);
 
             return true;
