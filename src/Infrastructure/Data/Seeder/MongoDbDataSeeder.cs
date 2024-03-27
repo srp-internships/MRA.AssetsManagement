@@ -20,7 +20,10 @@ public class MongoDbDataSeeder : IDataSeeder
         _entitySeeders =
         [
             new AssetTypeEntitySeeder(context.AssetTypes),
-            new TagEntitySeeder(context.Tags)
+            new AssetEntitySeeder(context),
+            new AssetSerialEntitySeeder(context),
+            new TagEntitySeeder(context.Tags),
+            new DocumentEntitySeeder(context)
         ];
     }
 
