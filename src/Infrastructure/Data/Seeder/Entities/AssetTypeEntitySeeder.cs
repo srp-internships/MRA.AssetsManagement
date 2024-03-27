@@ -16,8 +16,8 @@ public class AssetTypeEntitySeeder : EntitySeeder<AssetType>
         await _repository.CreateAsync(default,
             new AssetType() { Name = "PC", ShortName = "PC", Icon = "pc" },
             new AssetType() { Name = "Laptop", ShortName = "LPT", Icon = "laptop" },
-            new AssetType() { Name = "Chair", ShortName = "CHR", Icon = "chair" },
-            new AssetType() { Name = "Monitor", ShortName = "MTR", Icon = "monitor" }
+            new AssetType() { Name = "Chair", ShortName = "CHR", Icon = "Chair" },
+            new AssetType() { Name = "Monitor", ShortName = "MTR", Icon = "Monitor" }
         );
     }
 }
