@@ -37,13 +37,13 @@ public class CreateAssetTypeCommandValidator : AbstractValidator<CreateAssetType
     public async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
     {
         return await _context.AssetTypes
-            .AnyAsync(x => x.Name == name, cancellationToken);
+            .AnyAsync(x => x.Name != name, cancellationToken);
     }
     
     public async Task<bool> BeUniqueShortName(string shortName, CancellationToken cancellationToken)
     {
         return await _context.AssetTypes
-            .AnyAsync(x => x.ShortName == shortName, cancellationToken);
+            .AnyAsync(x => x.ShortName != shortName, cancellationToken);
     }
 }
 

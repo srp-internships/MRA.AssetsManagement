@@ -44,10 +44,11 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             {
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "An error occurred while processing your request.",
-                Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1"
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+                Detail = context.Exception.Message,
             };
 
-            context.Result = new ObjectResult(details) { StatusCode = StatusCodes.Status500InternalServerError };
+            context.Result = new ObjectResult(details);
 
             return true;
         }
@@ -86,7 +87,8 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             {
                 Status = StatusCodes.Status404NotFound,
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-                Title = context.Exception.Message,
+                Title = "Not Found",
+                Detail = context.Exception.Message,
             };
             
             context.Result = new NotFoundObjectResult(details);

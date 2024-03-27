@@ -23,10 +23,10 @@ public class AssetTypesController : ApiControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult<GetAssetType>> Create(CreateAssetTypeCommand command, CancellationToken cancellationToken)
+    public async Task<ActionResult<GetAssetType>> Create(CreateAssetTypeRequest request, CancellationToken cancellationToken)
     {
-        var result = await Mediator.Send(command, cancellationToken);
-        return Created(new Uri($"api/AssetTypes/{result.Id}"), result);
+        var result = await Mediator.Send(new CreateAssetTypeCommand(request), cancellationToken);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
     [HttpPut]
