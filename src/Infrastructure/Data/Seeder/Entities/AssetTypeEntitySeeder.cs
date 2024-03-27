@@ -11,7 +11,7 @@ public class AssetTypeEntitySeeder : EntitySeeder<AssetType>
 
     public override async Task Development()
     {
-        if (await _repository.Any()) return;
+        if (await _repository.AnyAsync()) return;
 
         await _repository.CreateAsync(default,
             new AssetType() { Name = "PC", ShortName = "PC", Icon = "pc" },

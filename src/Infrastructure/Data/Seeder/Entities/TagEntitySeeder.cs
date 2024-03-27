@@ -11,7 +11,7 @@ public class TagEntitySeeder : EntitySeeder<Tag>
 
     public async override Task Development()
     {
-        if (await _repository.Any()) return;
+        if (await _repository.AnyAsync()) return;
         
         await _repository.CreateAsync(default,
             new () { Name = "outdated", Color = "#DD0000" },
