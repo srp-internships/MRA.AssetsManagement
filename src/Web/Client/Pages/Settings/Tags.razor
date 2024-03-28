@@ -1,10 +1,18 @@
 @page "/settings/tags"
+@using MRA.AssetsManagement.Web.Client.Shared.MenuItems
+@using MRA.AssetsManagement.Web.Client.Services.Tags
 @layout SettingsLayout
+@inject ITagsService TagsService;
+@inject IMenuItemService MenuItemsService;
 
 <PageTitle>Tags</PageTitle>
 
 <h3>Tags</h3>
 
 @code {
-    
+    protected override void OnInitialized()
+    {
+        MenuItemsService.SetFetcher(TagsService);
+    }
+
 }

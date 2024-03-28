@@ -2,8 +2,10 @@
 @page "/settings/asset-types/{id}"
 @using MRA.AssetsManagement.Web.Shared.AssetTypes
 @using MRA.AssetsManagement.Web.Client.Common.Extensions
+@using MRA.AssetsManagement.Web.Client.Shared.MenuItems
 @layout SettingsLayout
 @inject IAssetTypesService AssetTypesService
+@inject IMenuItemService MenuItemService;
 @inject ISnackbar Snackbar
 <PageTitle>Asset Types</PageTitle>
 
@@ -76,6 +78,8 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        MenuItemService.SetFetcher(AssetTypesService);
+        
         _loading = true;
         _getAssetType = new GetAssetType();
         _autoGenerateShortName = false;

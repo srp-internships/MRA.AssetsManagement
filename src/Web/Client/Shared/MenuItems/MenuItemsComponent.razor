@@ -1,0 +1,61 @@
+@inject IMenuItemService MenuItemService;
+@implements IDisposable
+
+<MudPaper Class="pa-2">
+    <MudStack Spacing="4">
+        <MudStack Row="true">
+            <MudTextField @bind-Value="@_normalText" Label="Search" Margin="Margin.Dense" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" Href="settings/asset-types"></MudIconButton>
+        </MudStack>
+        <MudDivider/>
+        <MudNavMenu Bordered="true">
+            @if (_loading)
+            {
+                <MudSkeleton Animation="Animation.Wave"/>
+                <MudSkeleton Animation="Animation.Wave"/>
+                <MudSkeleton Animation="Animation.Wave"/>
+            }
+            else
+            {
+                @foreach (var menuItem in _menuItems)
+                {
+                    <MudNavLink
+                        Disabled="@menuItem.Disabled"
+                        Href="@menuItem.Route" Icon="@menuItem.Icon">
+                        @menuItem.Title
+                    </MudNavLink>
+                }
+            }
+        </MudNavMenu>
+    </MudStack>
+</MudPaper>
+
+@code {
+    string _normalText = "";
+    bool _loading = false;
+    private IEnumerable<MenuItem> _menuItems = Enumerable.Empty<MenuItem>();
+
+    protected override void OnInitialized()
+    {
+        MenuItemService.RefreshRequested += ReloadPage;
+    }
+
+    private async void ReloadPage()
+    {
+        _loading = true;
+        StateHasChanged();
+
+        if (MenuItemService.Service is not null)
+        {
+            _menuItems =  await MenuItemService.Service.Fetch();
+        }
+        
+        _loading = false;
+        StateHasChanged();
+    }
+    
+    public void Dispose()
+    {
+        MenuItemService.RefreshRequested -= ReloadPage;
+    }
+}

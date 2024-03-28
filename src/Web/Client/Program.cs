@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 using MRA.AssetsManagement.Web.Client;
 using MRA.AssetsManagement.Web.Client.Services.AssetTypes;
+using MRA.AssetsManagement.Web.Client.Services.Tags;
+using MRA.AssetsManagement.Web.Client.Shared.MenuItems;
 using MRA.BlazorComponents.HttpClient;
 
 using MudBlazor.Services;
@@ -25,6 +27,8 @@ builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.H
 
 builder.Services.AddAuthorizationCore();
 
+builder.Services.AddSingleton<IMenuItemService, MenuItemsService>();
 builder.Services.AddScoped<IAssetTypesService, AssetTypesService>();
+builder.Services.AddScoped<ITagsService, TagService>();
 
 await builder.Build().RunAsync();
