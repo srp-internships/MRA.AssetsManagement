@@ -23,7 +23,6 @@ public class MongoDbDataSeeder : IDataSeeder
             new TagEntitySeeder(context.Tags)
         ];
     }
-
     public async Task SeedData(bool isDevelopment)
     {
         try
