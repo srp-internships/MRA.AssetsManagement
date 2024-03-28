@@ -9,6 +9,7 @@ using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
 using MRA.AssetsManagement.Infrastructure.Identity.Services;
+using MRA.AssetsManagement.Web.Server;
 using MRA.AssetsManagement.Web.Server.Filters;
 
 using Serilog;
@@ -87,6 +88,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseMiddleware<RequestLogContextMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 

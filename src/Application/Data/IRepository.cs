@@ -13,5 +13,5 @@ public interface IRepository<T> where T : IEntity
     Task CreateAsync(CancellationToken cancellationToken = default, params T[] entity);
     Task RemoveAsync(string id, CancellationToken cancellationToken = default);
     Task UpdateAsync(T entity, CancellationToken cancellationToken = default);
-    Task<bool> Any(Expression<Func<T, bool>>? filter = default, CancellationToken cancellationToken = default);
+    Task<bool> AnyAsync(Expression<Func<T, bool>>? filter = default, CancellationToken cancellationToken = default);
 }
