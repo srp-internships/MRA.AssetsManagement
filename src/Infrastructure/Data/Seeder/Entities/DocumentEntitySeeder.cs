@@ -19,16 +19,18 @@ public class DocumentEntitySeeder : EntitySeeder<Document>
         var assets = await _context.Assets.GetAllAsync();
 
         await _repository.CreateAsync(default, [
-            new Document
+            new PurchaseDocument
             {
                 Approved = true,
-                Date = DateTime.Now.AddDays(-1),
+                Date = DateTime.Now.AddMonths(-2),
                 Details =
                 [
-                    new() { Price = 30000, Quantity = 3, Asset = assets.ElementAt(2) },
-                    new() { Price = 14000, Quantity = 2, Asset = assets.ElementAt(1) },
-                    new() { Price = 20000, Quantity = 2, Asset = assets.ElementAt(2) }
-                ]
+                    new() { Id = assets.ElementAt(2).Id, Price = 30000, Quantity = 3, Asset = assets.ElementAt(2) },
+                    new() { Id = assets.ElementAt(1).Id, Price = 14000, Quantity = 2, Asset = assets.ElementAt(1) },
+                    new() { Id = assets.ElementAt(0).Id, Price = 20000, Quantity = 2, Asset = assets.ElementAt(0) },
+                    new() { Id = assets.ElementAt(3).Id, Price = 1500, Quantity = 1, Asset = assets.ElementAt(3) }
+                ],
+                Vendor = "Some Vendor"
             }
         ]);
     }

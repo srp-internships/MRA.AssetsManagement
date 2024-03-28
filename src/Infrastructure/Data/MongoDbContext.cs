@@ -5,7 +5,6 @@ using MRA.AssetsManagement.Domain.Common;
 using MRA.AssetsManagement.Domain.Entities;
 using MRA.AssetsManagement.Infrastructure.Data.Configurations;
 
-
 using Tag = MRA.AssetsManagement.Domain.Entities.Tag;
 
 namespace MRA.AssetsManagement.Infrastructure.Data;
@@ -24,6 +23,7 @@ public class MongoDbContext : IApplicationDbContext
         Documents = GetRepository<DocumentConfiguration, Document>("documents");
         AssetSerials = GetRepository<AssetSerialConfiguration, AssetSerial>("asset-serials");
         Assets = GetRepository<AssetConfiguration, Asset>("assets");
+        AssetHistories = GetRepository<AssetHistoryConfiguration, AssetHistory>("asset-histories");
     }
 
     public IRepository<AssetType> AssetTypes { get; }
@@ -31,7 +31,8 @@ public class MongoDbContext : IApplicationDbContext
     public IRepository<Document> Documents { get; }
     public IRepository<AssetSerial> AssetSerials { get; }
     public IRepository<Asset> Assets { get; }
-    
+    public IRepository<AssetHistory> AssetHistories { get; }
+
 
     private MongoRepository<TEntity> GetRepository<TConfiguration, TEntity>(string collectionName) where TConfiguration : BaseConfiguration<TEntity>
                                                                             where TEntity : IEntity

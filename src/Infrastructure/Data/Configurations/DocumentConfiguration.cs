@@ -29,5 +29,10 @@ public class DocumentConfiguration : BaseConfiguration<Document>
             initializer.MapMember(x => x.Price).SetElementName("price");
             initializer.MapMember(x => x.Asset).SetElementName("asset");
         });
+        
+        BsonClassMap.RegisterClassMap<PurchaseDocument>(initializer =>
+        {
+            initializer.MapMember(x => x.Vendor).SetElementName("vendor");
+        });
     }
 }

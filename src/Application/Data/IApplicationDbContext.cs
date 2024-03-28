@@ -9,4 +9,5 @@ public interface IApplicationDbContext
     public IRepository<Document> Documents { get; }
     public IRepository<AssetSerial> AssetSerials { get; }
     public IRepository<Asset> Assets { get; }
+    public IRepository<AssetHistory> AssetHistories { get; }
 }
