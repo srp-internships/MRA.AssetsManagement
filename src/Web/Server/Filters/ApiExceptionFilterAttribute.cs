@@ -6,13 +6,8 @@ using Serilog;
 
 namespace MRA.AssetsManagement.Web.Server.Filters
 {
-    public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
+    public class ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger) : ExceptionFilterAttribute
     {
-        private readonly ILogger<ApiExceptionFilterAttribute> logger;
-        public ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> _logger)
-        {
-            logger = _logger;
-        }
         public override void OnException(ExceptionContext context)
         {
             context.ExceptionHandled = context switch

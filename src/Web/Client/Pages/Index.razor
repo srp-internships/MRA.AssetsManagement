@@ -15,10 +15,7 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?"/>
-
 <a href="@(Configuration["IdentityClient"] + "login?callback=https://localhost:7098")">Login</a>
-
-<a href="https://localhost:7081/login?callback=https://localhost:7098">Login2</a>
 
 <button @onclick="FetchSecret">Get secret</button>
 
