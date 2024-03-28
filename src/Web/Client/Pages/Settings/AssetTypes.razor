@@ -1,10 +1,136 @@
 ﻿@page "/settings/asset-types"
-@inject HttpClient Http
+@page "/settings/asset-types/{id}"
+@using MRA.AssetsManagement.Web.Shared.AssetTypes
+@using MRA.AssetsManagement.Web.Client.Common.Extensions
 @layout SettingsLayout
+@inject IAssetTypesService AssetTypesService
+@inject ISnackbar Snackbar
+<PageTitle>Asset Types</PageTitle>
 
-<PageTitle>Asset types</PageTitle>
 
-<h1>Asset types</h1>
+<MudStack>
+    <MudStack Row="true" Class="d-flex justify-space-between">
+        <MudText Typo="Typo.h4">Asset type</MudText>
+        <MudStack Class="mb-3" Row="true">
+            <MudButton Variant="Variant.Filled" @onclick=CreateOrUpdate Disabled="_getAssetType.Archived" StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary" Size="Size.Medium">Save</MudButton>
+            @if (_getAssetType.Archived)
+            {
+                <MudButton Variant="Variant.Filled" @onclick="Restore" Disabled=@(string.IsNullOrEmpty(Id) ? true : false) StartIcon="@Icons.Material.Filled.Archive" Color="Color.Secondary" Size="Size.Medium">Restore</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" @onclick="Archive" Disabled=@(string.IsNullOrEmpty(Id) ? true : false) StartIcon="@Icons.Material.Filled.Unarchive" Color="Color.Secondary" Size="Size.Medium">Archive</MudButton>
+            }
+        </MudStack>
+    </MudStack>
+
+    <MudDivider/>
+    <MudForm Disabled=@_getAssetType.Archived Style="max-width: 420px" Class="pa-4">
+        @if (_loading)
+        {
+            <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px"/>
+            <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px"/>
+            <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px"/>
+        }
+        else
+        {
+            <MudTextField Class="mt-3" T="string" @bind-Value="@_getAssetType.Name"
+                          Margin="Margin.Dense" Variant=Variant.Outlined
+                          Label="Name" Required="true" RequiredError="Name is required!" TextChanged="AutoGenerateShortName" Immediate="true"/>
+            <MudItem Class="d-flex mt-3">
+                <MudTextField T="string" @bind-Value="@_getAssetType.ShortName" Margin="Margin.Dense" Variant=Variant.Outlined Label="Short name" Required="true" RequiredError="Short name is required!"/>
+                <MudCheckBox T="bool" @bind-Value="_autoGenerateShortName" Label="Auto Generate" CheckedChanged="AutoGenerateShortName"></MudCheckBox>
+            </MudItem>
+            <MudSelect @bind-Value="_getAssetType.Icon" Immediate=true Label="Icon" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mt-3">
+                <MudSelectItem Value="@(Icons.Material.Outlined.Computer)">
+                    <div class="d-flex">
+                        <MudIcon Icon="@Icons.Material.Outlined.Computer" Class="mr-1" />
+                        <span>Computer</span>
+                    </div>
+                </MudSelectItem>
+                <MudSelectItem Value="@(Icons.Material.Outlined.LaptopMac)">
+                    <div class="d-flex">
+                        <MudIcon Icon="@Icons.Material.Outlined.LaptopMac" Class="mr-1" />
+                        <span>Laptop</span>
+                    </div>
+                </MudSelectItem>
+                <MudSelectItem Value="@(Icons.Material.Outlined.DesktopWindows)">
+                    <div class="d-flex">
+                        <MudIcon Icon="@Icons.Material.Outlined.DesktopWindows" Class="mr-1" />
+                        <span>Monitor</span>
+                    </div>
+                </MudSelectItem>
+            </MudSelect>
+        }
+
+    </MudForm>
+</MudStack>
+
 
 @code {
+    [Parameter] public string? Id { get; set; }
+
+    GetAssetType _getAssetType;
+    bool _loading = false;
+    bool _autoGenerateShortName = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        _getAssetType = new GetAssetType();
+        _autoGenerateShortName = false;
+        if (Id is not null)
+        {
+            _getAssetType = await AssetTypesService.GetAssetTypeById(Id);
+        }
+
+        _loading = false;
+
+        StateHasChanged();
+    }
+
+
+    private void AutoGenerateShortName()
+    {
+        if (_autoGenerateShortName && !string.IsNullOrEmpty(_getAssetType.Name))
+        {
+            _getAssetType.ShortName = _getAssetType.Name.ToShortName();
+        }
+    }
+
+    private async void CreateOrUpdate()
+    {
+        if (Id is not null)
+        {
+            await AssetTypesService.Update(_getAssetType);
+        }
+        else
+        {
+            CreateAssetTypeRequest newAssetType = new CreateAssetTypeRequest();
+            {
+                newAssetType.Name = _getAssetType.Name;
+                newAssetType.ShortName = _getAssetType.ShortName;
+                newAssetType.Icon = _getAssetType.Icon;
+            }
+
+            await AssetTypesService.Create(newAssetType);
+            _getAssetType = new GetAssetType();
+            StateHasChanged();
+        }
+
+    }
+
+    private async void Archive()
+    {
+        _getAssetType.Archived = !_getAssetType.Archived;
+        await AssetTypesService.Archive(_getAssetType.Id);
+    }
+
+    private async void Restore()
+    {
+        _getAssetType.Archived = !_getAssetType.Archived;
+        await AssetTypesService.Restore(_getAssetType.Id);
+
+    }
+
 }
