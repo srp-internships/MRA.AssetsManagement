@@ -1,13 +1,12 @@
 ﻿using MediatR;
-using MRA.AssetsManagement.Domain.Entities;
 
 public class CreateEmployeeCommand : IRequest<string>
 {
-    public RegisterEmployee RegisterEmployee { get; }
+    public CreateEmployee CreateEmployee { get; }
 
-    public CreateEmployeeCommand(RegisterEmployee registerEmployee)
+    public CreateEmployeeCommand(CreateEmployee createEmployee)
     {
-        RegisterEmployee = registerEmployee;
+        CreateEmployee = createEmployee;
     }
 }
 
@@ -21,7 +20,7 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
 
     public async Task<string> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var response = await _employeeService.Create(request.RegisterEmployee);
+        var response = await _employeeService.Create(request.CreateEmployee);
         return response;
     }
 }

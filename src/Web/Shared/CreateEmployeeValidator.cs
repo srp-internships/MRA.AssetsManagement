@@ -1,10 +1,8 @@
 ﻿using FluentValidation;
 
-namespace MRA.AssetsManagement.Domain.Entities;
-
-public class RegisterEmployeeValidator : AbstractValidator<RegisterEmployee>
+public class CreateEmployeeValidator : AbstractValidator<CreateEmployee>
 {
-    public RegisterEmployeeValidator()
+    public CreateEmployeeValidator()
     {
         RuleFor(s => s.Email).EmailAddress();
         RuleFor(s=>s.Username).NotEmpty();

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MRA.AssetsManagement.Domain.Entities.Employee;
 
 public class ValidationEmployee : AbstractValidator<Employee>
 {

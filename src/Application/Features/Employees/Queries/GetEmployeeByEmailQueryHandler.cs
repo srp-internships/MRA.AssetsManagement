@@ -1,19 +1,18 @@
 ﻿using MediatR;
-using MRA.AssetsManagement.Domain.Entities;
+using MRA.AssetsManagement.Domain.Entities.Employee;
 
-namespace MRA.AssetsManagement.Application.Features.Employees.Handlers;
-
-public class GetEmployeeByEmailQuery : IRequest<EmployeeResponse>
+namespace MRA.AssetsManagement.Application.Features.Employees.Queries;
+public class GetEmployeeByEmailQuery : IRequest<Employee>
 {
-    public readonly string _email;
+    public string Email { get; set; }
 
     public GetEmployeeByEmailQuery(string email)
     {
-        _email = email;
+        Email = email;
     }
 }
 
-public class GetEmployeeByEmailQueryHandler : IRequestHandler<GetEmployeeByEmailQuery, EmployeeResponse>
+public class GetEmployeeByEmailQueryHandler : IRequestHandler<GetEmployeeByEmailQuery, Employee>
 {
     private readonly IEmployeeService _employeeService;
 
@@ -21,10 +20,9 @@ public class GetEmployeeByEmailQueryHandler : IRequestHandler<GetEmployeeByEmail
     {
         _employeeService = employeeService;
     }
-
-    public async Task<EmployeeResponse> Handle(GetEmployeeByEmailQuery request, CancellationToken cancellationToken)
+    public async Task<Employee> Handle(GetEmployeeByEmailQuery request, CancellationToken cancellationToken)
     {
-        var response = await _employeeService.GetByEmail(request._email);
+        var response = await _employeeService.GetByEmail(request.Email);
         return response;
     }
 }

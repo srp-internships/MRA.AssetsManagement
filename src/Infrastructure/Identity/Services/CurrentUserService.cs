@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-
 using MRA.AssetsManagement.Application.Common.Security;
 using MRA.Configurations.Common.Constants;
 
@@ -70,9 +69,9 @@ public class CurrentUserService : ICurrentUserService
             var token = _httpContextAccessor.HttpContext.Request.Headers.Authorization;
             if (!string.IsNullOrEmpty(token))
             {
-                return token;
+                return token.ToString();
             }
         }
-        return null;
+        return string.Empty;
     }
 }

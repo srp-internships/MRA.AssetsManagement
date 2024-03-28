@@ -1,16 +1,17 @@
 ﻿using MediatR;
-using MRA.AssetsManagement.Domain.Entities;
+using MRA.AssetsManagement.Domain.Entities.Employee;
 
-public class GetEmployeeByIdQuery : IRequest<EmployeeResponse>
+namespace MRA.AssetsManagement.Application.Features.Employees.Queries;
+
+public class GetEmployeeByIdQuery : IRequest<Employee>
 {
-    public readonly string _id;
-
+    public string Id { get; set; }
     public GetEmployeeByIdQuery(string id)
     {
-        _id = id;
+        Id = id;
     }
 }
-public class GetEmployeeByIdQueryHandler : IRequestHandler<GetEmployeeByIdQuery, EmployeeResponse>
+public class GetEmployeeByIdQueryHandler : IRequestHandler<GetEmployeeByIdQuery, Employee>
 {
     private readonly IEmployeeService _employeeService;
     public GetEmployeeByIdQueryHandler(IEmployeeService employeeService)
@@ -18,9 +19,9 @@ public class GetEmployeeByIdQueryHandler : IRequestHandler<GetEmployeeByIdQuery,
         _employeeService = employeeService;
     }
 
-    public async Task<EmployeeResponse> Handle(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Employee> Handle(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
     {
-        var response = await _employeeService.GetById(request._id);
+        var response = await _employeeService.GetById(request.Id);
         return response;
     }
 }

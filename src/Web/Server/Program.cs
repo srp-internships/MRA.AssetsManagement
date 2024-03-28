@@ -1,11 +1,8 @@
 using System.Text.Json.Serialization;
-
 using Microsoft.Extensions.Options;
-using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
 using MRA.AssetsManagement.Application;
 using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Infrastructure;

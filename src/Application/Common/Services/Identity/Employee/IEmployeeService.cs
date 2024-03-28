@@ -1,9 +1,9 @@
-﻿using MRA.AssetsManagement.Domain.Entities;
+﻿using MRA.AssetsManagement.Domain.Entities.Employee;
 
 public interface IEmployeeService
 {
-    Task<List<EmployeeResponse>> GetAll();
-    Task<EmployeeResponse> GetById(string id);
-    Task<EmployeeResponse> GetByEmail(string email);
-    Task<string> Create(RegisterEmployee registerEmployee);
+    Task<List<Employee>> GetAll();
+    Task<Employee> GetById(string id);
+    Task<Employee> GetByEmail(string email);
+    Task<string> Create(CreateEmployee createEmployee);
 }
