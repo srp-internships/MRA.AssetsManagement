@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+
+using MRA.AssetsManagement.Application.Features.Assets.Queries;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Commands;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Queries;
 using MRA.AssetsManagement.Domain.Entities;
@@ -49,5 +51,13 @@ public class AssetTypesController : ApiControllerBase
     {
         await Mediator.Send(new RestoreAssetTypeCommand(id), cancellationToken);
         return NoContent();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<AssetType>> Get(string id, CancellationToken cancellationToken)
+    {
+        var query = new GetAssetTypeById(id);
+        var assets = await Mediator.Send(query, cancellationToken);
+        return Ok(assets);
     }
 }
