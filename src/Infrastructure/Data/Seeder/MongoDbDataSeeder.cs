@@ -27,7 +27,6 @@ public class MongoDbDataSeeder : IDataSeeder
             new AssetHistoryEntitySeeder(context)
         ];
     }
-
     public async Task SeedData(bool isDevelopment)
     {
         try

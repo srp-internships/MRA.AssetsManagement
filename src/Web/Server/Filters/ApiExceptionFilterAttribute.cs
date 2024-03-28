@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Common.Exceptions;
 
+using Serilog;
+
 namespace MRA.AssetsManagement.Web.Server.Filters
 {
     public class ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger) : ExceptionFilterAttribute
@@ -10,7 +12,7 @@ namespace MRA.AssetsManagement.Web.Server.Filters
         {
             context.ExceptionHandled = context switch
             {
-                { Exception: BadHttpRequestException } => HandleBadRequest(context),
+                { Exception: ValidationException } => HandleValidationException(context),
                 { Exception: UnauthorizedAccessException } => HandleUnauthorizedAccessException(context),
                 { Exception: NotFoundEntityException } => HandleNotFoundException(context),
                 { ModelState: { IsValid: false } } => HandleInvalidModelStateException(context),
@@ -20,18 +22,17 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             base.OnException(context);
         }
 
-        public bool HandleBadRequest(ExceptionContext context)
+        public bool HandleValidationException(ExceptionContext context)
         {
-            ProblemDetails details = new ProblemDetails
+            var exception = (ValidationException)context.Exception;
+            ProblemDetails details = new ValidationProblemDetails(exception.Errors)
             {
-                Status = StatusCodes.Status400BadRequest,
                 Title = "Bad Request.",
-                Detail = "Bad request!",
+                Detail = "One or more validation errors was occured",
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1"
             };
 
-            context.Result = new ObjectResult(details) { StatusCode = StatusCodes.Status400BadRequest };
-            logger.LogError(context.Exception, nameof(HandleBadRequest));
+            context.Result = new BadRequestObjectResult(details);
 
             return true;
         }
@@ -43,11 +44,11 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             {
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "An error occurred while processing your request.",
-                Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1"
+                Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+                Detail = context.Exception.Message,
             };
 
-            context.Result = new ObjectResult(details) { StatusCode = StatusCodes.Status500InternalServerError };
-            logger.LogError(context.Exception, nameof(HandleUnknownException));
+            context.Result = new ObjectResult(details);
 
             return true;
         }
@@ -86,9 +87,10 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             {
                 Status = StatusCodes.Status404NotFound,
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-                Title = context.Exception.Message,
+                Title = "Not Found",
+                Detail = context.Exception.Message,
             };
-
+            
             context.Result = new NotFoundObjectResult(details);
 
             return true;

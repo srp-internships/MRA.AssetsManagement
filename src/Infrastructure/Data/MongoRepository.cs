@@ -56,7 +56,7 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         await _collection.ReplaceOneAsync(filter, entity, cancellationToken: cancellationToken);
     }
     
-    public Task<bool> Any(Expression<Func<T, bool>>? filter = default, CancellationToken cancellationToken = default)
+    public Task<bool> AnyAsync(Expression<Func<T, bool>>? filter = default, CancellationToken cancellationToken = default)
     {
         return filter is null ? _collection.AsQueryable().AnyAsync() : _collection.AsQueryable().AnyAsync(filter, cancellationToken);
     }

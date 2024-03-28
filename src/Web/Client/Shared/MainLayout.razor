@@ -17,8 +17,8 @@
            <MudNavMenu Color="Color.Info">
                <MudNavLink Href="/assets" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Assignment">Assets</MudNavLink>
                <MudNavLink Href="/employees" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AssignmentInd">Employees</MudNavLink>
-               <MudNavGroup Icon="@Icons.Material.Filled.Settings" Title="Settings" Expanded="false">
-                   <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Category"  Href="/settings/asset-types">Asset types</MudNavLink>
+               <MudNavGroup Icon="@Icons.Material.Filled.Settings" Title="Settings"  Expanded="true">
+                   <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Category"  Href="/settings/asset-types">Asset types</MudNavLink>
                    <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Tag"  Href="/settings/tags">Tags</MudNavLink>
                </MudNavGroup>
            </MudNavMenu>
@@ -31,9 +31,6 @@
     </MudMainContent>
 </MudLayout>
 
-
 @code {
     bool open = true;
-    bool isExpanded = false;
-
 }

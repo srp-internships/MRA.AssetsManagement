@@ -1,18 +1,18 @@
 using System.Text.Json.Serialization;
-
 using Microsoft.Extensions.Options;
-using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
 using MRA.AssetsManagement.Application;
 using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
 using MRA.AssetsManagement.Infrastructure.Identity.Services;
+using MRA.AssetsManagement.Web.Server;
 using MRA.AssetsManagement.Web.Server.Filters;
+
+using Serilog;
 
 using Swashbuckle.AspNetCore.Filters;
 
@@ -57,6 +57,9 @@ builder.Services
     .AddApplication()
     .AddInfrastructure();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Host.UseSerilog();
+
+Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
 
 var app = builder.Build();
 
@@ -85,6 +88,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseMiddleware<RequestLogContextMiddleware>();
+app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
