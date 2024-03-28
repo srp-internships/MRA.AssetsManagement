@@ -15,7 +15,7 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
 
     public override async Task Development()
     {
-        if (await _repository.Any()) return;
+        if (await _repository.AnyAsync()) return;
 
         var assetTypes = await _context.AssetTypes.GetAllAsync();
 

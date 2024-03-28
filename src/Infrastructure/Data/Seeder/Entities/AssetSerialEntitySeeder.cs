@@ -15,7 +15,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
 
     public override async Task Development()
     {
-        if (await _repository.Any()) return;
+        if (await _repository.AnyAsync()) return;
         
         var laptopAssetType = (await _context.AssetTypes.GetAllAsync(x => x.Name == "Laptop")).FirstOrDefault();
         var monitorAssetType = (await _context.AssetTypes.GetAllAsync(x => x.Name == "Monitor")).FirstOrDefault();

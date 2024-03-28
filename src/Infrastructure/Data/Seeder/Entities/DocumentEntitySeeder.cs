@@ -14,7 +14,7 @@ public class DocumentEntitySeeder : EntitySeeder<Document>
 
     public async override Task Development()
     {
-        if (await _repository.Any()) return;
+        if (await _repository.AnyAsync()) return;
 
         var assets = await _context.Assets.GetAllAsync();
 
