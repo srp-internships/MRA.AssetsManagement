@@ -8,8 +8,8 @@ public class EmployeeProfile : Profile
 {
     public EmployeeProfile()
     {
-        CreateMap<CreateEmployee, Employee>();
-        CreateMap<Employee, CreateEmployee>();
+        CreateMap<CreateEmployeeRequest, Employee>();
+        CreateMap<Employee, CreateEmployeeRequest>();
         CreateMap<Employee, EmployeeResponse>();
         CreateMap<EmployeeResponse, Employee>()
             .ForMember(d=>d.FirstName,o

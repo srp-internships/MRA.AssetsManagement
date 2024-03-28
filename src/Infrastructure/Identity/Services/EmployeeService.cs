@@ -47,28 +47,14 @@ public class EmployeeService : IEmployeeService
         SetAuthorizationHeader();
         var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>(
                 $"{_apiBaseUrl}User/GetListUsers/ByFilter?Email={email}");
-        if (response != null)
-        {
             return _mapper.Map<Employee>( response.FirstOrDefault());
-        }
-        else
-        {
-            throw new Exception("Error: Unable to retrieve user data.");
-        }
     }
 
-    public async Task<string> Create(CreateEmployee createEmployee)
+    public async Task<string> Create(CreateEmployeeRequest createEmployeeRequest)
     {
-        var response = await _http.PostAsJsonAsync($"{_apiBaseUrl}Auth/register", createEmployee);
-        if (response.IsSuccessStatusCode)
-        {
-            var userId = await response.Content.ReadAsStringAsync();
-            return userId;
-        }
-        else
-        {
-            throw new HttpRequestException($"Failed to create employee. Status code: {response.StatusCode}");
-        }
+        var response = await _http.PostAsJsonAsync($"{_apiBaseUrl}Auth/register", createEmployeeRequest);
+        var userId = await response.Content.ReadAsStringAsync();
+        return userId;
     }
     private void SetAuthorizationHeader()
     {

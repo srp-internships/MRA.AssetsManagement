@@ -2,11 +2,11 @@
 
 public class CreateEmployeeCommand : IRequest<string>
 {
-    public CreateEmployee CreateEmployee { get; }
+    public CreateEmployeeRequest CreateEmployeeRequest { get; }
 
-    public CreateEmployeeCommand(CreateEmployee createEmployee)
+    public CreateEmployeeCommand(CreateEmployeeRequest createEmployeeRequest)
     {
-        CreateEmployee = createEmployee;
+        CreateEmployeeRequest = createEmployeeRequest;
     }
 }
 
@@ -20,7 +20,7 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
 
     public async Task<string> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var response = await _employeeService.Create(request.CreateEmployee);
+        var response = await _employeeService.Create(request.CreateEmployeeRequest);
         return response;
     }
 }
