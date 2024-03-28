@@ -7,7 +7,7 @@ namespace MRA.AssetsManagement.Infrastructure.Data.Configurations;
 
 public class AssetTypeConfiguration : BaseConfiguration<AssetType>
 {
-    public AssetTypeConfiguration(IMongoDatabase database) : base(database, "asset-types")
+    public AssetTypeConfiguration(IMongoDatabase database, string collectionName) : base(database, collectionName)
     {
     }
 

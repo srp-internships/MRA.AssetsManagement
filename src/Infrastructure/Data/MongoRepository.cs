@@ -26,7 +26,7 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         return await _collection.Find(filter).ToListAsync(cancellationToken);
     }
 
-    public async Task<T> GetAsync(string id, CancellationToken cancellationToken = default)
+    public async Task<T?> GetAsync(string id, CancellationToken cancellationToken = default)
     {
         FilterDefinition<T> filter = _filterBuilder.Eq(e => e.Id, id);
         return await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken);
