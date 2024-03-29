@@ -1,3 +1,4 @@
+using AutoMapper;
 using MediatR;
 using MRA.AssetsManagement.Application.Common.Exceptions;
 using MRA.AssetsManagement.Application.Data;
@@ -15,12 +16,10 @@ public class CreatePurchaseCommand : CreateDocumentCommand, IRequest<PurchaseDoc
 public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseCommand, PurchaseDocument>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IMediator _mediator;
 
-    public CreatePurchaseCommandHandler(IApplicationDbContext context, IMediator mediator)
+    public CreatePurchaseCommandHandler(IApplicationDbContext context)
     {
         _context = context;
-        _mediator = mediator;
     }
 
     public async Task<PurchaseDocument> Handle(CreatePurchaseCommand request, CancellationToken cancellationToken)
@@ -35,18 +34,13 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
 
         foreach (var detail in request.Details)
         {
-            Asset? asset;
+            Asset asset;
             
             if (detail.AssetId is not null)
-            {
                 asset = await _context.Assets.GetAsync(detail.AssetId, cancellationToken);
-
-                if (asset is null)
-                    throw new NotFoundEntityException(nameof(Asset), detail.AssetId);
-            }
             else
                 asset = await CreateNewAsset(detail, cancellationToken);
-            
+
             document.Details.Add(new DocumentDetail
             {
                 Asset = asset, Id = asset.Id, Price = detail.Price, Quantity = detail.Quantity
@@ -59,18 +53,18 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
 
     private async Task<Asset> CreateNewAsset(CreateDocumentDetailCommand detail, CancellationToken cancellationToken)
     {
-        var assetType = await _context.AssetTypes.GetAsync(detail.AssetTypeId!, cancellationToken);
+        var assetType = await _context.AssetTypes.GetAsync(detail.AssetTypeId, cancellationToken);
 
         if (assetType is null)
-            throw new NotFoundEntityException(nameof(Asset), detail.AssetTypeId!);
+            throw new NotFoundEntityException(nameof(Asset), detail.AssetTypeId);
 
-        var asset = new Asset { Name = detail.AssetName!, AssetTypeId = detail.AssetTypeId!, AssetType = assetType };
+        var asset = new Asset { Name = detail.AssetName!, AssetTypeId = detail.AssetTypeId };
 
         var assetSerial = new AssetSerial
         {
             Asset = asset,
             Status = AssetStatus.Available,
-            Serial = asset.AssetType.ShortName + DateTime.Now.ToUnixTimestamp()
+            Serial = assetType.ShortName + DateTime.Now.ToUnixTimestamp()
         };
 
         await _context.Assets.CreateAsync(cancellationToken, asset);

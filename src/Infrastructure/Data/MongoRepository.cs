@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using MRA.AssetsManagement.Application.Common.Exceptions;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Domain.Common;
 
@@ -26,10 +27,15 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         return await _collection.Find(filter).ToListAsync(cancellationToken);
     }
 
-    public async Task<T?> GetAsync(string id, CancellationToken cancellationToken = default)
+    public async Task<T> GetAsync(string id, CancellationToken cancellationToken = default)
     {
         FilterDefinition<T> filter = _filterBuilder.Eq(e => e.Id, id);
-        return await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken);
+        var entity = await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken);
+
+        if (entity is null)
+            throw new NotFoundEntityException(nameof(T), id);
+
+        return entity;
     }
 
     public async Task<T> GetAsync(Expression<Func<T, bool>> filter, CancellationToken cancellationToken = default)

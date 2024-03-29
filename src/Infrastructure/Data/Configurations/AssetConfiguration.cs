@@ -17,6 +17,5 @@ public class AssetConfiguration : BaseConfiguration<Asset>
 
         classMap.MapMember(x => x.Name).SetElementName("name");
         classMap.MapMember(x => x.AssetTypeId).SetElementName("assetTypeId");
-        classMap.UnmapMember(x=> x.AssetType);
     }
 }
