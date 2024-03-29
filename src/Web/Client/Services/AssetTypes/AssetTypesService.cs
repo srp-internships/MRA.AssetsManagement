@@ -57,7 +57,6 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
             var response = await httpClient.PutAsJsonAsync($"{_baseAddress}api/assettypes", getAssetType);
             await GetAssetTypes();
             OnChange?.Invoke();
-
         }
     }
 }
