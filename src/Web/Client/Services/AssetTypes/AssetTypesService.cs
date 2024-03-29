@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-
-using MRA.AssetsManagement.Web.Client.Pages.Settings;
 using MRA.AssetsManagement.Web.Shared;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
 using MRA.BlazorComponents.HttpClient.Services;

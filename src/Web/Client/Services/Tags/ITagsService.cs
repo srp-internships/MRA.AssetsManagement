@@ -1,8 +1,6 @@
 ﻿using MRA.AssetsManagement.Web.Shared;
 using MRA.AssetsManagement.Web.Shared.Tags;
 
-using System.Threading.Tasks;
-
 namespace MRA.AssetsManagement.Web.Client.Services.Tags
 {
     public interface ITagsService
