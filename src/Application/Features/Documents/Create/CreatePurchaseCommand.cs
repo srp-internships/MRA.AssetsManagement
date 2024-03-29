@@ -1,6 +1,5 @@
 using AutoMapper;
 using MediatR;
-using MRA.AssetsManagement.Application.Common.Exceptions;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Domain.Entities;
 using MRA.AssetsManagement.Domain.Enums;
@@ -16,10 +15,12 @@ public class CreatePurchaseCommand : CreateDocumentCommand, IRequest<PurchaseDoc
 public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseCommand, PurchaseDocument>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IMapper _mapper;
 
-    public CreatePurchaseCommandHandler(IApplicationDbContext context)
+    public CreatePurchaseCommandHandler(IApplicationDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public async Task<PurchaseDocument> Handle(CreatePurchaseCommand request, CancellationToken cancellationToken)
@@ -34,31 +35,21 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
 
         foreach (var detail in request.Details)
         {
-            Asset asset;
-            
-            if (detail.AssetId is not null)
-                asset = await _context.Assets.GetAsync(detail.AssetId, cancellationToken);
+            if (string.IsNullOrEmpty(detail.Asset.Id))
+                await CreateNewAsset(detail.Asset, cancellationToken);
             else
-                asset = await CreateNewAsset(detail, cancellationToken);
-
-            document.Details.Add(new DocumentDetail
-            {
-                Asset = asset, Id = asset.Id, Price = detail.Price, Quantity = detail.Quantity
-            });
+                detail.Asset = await _context.Assets.GetAsync(x => x.Id == detail.Asset.Id, cancellationToken);
+            
+            document.Details.Add(_mapper.Map<DocumentDetail>(detail));
         }
 
         await _context.Documents.CreateAsync(cancellationToken, document);
         return document;
     }
 
-    private async Task<Asset> CreateNewAsset(CreateDocumentDetailCommand detail, CancellationToken cancellationToken)
+    private async Task CreateNewAsset(Asset asset, CancellationToken cancellationToken)
     {
-        var assetType = await _context.AssetTypes.GetAsync(detail.AssetTypeId, cancellationToken);
-
-        if (assetType is null)
-            throw new NotFoundEntityException(nameof(Asset), detail.AssetTypeId);
-
-        var asset = new Asset { Name = detail.AssetName!, AssetTypeId = detail.AssetTypeId };
+        var assetType = await _context.AssetTypes.GetAsync(asset.AssetTypeId, cancellationToken);
 
         var assetSerial = new AssetSerial
         {
@@ -69,7 +60,5 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
 
         await _context.Assets.CreateAsync(cancellationToken, asset);
         await _context.AssetSerials.CreateAsync(cancellationToken, assetSerial);
-
-        return asset;
     }
 }

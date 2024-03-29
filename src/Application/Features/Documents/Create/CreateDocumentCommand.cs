@@ -1,11 +1,13 @@
+using MRA.AssetsManagement.Domain.Entities;
+
 namespace MRA.AssetsManagement.Application.Features.Documents.Create;
 
-public record CreateDocumentDetailCommand(
-    decimal Price,
-    int Quantity,
-    string? AssetName,
-    string AssetTypeId,
-    string? AssetId);
+public class CreateDocumentDetailCommand
+{
+    public decimal Price { get; set; }
+    public int Quantity { get; set; }
+    public Asset Asset { get; set; } = null!;
+}
 
 public abstract class CreateDocumentCommand
 {

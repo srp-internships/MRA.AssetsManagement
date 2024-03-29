@@ -18,6 +18,5 @@ public class DocumentDetailValidator : AbstractValidator<CreateDocumentDetailCom
     {
         RuleFor(x => x.Price).Must(x => x >= 0);
         RuleFor(x => x.Quantity).Must(x => x >= 0);
-        RuleFor(x => x.AssetTypeId).NotNull().NotEmpty();
     }
 }
