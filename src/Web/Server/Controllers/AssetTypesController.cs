@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+
+using MRA.AssetsManagement.Application.Features.Assets.Queries;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Commands;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Queries;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
