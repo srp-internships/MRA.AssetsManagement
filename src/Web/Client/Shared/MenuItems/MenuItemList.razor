@@ -1,0 +1,78 @@
+﻿@inject IMenuItemService MenuItemService;
+@implements IDisposable;
+@inject NavigationManager MyNavigationManager
+
+<MudStack Spacing="4">
+    <MudStack Row="true">
+        <MudTextField @bind-Value="@_normalText" Label="Search" Margin="Margin.Dense" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" Href="@_hrefUrl"></MudIconButton>
+    </MudStack>
+    <MudDivider/>
+    <MudNavMenu Style="overflow: auto; height: 72vh" Bordered="true">
+        @if (_loading)
+        {
+            <MudSkeleton Animation="Animation.Wave"/>
+            <MudSkeleton Animation="Animation.Wave"/>
+            <MudSkeleton Animation="Animation.Wave"/>
+        }
+        else
+        {
+            @foreach (var menuItem in MenuItems)
+            {
+                <MudNavLink Disabled="@menuItem.Disabled" Href="@menuItem.Route"
+                            Icon="@menuItem.Icon">
+                    @menuItem.Title
+                </MudNavLink>
+            }
+        }
+    </MudNavMenu>
+</MudStack>
+
+
+@code {
+
+    string _normalText = "";
+
+    bool _loading = false;
+    string _hrefUrl = "";
+
+    IEnumerable<MenuItem> MenuItems { get; set; } = Enumerable.Empty<MenuItem>();
+    [Parameter] public required IFetchMenuItemService Service { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _hrefUrl = new Uri(MyNavigationManager.Uri).AbsolutePath;
+        MenuItemService.Changed += OnChanged;
+    }
+
+    private void OnChanged(KeyValuePair<MenuItemEvent, MenuItem> obj)
+    {
+        //TODO implement Events
+        switch (obj.Key)
+        {
+            case MenuItemEvent.Add:
+                break;
+            case MenuItemEvent.Update:
+                break;
+            case MenuItemEvent.Delete:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        StateHasChanged();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        MenuItems = await Service.Fetch();
+        _loading = false;
+    }
+
+    public void Dispose()
+    {
+        MenuItemService.Changed -= OnChanged;
+    }
+
+}

@@ -2,8 +2,10 @@
 @page "/settings/asset-types/{id}"
 @using MRA.AssetsManagement.Web.Shared.AssetTypes
 @using MRA.AssetsManagement.Web.Client.Common.Extensions
+@using MRA.AssetsManagement.Web.Client.Shared.MenuItems
 @layout SettingsLayout
-@inject IAssetTypesService AssetTypesService
+@inject IAssetTypesService AssetTypesService;
+
 <PageTitle>Asset Types</PageTitle>
 
 
@@ -64,11 +66,8 @@
 
     </MudForm>
 </MudStack>
-<SectionContent SectionName="menu-items">
-    <SettingsMenuItemList menuItems="AssetTypesService.MenuItems" />
-</SectionContent>
-<SectionContent SectionName="new-button">
-    <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" Href="settings/asset-types"></MudIconButton>
+<SectionContent SectionName="@nameof(MenuItemList)">
+    <MenuItemList Service="AssetTypesService" />
 </SectionContent>
 
 
@@ -79,12 +78,7 @@
     bool _loading = false;
     bool _autoGenerateShortName = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await AssetTypesService.GetMenuItems();
-    }
-
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         _loading = true;
         _autoGenerateShortName = false;
@@ -92,7 +86,7 @@
         
         if (Id is not null)
         {
-            _getAssetType = AssetTypesService.AssetTypes.FirstOrDefault(at => at.Id == Id)!;
+            _getAssetType = await AssetTypesService.GetAssetTypeById(Id)!;
         }
 
         _loading = false;

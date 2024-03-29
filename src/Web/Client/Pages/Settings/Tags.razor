@@ -2,6 +2,7 @@
 @page "/settings/tags/{id}"
 @layout SettingsLayout
 @using MRA.AssetsManagement.Web.Shared.Tags
+@using MRA.AssetsManagement.Web.Client.Shared.MenuItems
 @inject ITagsService TagsService
 
 <MudStack>
@@ -23,15 +24,15 @@
         }
         else
         {
-            <MudTextField Class="mt-3" T="string" @bind-Value="_getTags.Name"
+            <MudTextField Class="mt-3" T="string" @bind-Value="_getTag.Name"
                           Margin="Margin.Dense" Variant=Variant.Outlined
                           Label="Name" Required="true" RequiredError="Name is required!" Immediate="true" />
 
             <MudStack Class="mt-3" Style="position: relative" Row=true AlignItems="AlignItems.End">
-                <MudColorPicker @bind-Text="@_getTags.Color" DisableToolbar="false" Label="Color" Adornment="Adornment.None"
+                <MudColorPicker @bind-Text="@_getTag.Color" DisableToolbar="false" Label="Color" Adornment="Adornment.None"
                                 PickerVariant="PickerVariant.Inline" Margin=Margin.Dense Variant=Variant.Outlined
                                 ColorPickerView="ColorPickerView.Spectrum" DisableInputs=true />
-                <MudPaper Class="mb-3 mr-3" Style="@($"background-color: {_getTags.Color}; position:absolute; right: 0")" Width="25px" Height="25px"></MudPaper>
+                <MudPaper Class="mb-3 mr-3" Style="@($"background-color: {_getTag.Color}; position:absolute; right: 0")" Width="25px" Height="25px"></MudPaper>
 
 
             </MudStack>
@@ -39,11 +40,8 @@
 
     </MudForm>
 </MudStack>
-<SectionContent SectionName="menu-items">
-    <SettingsMenuItemList menuItems="TagsService.MenuItems" />
-</SectionContent>
-<SectionContent SectionName="new-button">
-    <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" Href="settings/tags"></MudIconButton>
+<SectionContent SectionName="@nameof(MenuItemList)">
+    <MenuItemList Service="TagsService"/>
 </SectionContent>
 
 @code {
@@ -51,21 +49,17 @@
     public string? Id { get; set; }
 
 
-    GetTags _getTags = new GetTags();
+    GetTag _getTag = new GetTag();
     bool _loading = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await TagsService.GetMenuItems();
-    }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         _loading = true;
-        _getTags = new GetTags();
+        _getTag = new GetTag();
         if (Id is not null)
         {
-            _getTags = TagsService.Tags.FirstOrDefault(t => t.Id == Id)!;
+            _getTag = await TagsService.GetTagById(Id);
         }
         _loading = false;
         StateHasChanged();
@@ -76,14 +70,14 @@
     {
         if (Id is not null)
         {
-            await TagsService.Update(_getTags);
+            await TagsService.Update(_getTag);
         }
         else
         {
             CreateTagRequest newTag = new CreateTagRequest()
             {
-                Name = _getTags.Name,
-                Color = _getTags.Color
+                Name = _getTag.Name,
+                Color = _getTag.Color
             };
 
             await TagsService.Create(newTag);
@@ -93,7 +87,7 @@
 
     private async void Delete()
     {
-        await TagsService.Delete(_getTags.Id);
+        await TagsService.Delete(_getTag.Id);
         StateHasChanged();
 
     }

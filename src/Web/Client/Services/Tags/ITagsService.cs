@@ -1,18 +1,13 @@
-﻿using MRA.AssetsManagement.Web.Shared;
+﻿using MRA.AssetsManagement.Web.Client.Shared.MenuItems;
 using MRA.AssetsManagement.Web.Shared.Tags;
 
 namespace MRA.AssetsManagement.Web.Client.Services.Tags
 {
-    public interface ITagsService
+    public interface ITagsService : IFetchMenuItemService
     {
-        Task<IEnumerable<MenuItem>> GetMenuItems();
-
-        //Task<GetTags> GetTagById(string id);
+        Task<GetTag> GetTagById(string id);
         Task Create(CreateTagRequest newTag);
-        Task Update(GetTags newTag);
+        Task Update(GetTag newTag);
         Task Delete(string id);
-        IEnumerable<MenuItem> MenuItems { get; set; }
-        IEnumerable<GetTags> Tags { get; set; }
-
     }
 }
