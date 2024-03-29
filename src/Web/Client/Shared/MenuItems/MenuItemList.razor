@@ -36,7 +36,7 @@
     bool _loading = false;
     string _hrefUrl = "";
 
-    IEnumerable<MenuItem> MenuItems { get; set; } = Enumerable.Empty<MenuItem>();
+    List<MenuItem> MenuItems { get; set; } = new();
     [Parameter] public required IFetchMenuItemService Service { get; set; }
 
     protected override void OnInitialized()
@@ -45,16 +45,19 @@
         MenuItemService.Changed += OnChanged;
     }
 
-    private void OnChanged(KeyValuePair<MenuItemEvent, MenuItem> obj)
+    private void OnChanged(MenuItemEvent @event, MenuItem obj)
     {
         //TODO implement Events
-        switch (obj.Key)
+        switch (@event)
         {
             case MenuItemEvent.Add:
+                MenuItems.Add(obj);
                 break;
             case MenuItemEvent.Update:
+                MenuItems[2] = obj;
                 break;
             case MenuItemEvent.Delete:
+                MenuItems.Remove(obj);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

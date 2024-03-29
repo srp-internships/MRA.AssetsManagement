@@ -14,10 +14,11 @@ public enum MenuItemEvent
 
 public interface IMenuItemService
 {
-    event Action<KeyValuePair<MenuItemEvent, MenuItem>> Changed;
+    event Action<MenuItemEvent, MenuItem> Changed;
+    void OnChangeMenuItem(MenuItemEvent @event, MenuItem menuItem);
 }
 
 public class MenuItemService : IMenuItemService
 {
-    public event Action<KeyValuePair<MenuItemEvent, MenuItem>>? Changed;
+    public event Action<MenuItemEvent, MenuItem>? Changed;
 }
