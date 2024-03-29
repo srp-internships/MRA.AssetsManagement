@@ -8,8 +8,8 @@ public class CreateEmployeeRequest
     public string PhoneNumber { get; set; } = "";
     public bool IsPhoneandEmailVerificationRequired { get; set; } = false;
     public int VerificationCode { get; set; }
-    
-    private string _username;
+
+    private string _username = null!;
     public string Username
     {
         get { return _username; }
