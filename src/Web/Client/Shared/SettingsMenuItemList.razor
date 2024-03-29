@@ -1,0 +1,14 @@
+﻿@foreach (var menuItem in menuItems)
+{
+    <MudNavLink Style="@(menuItem.Archived ? "opacity: 0.4" : "")" Href="@($"{menuItem.Route}#form")" 
+    Icon="@menuItem.Icon">@menuItem.Name</MudNavLink>
+}
+
+
+
+
+
+@code {
+    [Parameter]
+    public IEnumerable<MenuItem> menuItems { get; set; } = Enumerable.Empty<MenuItem>();
+}

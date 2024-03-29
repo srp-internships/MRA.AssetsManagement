@@ -1,18 +1,17 @@
 @inherits LayoutComponentBase
 @layout MainLayout
 @inject IAssetTypesService AssetTypesService
-@implements IDisposable
 <MudGrid>
     <MudItem md="3">
         <MudPaper Class="pa-2">
             <MudStack Spacing="4">
                 <MudStack Row="true">
                     <MudTextField @bind-Value="@_normalText" Label="Search" Margin="Margin.Dense" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" Href="settings/asset-types"></MudIconButton>
+                    <SectionOutlet SectionName="new-button" />
                 </MudStack>
                 <MudDivider />
-                <MudNavMenu Bordered="true">
-                    @if (AssetTypesService.AssetTypes == null)
+                <MudNavMenu Style="overflow: auto; height: 72vh" Bordered="true">
+                    @if (AssetTypesService.MenuItems == null)
                     {
                         <MudSkeleton Animation="Animation.Wave" />
                         <MudSkeleton Animation="Animation.Wave" />
@@ -20,12 +19,7 @@
                     }
                     else
                     {
-                        @foreach (var assetsType in AssetTypesService.AssetTypes)
-                        {
-                            <MudNavLink Style="@(assetsType.Archived ? "opacity: 0.4" : "")" Href="@($"/settings/asset-types/{assetsType.Id}#form")" Icon="@assetsType.Icon">
-                                @assetsType.Name
-                            </MudNavLink>
-                        }
+                       <SectionOutlet SectionName="menu-items" />
                     }
                 </MudNavMenu>
             </MudStack>
@@ -46,16 +40,4 @@
 
 @code {
     string _normalText = "";
-
-    protected override async Task OnInitializedAsync()
-    {
-        await AssetTypesService.GetAssetTypes();
-        AssetTypesService.OnChange += StateHasChanged;
-    }
-
-    public void Dispose()
-    {
-        AssetTypesService.OnChange -= StateHasChanged;
-    }
-
 }

@@ -4,7 +4,6 @@
 @using MRA.AssetsManagement.Web.Client.Common.Extensions
 @layout SettingsLayout
 @inject IAssetTypesService AssetTypesService
-@inject ISnackbar Snackbar
 <PageTitle>Asset Types</PageTitle>
 
 
@@ -65,23 +64,35 @@
 
     </MudForm>
 </MudStack>
+<SectionContent SectionName="menu-items">
+    <SettingsMenuItemList menuItems="AssetTypesService.MenuItems" />
+</SectionContent>
+<SectionContent SectionName="new-button">
+    <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" Href="settings/asset-types"></MudIconButton>
+</SectionContent>
 
 
 @code {
     [Parameter] public string? Id { get; set; }
 
-    GetAssetType _getAssetType;
+    GetAssetType _getAssetType = new GetAssetType();
     bool _loading = false;
     bool _autoGenerateShortName = false;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
+    {
+        await AssetTypesService.GetMenuItems();
+    }
+
+    protected override void OnParametersSet()
     {
         _loading = true;
-        _getAssetType = new GetAssetType();
         _autoGenerateShortName = false;
+        _getAssetType = new GetAssetType();
+        
         if (Id is not null)
         {
-            _getAssetType = await AssetTypesService.GetAssetTypeById(Id);
+            _getAssetType = AssetTypesService.AssetTypes.FirstOrDefault(at => at.Id == Id)!;
         }
 
         _loading = false;
@@ -115,22 +126,22 @@
 
             await AssetTypesService.Create(newAssetType);
             _getAssetType = new GetAssetType();
-            StateHasChanged();
         }
-
+        StateHasChanged();
     }
 
     private async void Archive()
     {
         _getAssetType.Archived = !_getAssetType.Archived;
         await AssetTypesService.Archive(_getAssetType.Id);
+        StateHasChanged();
     }
 
     private async void Restore()
     {
         _getAssetType.Archived = !_getAssetType.Archived;
         await AssetTypesService.Restore(_getAssetType.Id);
-
+        StateHasChanged();
     }
 
 }
