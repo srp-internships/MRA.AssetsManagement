@@ -45,22 +45,22 @@
         MenuItemService.Changed += OnChanged;
     }
 
-    private void OnChanged(MenuItemEvent @event, MenuItem obj)
+    private void OnChanged(MenuItemEvent menuItemEvent, MenuItem menuItem)
     {
-        //TODO implement Events
-        switch (@event)
+        switch (menuItemEvent)
         {
             case MenuItemEvent.Add:
-                MenuItems.Add(obj);
+                MenuItems.Add(menuItem);
                 break;
             case MenuItemEvent.Update:
-                MenuItems[2] = obj;
+                var existingItem = MenuItems.Single(mi => mi.Id == menuItem.Id);
+                existingItem = menuItem;
                 break;
             case MenuItemEvent.Delete:
-                MenuItems.Remove(obj);
+                MenuItems.Remove(menuItem);
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new NullReferenceException();
         }
 
         StateHasChanged();

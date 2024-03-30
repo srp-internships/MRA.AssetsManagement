@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MRA.AssetsManagement.Web.Client;
 using MRA.AssetsManagement.Web.Client.Services.AssetTypes;
 using MRA.AssetsManagement.Web.Client.Services.Tags;
-using MRA.AssetsManagement.Web.Client.Shared.MenuItems;
+using MRA.AssetsManagement.Web.Client.Components.MenuItems;
 using MRA.BlazorComponents.HttpClient;
 
 using MudBlazor.Services;

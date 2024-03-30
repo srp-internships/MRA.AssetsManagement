@@ -1,4 +1,4 @@
-﻿using MRA.AssetsManagement.Web.Client.Shared.MenuItems;
+﻿using MRA.AssetsManagement.Web.Client.Components.MenuItems;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
 namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes

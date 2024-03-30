@@ -1,9 +1,11 @@
 @page "/settings/tags"
 @page "/settings/tags/{id}"
 @layout SettingsLayout
+@using MRA.AssetsManagement.Web.Client.Common.Extensions
+@using MRA.AssetsManagement.Web.Client.Components.MenuItems
 @using MRA.AssetsManagement.Web.Shared.Tags
-@using MRA.AssetsManagement.Web.Client.Shared.MenuItems
 @inject ITagsService TagsService
+@inject IMenuItemService MenuItemService;
 
 <MudStack>
     <MudStack Row="true" Class="d-flex justify-space-between">
@@ -71,6 +73,7 @@
         if (Id is not null)
         {
             await TagsService.Update(_getTag);
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getTag.ToMenuItem());
         }
         else
         {
@@ -81,6 +84,7 @@
             };
 
             await TagsService.Create(newTag);
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getTag.ToMenuItem());
         }
         StateHasChanged();
     }
@@ -88,7 +92,7 @@
     private async void Delete()
     {
         await TagsService.Delete(_getTag.Id);
+        MenuItemService.OnChangeMenuItem(MenuItemEvent.Delete, _getTag.ToMenuItem());
         StateHasChanged();
-
     }
 }

@@ -27,6 +27,14 @@ public class TagsController : ApiControllerBase
         return Ok(await Mediator.Send(new GetTagsQuery(), cancellationToken));
     }
 
+    [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<IEnumerable<Tag>>> GetById(string id, CancellationToken cancellationToken)
+    {
+        return Ok(await Mediator.Send(new GetSingleTagQuery(id), cancellationToken));
+    }
+
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesDefaultResponseType]
