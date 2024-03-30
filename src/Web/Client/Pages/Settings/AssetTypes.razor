@@ -5,8 +5,8 @@
 @layout SettingsLayout
 @inject IAssetTypesService AssetTypesService
 @inject ISnackbar Snackbar
-<PageTitle>Asset Types</PageTitle>
 
+<PageTitle>Asset Types</PageTitle>
 
 <MudStack>
     <MudStack Row="true" Class="d-flex justify-space-between">
@@ -15,11 +15,11 @@
             <MudButton Variant="Variant.Filled" @onclick=CreateOrUpdate Disabled="_getAssetType.Archived" StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary" Size="Size.Medium">Save</MudButton>
             @if (_getAssetType.Archived)
             {
-                <MudButton Variant="Variant.Filled" @onclick="Restore" Disabled=@(string.IsNullOrEmpty(Id) ? true : false) StartIcon="@Icons.Material.Filled.Archive" Color="Color.Secondary" Size="Size.Medium">Restore</MudButton>
+                <MudButton Variant="Variant.Filled" @onclick="ArchiveOrRestore" Disabled=@(string.IsNullOrEmpty(Id) ? true : false) StartIcon="@Icons.Material.Filled.Archive" Color="Color.Secondary" Size="Size.Medium">Restore</MudButton>
             }
             else
             {
-                <MudButton Variant="Variant.Filled" @onclick="Archive" Disabled=@(string.IsNullOrEmpty(Id) ? true : false) StartIcon="@Icons.Material.Filled.Unarchive" Color="Color.Secondary" Size="Size.Medium">Archive</MudButton>
+                <MudButton Variant="Variant.Filled" @onclick="ArchiveOrRestore" Disabled=@(string.IsNullOrEmpty(Id) ? true : false) StartIcon="@Icons.Material.Filled.Unarchive" Color="Color.Secondary" Size="Size.Medium">Archive</MudButton>
             }
         </MudStack>
     </MudStack>
@@ -70,7 +70,7 @@
 @code {
     [Parameter] public string? Id { get; set; }
 
-    GetAssetType _getAssetType;
+    GetAssetType _getAssetType = null!;
     bool _loading = false;
     bool _autoGenerateShortName = false;
 
@@ -120,17 +120,10 @@
 
     }
 
-    private async void Archive()
+    private async void ArchiveOrRestore()
     {
         _getAssetType.Archived = !_getAssetType.Archived;
-        await AssetTypesService.Archive(_getAssetType.Id);
-    }
-
-    private async void Restore()
-    {
-        _getAssetType.Archived = !_getAssetType.Archived;
-        await AssetTypesService.Restore(_getAssetType.Id);
-
+        await AssetTypesService.Update(_getAssetType);
     }
 
 }

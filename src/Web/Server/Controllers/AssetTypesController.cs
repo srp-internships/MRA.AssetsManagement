@@ -39,22 +39,4 @@ public class AssetTypesController : ApiControllerBase
         await Mediator.Send(command, cancellationToken);
         return NoContent();
     }
-
-    [HttpPatch("archive/{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesDefaultResponseType]
-    public async Task<IActionResult> Archive(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new ArchiveAssetTypeCommand(id), cancellationToken);
-        return NoContent();
-    }
-
-    [HttpPatch("restore/{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesDefaultResponseType]
-    public async Task<IActionResult> Restore(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new RestoreAssetTypeCommand(id), cancellationToken);
-        return NoContent();
-    }
 }
