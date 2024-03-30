@@ -84,7 +84,7 @@
         _loading = true;
         _autoGenerateShortName = false;
         _getAssetType = new GetAssetType();
-        
+
         if (Id is not null)
         {
             _getAssetType = await AssetTypesService.GetAssetTypeById(Id)!;
@@ -109,7 +109,7 @@
         if (Id is not null)
         {
             await AssetTypesService.Update(_getAssetType);
-           MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
         }
         else
         {
@@ -121,8 +121,7 @@
             }
 
             await AssetTypesService.Create(newAssetType);
-            _getAssetType = new GetAssetType();
-            MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getAssetType.ToMenuItem());
 
         }
         StateHasChanged();

@@ -8,7 +8,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" Href="@_hrefUrl"></MudIconButton>
     </MudStack>
     <MudDivider/>
-    <MudNavMenu Style="overflow: auto; height: 72vh" Bordered="true">
+    <MudNavMenu Bordered="true">
         @if (_loading)
         {
             <MudSkeleton Animation="Animation.Wave"/>
@@ -39,22 +39,28 @@
     List<MenuItem> MenuItems { get; set; } = new();
     [Parameter] public required IFetchMenuItemService Service { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        _loading = false;
         _hrefUrl = new Uri(MyNavigationManager.Uri).AbsolutePath;
+        MenuItems = await Service.Fetch();
         MenuItemService.Changed += OnChanged;
+        _loading = true;
     }
 
-    private void OnChanged(MenuItemEvent menuItemEvent, MenuItem menuItem)
+    private async void OnChanged(MenuItemEvent menuItemEvent, MenuItem menuItem)
     {
         switch (menuItemEvent)
         {
             case MenuItemEvent.Add:
-                MenuItems.Add(menuItem);
+                MenuItems = await Service.Fetch();
                 break;
             case MenuItemEvent.Update:
-                var existingItem = MenuItems.Single(mi => mi.Id == menuItem.Id);
-                existingItem = menuItem;
+                int index = MenuItems.FindIndex(item => item.Id == menuItem.Id);
+                if (index != -1)
+                {
+                    MenuItems[index] = menuItem;
+                }
                 break;
             case MenuItemEvent.Delete:
                 MenuItems.Remove(menuItem);
@@ -64,13 +70,6 @@
         }
 
         StateHasChanged();
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        _loading = true;
-        MenuItems = await Service.Fetch();
-        _loading = false;
     }
 
     public void Dispose()
