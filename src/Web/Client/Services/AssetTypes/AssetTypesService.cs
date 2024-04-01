@@ -28,19 +28,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }
-
-        public async Task Archive(string id)
-        {
-            var response = await httpClient.PutAsJsonAsync($"{_baseAddress}api/assettypes/archive/{id}", null!);
-            snackbar.ShowIfError(response, "Error was occured.");
-        }
-
-        public async Task Restore(string id)
-        {
-            var response = await httpClient.PutAsJsonAsync($"{_baseAddress}api/assettypes/restore/{id}", null!);
-            snackbar.ShowIfError(response, "Error was occured.");
-        }
-
+        
         public async Task Update(GetAssetType getAssetType)
         {
             var response = await httpClient.PutAsJsonAsync($"{_baseAddress}api/assettypes", getAssetType);

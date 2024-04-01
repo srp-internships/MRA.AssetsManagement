@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+
+using MRA.AssetsManagement.Application.Features.Assets.Queries;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Commands;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Queries;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
@@ -36,24 +38,6 @@ public class AssetTypesController : ApiControllerBase
     public async Task<IActionResult> Update(UpdateAssetTypeCommand command, CancellationToken cancellationToken)
     {
         await Mediator.Send(command, cancellationToken);
-        return NoContent();
-    }
-
-    [HttpPatch("archive/{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesDefaultResponseType]
-    public async Task<IActionResult> Archive(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new ArchiveAssetTypeCommand(id), cancellationToken);
-        return NoContent();
-    }
-
-    [HttpPatch("restore/{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesDefaultResponseType]
-    public async Task<IActionResult> Restore(string id, CancellationToken cancellationToken)
-    {
-        await Mediator.Send(new RestoreAssetTypeCommand(id), cancellationToken);
         return NoContent();
     }
 }

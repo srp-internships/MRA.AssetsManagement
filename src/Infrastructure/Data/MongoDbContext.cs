@@ -20,15 +20,17 @@ public class MongoDbContext : IApplicationDbContext
 
         AssetTypes = GetRepository<AssetTypeConfiguration, AssetType>();
         Tags = GetRepository<TagConfiguration, Tag>();
+        Assets = GetRepository<AssetConfiguration, Asset>();
     }
 
     public IRepository<AssetType> AssetTypes { get; }
     public IRepository<Tag> Tags { get; }
+    public IRepository<Asset> Assets { get; }
 
     private MongoRepository<TEntity> GetRepository<TConfiguration, TEntity>() where TConfiguration : BaseConfiguration<TEntity>
                                                                             where TEntity : IEntity
     {
-        var config = (TConfiguration) Activator.CreateInstance(typeof(TConfiguration), args: [_database])!;
+        var config = (TConfiguration) Activator.CreateInstance(typeof(TConfiguration), _database)!;
         return new MongoRepository<TEntity>(config.Collection);
     }
 }
