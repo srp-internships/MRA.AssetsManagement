@@ -2,9 +2,10 @@
 @page "/settings/asset-types/{id}"
 @using MRA.AssetsManagement.Web.Shared.AssetTypes
 @using MRA.AssetsManagement.Web.Client.Common.Extensions
+@using MRA.AssetsManagement.Web.Client.Components.MenuItems
 @layout SettingsLayout
-@inject IAssetTypesService AssetTypesService
-@inject ISnackbar Snackbar
+@inject IAssetTypesService AssetTypesService;
+@inject IMenuItemService MenuItemService;
 
 <PageTitle>Asset Types</PageTitle>
 
@@ -13,14 +14,15 @@
         <MudText Typo="Typo.h4">Asset type</MudText>
         <MudStack Class="mb-3" Row="true">
             <MudButton Variant="Variant.Filled" @onclick=CreateOrUpdate Disabled="_getAssetType.Archived" StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary" Size="Size.Medium">Save</MudButton>
-            @if (_getAssetType.Archived)
-            {
-                <MudButton Variant="Variant.Filled" @onclick="ArchiveOrRestore" Disabled=@(string.IsNullOrEmpty(Id) ? true : false) StartIcon="@Icons.Material.Filled.Archive" Color="Color.Secondary" Size="Size.Medium">Restore</MudButton>
-            }
-            else
-            {
-                <MudButton Variant="Variant.Filled" @onclick="ArchiveOrRestore" Disabled=@(string.IsNullOrEmpty(Id) ? true : false) StartIcon="@Icons.Material.Filled.Unarchive" Color="Color.Secondary" Size="Size.Medium">Archive</MudButton>
-            }
+            <MudButton 
+                Variant="Variant.Filled" 
+                @onclick="ArchiveOrRestore" 
+                Disabled="@string.IsNullOrEmpty(Id)" 
+                StartIcon="@(_getAssetType.Archived ? Icons.Material.Filled.Unarchive : Icons.Material.Filled.Archive)" 
+                Color="Color.Secondary" 
+                Size="Size.Medium">
+                @( _getAssetType.Archived ? "Restore" : "Archive")
+            </MudButton>
         </MudStack>
     </MudStack>
 
@@ -44,19 +46,19 @@
             <MudSelect @bind-Value="_getAssetType.Icon" Immediate=true Label="Icon" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mt-3">
                 <MudSelectItem Value="@(Icons.Material.Outlined.Computer)">
                     <div class="d-flex">
-                        <MudIcon Icon="@Icons.Material.Outlined.Computer" Class="mr-1" />
+                        <MudIcon Icon="@Icons.Material.Outlined.Computer" Class="mr-1"/>
                         <span>Computer</span>
                     </div>
                 </MudSelectItem>
                 <MudSelectItem Value="@(Icons.Material.Outlined.LaptopMac)">
                     <div class="d-flex">
-                        <MudIcon Icon="@Icons.Material.Outlined.LaptopMac" Class="mr-1" />
+                        <MudIcon Icon="@Icons.Material.Outlined.LaptopMac" Class="mr-1"/>
                         <span>Laptop</span>
                     </div>
                 </MudSelectItem>
                 <MudSelectItem Value="@(Icons.Material.Outlined.DesktopWindows)">
                     <div class="d-flex">
-                        <MudIcon Icon="@Icons.Material.Outlined.DesktopWindows" Class="mr-1" />
+                        <MudIcon Icon="@Icons.Material.Outlined.DesktopWindows" Class="mr-1"/>
                         <span>Monitor</span>
                     </div>
                 </MudSelectItem>
@@ -65,6 +67,9 @@
 
     </MudForm>
 </MudStack>
+<SectionContent SectionName="@nameof(MenuItemList)">
+    <MenuItemList Service="AssetTypesService" BaseRoute="/settings/asset-types"/>
+</SectionContent>
 
 
 @code {
@@ -77,11 +82,12 @@
     protected override async Task OnParametersSetAsync()
     {
         _loading = true;
-        _getAssetType = new GetAssetType();
         _autoGenerateShortName = false;
+        _getAssetType = new GetAssetType();
+
         if (Id is not null)
         {
-            _getAssetType = await AssetTypesService.GetAssetTypeById(Id);
+            _getAssetType = await AssetTypesService.GetAssetTypeById(Id)!;
         }
 
         _loading = false;
@@ -103,6 +109,7 @@
         if (Id is not null)
         {
             await AssetTypesService.Update(_getAssetType);
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
         }
         else
         {
@@ -113,17 +120,17 @@
                 newAssetType.Icon = _getAssetType.Icon;
             }
 
-            await AssetTypesService.Create(newAssetType);
-            _getAssetType = new GetAssetType();
-            StateHasChanged();
+            _getAssetType = await AssetTypesService.Create(newAssetType);
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getAssetType.ToMenuItem());
         }
-
+        StateHasChanged();
     }
 
     private async void ArchiveOrRestore()
     {
         _getAssetType.Archived = !_getAssetType.Archived;
         await AssetTypesService.Update(_getAssetType);
+        MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
     }
 
 }
