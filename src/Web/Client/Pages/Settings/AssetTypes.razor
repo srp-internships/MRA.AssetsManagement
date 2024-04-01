@@ -68,7 +68,7 @@
     </MudForm>
 </MudStack>
 <SectionContent SectionName="@nameof(MenuItemList)">
-    <MenuItemList Service="AssetTypesService" />
+    <MenuItemList Service="AssetTypesService" Route="/settings/asset-types" />
 </SectionContent>
 
 
@@ -120,7 +120,7 @@
                 newAssetType.Icon = _getAssetType.Icon;
             }
 
-            await AssetTypesService.Create(newAssetType);
+            _getAssetType = await AssetTypesService.Create(newAssetType);
             MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getAssetType.ToMenuItem());
 
         }

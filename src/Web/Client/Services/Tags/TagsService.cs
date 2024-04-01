@@ -21,10 +21,11 @@ namespace MRA.AssetsManagement.Web.Client.Services.Tags
             return response.Result!;
         }
 
-        public async Task Create(CreateTagRequest newTag)
+        public async Task<GetTag> Create(CreateTagRequest newTag)
         {
-            var response = await httpClient.PostAsJsonAsync($"{_baseAddress}api/tags", newTag);
+            var response = await httpClient.PostAsJsonAsync<GetTag>($"{_baseAddress}api/tags", newTag);
             snackbar.ShowIfError(response, "Error was occured.");
+            return response.Result!;
         }
 
         public async Task Delete(string id)

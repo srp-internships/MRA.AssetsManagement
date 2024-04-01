@@ -22,10 +22,11 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
             return response.Result!;
         }
 
-        public async Task Create(CreateAssetTypeRequest newAssetType)
+        public async Task<GetAssetType> Create(CreateAssetTypeRequest newAssetType)
         {
-            var response = await httpClient.PostAsJsonAsync($"{_baseAddress}api/assettypes", newAssetType);
+            var response = await httpClient.PostAsJsonAsync<GetAssetType>($"{_baseAddress}api/assettypes", newAssetType);
             snackbar.ShowIfError(response, "Error was occured.");
+            return response.Result!;
         }
 
         public async Task Archive(string id)

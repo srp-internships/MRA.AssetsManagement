@@ -43,7 +43,7 @@
     </MudForm>
 </MudStack>
 <SectionContent SectionName="@nameof(MenuItemList)">
-    <MenuItemList Service="TagsService"/>
+    <MenuItemList Service="TagsService" Route="/settings/tags" />
 </SectionContent>
 
 @code {
@@ -83,7 +83,7 @@
                 Color = _getTag.Color
             };
 
-            await TagsService.Create(newTag);
+            _getTag = await TagsService.Create(newTag);
             MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getTag.ToMenuItem());
         }
         StateHasChanged();
