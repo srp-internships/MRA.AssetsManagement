@@ -1,5 +1,6 @@
 ﻿@inject IMenuItemService MenuItemService;
 @implements IDisposable;
+@using MRA.AssetsManagement.Web.Client.Components.Skeleton;
 
 <MudStack Spacing="4">
     <MudStack Row="true">
@@ -10,18 +11,9 @@
     <MudNavMenu Bordered="true">
         @if (_loading)
         {
-            <MudStack Row=true>
-                <MudSkeleton Style="flex-shrink: 0;" Width="40px" Animation="Animation.Wave" />
-                <MudSkeleton Width="100%" Height="67px" Animation="Animation.Wave" />
-            </MudStack>
-            <MudStack Row=true>
-                <MudSkeleton Style="flex-shrink: 0;" Width="40px" Animation="Animation.Wave" />
-                <MudSkeleton Width="100%" Height="67px" Animation="Animation.Wave" />
-            </MudStack>
-            <MudStack Row=true>
-                <MudSkeleton Style="flex-shrink: 0;" Width="40px" Animation="Animation.Wave" />
-                <MudSkeleton Width="100%" Height="67px" Animation="Animation.Wave" />
-            </MudStack>
+            <IconTextSkeleton/>
+            <IconTextSkeleton />
+            <IconTextSkeleton />
         }
         else
         {
