@@ -1,6 +1,5 @@
 ﻿@inject IMenuItemService MenuItemService;
 @implements IDisposable;
-@using MRA.AssetsManagement.Web.Client.Components.Skeleton;
 
 <MudStack Spacing="4">
     <MudStack Row="true">
@@ -8,12 +7,16 @@
         <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" Href="@_hrefUrl"></MudIconButton>
     </MudStack>
     <MudDivider/>
-    <MudNavMenu Bordered="true">
+    <MudNavMenu Rounded="true" Color="Color.Primary">
         @if (_loading)
         {
-            <IconTextSkeleton/>
-            <IconTextSkeleton />
-            <IconTextSkeleton />
+            foreach (var _ in Enumerable.Range(0, 3))
+            {
+                <MudStack Row="true" Class="ma-2">
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="35px" Height="30px"/>
+                    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="30px" Width="100%"/>
+                </MudStack>
+            }
         }
         else
         {
@@ -47,7 +50,7 @@
         MenuItems = await Service.Fetch();
         MenuItemService.Changed += OnChanged;
         _loading = false;
-    }   
+    }
 
     private void OnChanged(MenuItemEvent menuItemEvent, MenuItem menuItem)
     {
@@ -62,6 +65,7 @@
                 {
                     MenuItems[index] = menuItem;
                 }
+
                 break;
             case MenuItemEvent.Delete:
                 MenuItems.Remove(menuItem);
