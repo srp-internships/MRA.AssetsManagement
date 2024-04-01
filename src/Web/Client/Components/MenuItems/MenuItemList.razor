@@ -46,12 +46,12 @@
 
     List<MenuItem> MenuItems { get; set; } = new();
     [Parameter] public required IFetchMenuItemService Service { get; set; }
-    [Parameter] public required string Route { get; set; }
+    [Parameter] public required string BaseRoute { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         _loading = true;
-        _hrefUrl = Route;
+        _hrefUrl = BaseRoute;
         MenuItems = await Service.Fetch();
         MenuItemService.Changed += OnChanged;
         _loading = false;
