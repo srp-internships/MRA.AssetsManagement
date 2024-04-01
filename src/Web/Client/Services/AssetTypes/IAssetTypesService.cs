@@ -8,7 +8,5 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
         Task<GetAssetType> GetAssetTypeById(string id);
         Task<GetAssetType> Create(CreateAssetTypeRequest newAssetType);
         Task Update(GetAssetType newGetAssetType);
-        Task Archive(string id);
-        Task Restore(string id);
     }
 }

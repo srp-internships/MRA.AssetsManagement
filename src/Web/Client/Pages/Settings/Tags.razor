@@ -6,6 +6,7 @@
 @using MRA.AssetsManagement.Web.Shared.Tags
 @inject ITagsService TagsService
 @inject IMenuItemService MenuItemService;
+@inject NavigationManager NavigationManager;
 
 <MudStack>
     <MudStack Row="true" Class="d-flex justify-space-between">
@@ -43,14 +44,15 @@
     </MudForm>
 </MudStack>
 <SectionContent SectionName="@nameof(MenuItemList)">
-    <MenuItemList Service="TagsService" BaseRoute="/settings/tags" />
+    <MenuItemList Service="TagsService" BaseRoute="@TagsUrl" />
 </SectionContent>
 
 @code {
     [Parameter]
     public string? Id { get; set; }
 
-
+    const string TagsUrl = "/settings/tags";
+    
     GetTag _getTag = new GetTag();
     bool _loading = false;
 
@@ -93,6 +95,7 @@
     {
         await TagsService.Delete(_getTag.Id);
         MenuItemService.OnChangeMenuItem(MenuItemEvent.Delete, _getTag.ToMenuItem());
+        NavigationManager.NavigateTo(TagsUrl);
         StateHasChanged();
     }
 }
