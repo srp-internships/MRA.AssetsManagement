@@ -7,6 +7,7 @@
         <RootNamespace>MRA.AssetsManagement.Web.Server</RootNamespace>
         <AssemblyName>MRA.AssetsManagement.Web.Server</AssemblyName>
         <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
