@@ -4,7 +4,8 @@
 @using MRA.AssetsManagement.Web.Client.Common.Extensions
 @layout SettingsLayout
 @inject IAssetTypesService AssetTypesService
-@inject IconService
+@inject IIconService IconService
+
 @inject ISnackbar Snackbar
 
 <PageTitle>Asset Types</PageTitle>
@@ -43,7 +44,7 @@
                 <MudCheckBox T="bool" @bind-Value="_autoGenerateShortName" Label="Auto Generate" CheckedChanged="AutoGenerateShortName"></MudCheckBox>
             </MudItem>
             <MudSelect @bind-Value="_getAssetType.Icon" Immediate=true Label="Icon" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mt-3">
-                <MudSelectItem Value="@(Icons.Material.Outlined.Computer)">
+           @*      <MudSelectItem Value="@(Icons.Material.Outlined.Computer)">
                     <div class="d-flex">
                         <MudIcon Icon="@Icons.Material.Outlined.Computer" Class="mr-1" />
                         <span>Computer</span>
@@ -60,7 +61,18 @@
                         <MudIcon Icon="@Icons.Material.Outlined.DesktopWindows" Class="mr-1" />
                         <span>Monitor</span>
                     </div>
-                </MudSelectItem>
+                </MudSelectItem>  *@
+
+               @foreach (var icon in IconService.GetIcons())
+                {
+                    <MudSelectItem Value="@(icon.Value)">
+                        <div class="d-flex">
+                            <MudIcon Icon="@icon.Value" Class="mr-1" />
+                            <span>@icon.Key</span>
+                        </div>
+                    </MudSelectItem>
+                }
+               
             </MudSelect>
         }
 
