@@ -17,46 +17,55 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
     {
         if (await _repository.AnyAsync()) return;
 
-        var assetTypes = await _context.AssetTypes.GetAllAsync();
+        var assetSerials = (await _context.AssetSerials.GetAllAsync()).ToList();
 
-        var laptopSerials =
-            (await _context.AssetSerials.GetAllAsync(x =>
-                x.Asset.AssetTypeId == assetTypes.First(at => at.Name == "Laptop").Id)).ToList();
-        
-        var monitorSerials = (await _context.AssetSerials.GetAllAsync(x =>
-            x.Asset.AssetTypeId == assetTypes.First(at => at.Name == "Monitor").Id)).ToList();
+        List<AssetHistory> histories = [];
 
-        await _repository.CreateAsync(default, [
-            new AssetHistory { AssetSerial = laptopSerials[0], DateTime = DateTime.Now.AddMonths(-2) },
-            new AssetHistory { AssetSerial = laptopSerials[1], DateTime = DateTime.Now.AddMonths(-2) },
-            new AssetHistory { AssetSerial = laptopSerials[2], DateTime = DateTime.Now.AddMonths(-2) },
-            new AssetHistory { AssetSerial = monitorSerials[0], DateTime = DateTime.Now.AddMonths(-2) }
-        ]);
-
-        laptopSerials.ForEach(x =>
+        foreach (var serial in assetSerials)
         {
-            x.Status = AssetStatus.Taken;
-            Task.Run(async () => await _context.AssetSerials.UpdateAsync(x));
-        });
+            histories.Add(new AssetHistory
+            {
+                AssetSerial = new()
+                {
+                    Id = serial.Id, Asset = serial.Asset, Serial = serial.Serial, Status = AssetStatus.Available
+                },
+                DateTime = DateTime.Now.AddDays(new Random().Next(-90, -50))
+            });
+            if (serial.Status == AssetStatus.Available) continue;
 
-        monitorSerials.ForEach(x =>
-        {
-            x.Status = AssetStatus.Taken;
-            Task.Run(async () => await _context.AssetSerials.UpdateAsync(x));
-        });
+            histories.Add(new AssetHistory
+            {
+                AssetSerial = new()
+                {
+                    Id = serial.Id, Asset = serial.Asset, Serial = serial.Serial, Status = AssetStatus.Taken
+                },
+                DateTime = DateTime.Now.AddDays(new Random().Next(-50, -40))
+            });
+            if (serial.Status == AssetStatus.Taken) continue;
 
-        await _repository.CreateAsync(default, [
-            new AssetHistory { AssetSerial = laptopSerials[0], DateTime = DateTime.Now.AddDays(-55) },
-            new AssetHistory { AssetSerial = laptopSerials[1], DateTime = DateTime.Now.AddDays(-55) },
-            new AssetHistory { AssetSerial = laptopSerials[2], DateTime = DateTime.Now.AddDays(-55) },
-            new AssetHistory { AssetSerial = monitorSerials[0], DateTime = DateTime.Now.AddDays(-55) }
-        ]);
+            histories.Add(new AssetHistory
+            {
+                AssetSerial = new AssetSerial
+                {
+                    Id = serial.Id, Asset = serial.Asset, Serial = serial.Serial, Status = AssetStatus.Broken
+                },
+                DateTime = DateTime.Now.AddDays(new Random().Next(-39, -20))
+            });
+            if (serial.Status == AssetStatus.Broken) continue;
 
-        monitorSerials[0].Status = AssetStatus.Broken;
+            histories.Add(new AssetHistory
+            {
+                AssetSerial = new AssetSerial
+                {
+                    Id = serial.Id,
+                    Asset = serial.Asset,
+                    Serial = serial.Serial,
+                    Status = AssetStatus.Deprecated
+                },
+                DateTime = DateTime.Now.AddDays(new Random().Next(-19, -2))
+            });
+        }
 
-        await _repository.CreateAsync(default,
-            [new() { AssetSerial = monitorSerials[0], DateTime = DateTime.Now.AddDays(-10) }]);
-
-        await _context.AssetSerials.UpdateAsync(monitorSerials[0]);
+        await _repository.CreateAsync(default, histories.ToArray());
     }
 }
