@@ -39,6 +39,17 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
 
         List<AssetHistory> histories = [];
         List<AssetSerial> assetSerials = [];
+
+        var assetTypeCountDict = new Dictionary<string, int>();
+        
+        request.Details.Select(x => x.Asset.AssetTypeId).ToList().ForEach(x =>
+        {
+            Task.Run(async() =>
+            {
+                assetTypeCountDict[x] =
+                    (await _context.AssetSerials.GetAllAsync(a => a.Asset.AssetTypeId == x, cancellationToken)).Count;
+            }, cancellationToken);
+        });
         
         foreach (var detail in request.Details)
         {
@@ -49,24 +60,27 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
             
             var assetType = await _context.AssetTypes.GetAsync(detail.Asset.AssetTypeId, cancellationToken);
             
-            var assetSerial = new AssetSerial
+            for (int i = 0; i < detail.Quantity; i++)
             {
-                Asset = detail.Asset,
-                Status = AssetStatus.Available,
-                Serial = assetType.ShortName + DateTime.Now.ToUnixTimestamp()
-            };
-
-            var history = new AssetHistory()
-            {
-                AssetSerial = assetSerial,
-                DateTime = DateTime.Now,
-                Employee = null,
-                UserId = _currentUserService.GetUserId().ToString()
-            };
-
+                var assetSerial = new AssetSerial
+                {
+                    Asset = detail.Asset,
+                    Status = AssetStatus.Available,
+                    Serial = assetType.ShortName + (++assetTypeCountDict[detail.Asset.AssetTypeId])
+                };
+                assetSerials.Add(assetSerial);
+                
+                var history = new AssetHistory
+                {
+                    AssetSerial = assetSerial,
+                    DateTime = DateTime.Now,
+                    Employee = null,
+                    UserId = _currentUserService.GetUserId().ToString()
+                };
+                histories.Add(history);
+            }
+            
             document.Details.Add(_mapper.Map<DocumentDetail>(detail));
-            assetSerials.Add(assetSerial);
-            histories.Add(history);
         }
 
         await _context.Documents.CreateAsync(cancellationToken, document);
@@ -74,19 +88,5 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
         await _context.AssetHistories.CreateAsync(cancellationToken, histories.ToArray());
 
         return document;
-    }
-
-    private async Task CreateNewAsset(Asset asset, CancellationToken cancellationToken)
-    {
-        var assetType = await _context.AssetTypes.GetAsync(asset.AssetTypeId, cancellationToken);
-
-        var assetSerial = new AssetSerial
-        {
-            Asset = asset,
-            Status = AssetStatus.Available,
-            Serial = assetType.ShortName + DateTime.Now.ToUnixTimestamp()
-        };
-
-        await _context.Assets.CreateAsync(cancellationToken, asset);
     }
 }
