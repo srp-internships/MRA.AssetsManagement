@@ -21,12 +21,13 @@ public class AssetTypesController : ApiControllerBase
 
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
     public async Task<ActionResult<GetAssetType>> Create(CreateAssetTypeRequest request, CancellationToken cancellationToken)
     {
         var result = await Mediator.Send(new CreateAssetTypeCommand(request), cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        //REVIEW: MPT-59
+        return Ok(result);
     }
 
     [HttpPut]
