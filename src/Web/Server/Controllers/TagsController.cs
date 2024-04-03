@@ -8,15 +8,15 @@ namespace MRA.AssetsManagement.Web.Server.Controllers;
 public class TagsController : ApiControllerBase
 {
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
     public async Task<ActionResult<Tag>> Create(CreateTagCommand command, CancellationToken cancellationToken)
     {
         var createdTag = await Mediator.Send(command, cancellationToken);
         var uri = new Uri($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/" +
                           $"{ControllerContext.ActionDescriptor.ControllerName}");
-
-        return Created(uri, createdTag);
+        //REVIEW: MPT-59
+        return Ok(createdTag);
     }
 
     [HttpGet]
@@ -25,6 +25,14 @@ public class TagsController : ApiControllerBase
     public async Task<ActionResult<IEnumerable<Tag>>> GetAll(CancellationToken cancellationToken)
     {
         return Ok(await Mediator.Send(new GetTagsQuery(), cancellationToken));
+    }
+
+    [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<IEnumerable<Tag>>> GetById(string id, CancellationToken cancellationToken)
+    {
+        return Ok(await Mediator.Send(new GetSingleTagQuery(id), cancellationToken));
     }
 
     [HttpPut]

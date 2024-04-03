@@ -1,9 +1,13 @@
-﻿@page "/settings/asset-types"
+@page "/settings/asset-types"
 @page "/settings/asset-types/{id}"
 @layout SettingsLayout
 @inject IAssetTypesService AssetTypesService
 @inject IIconService IconService
 @inject ISnackbar Snackbar
+@using MRA.AssetsManagement.Web.Client.Components.MenuItems
+@layout SettingsLayout
+@inject IAssetTypesService AssetTypesService;
+@inject IMenuItemService MenuItemService;
 
 
 
@@ -14,14 +18,15 @@
         <MudText Typo="Typo.h4">Asset type</MudText>
         <MudStack Class="mb-3" Row="true">
             <MudButton Variant="Variant.Filled" @onclick=CreateOrUpdate Disabled="_getAssetType.Archived" StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary" Size="Size.Medium">Save</MudButton>
-            @if (_getAssetType.Archived)
-            {
-                <MudButton Variant="Variant.Filled" @onclick="ArchiveOrRestore" Disabled=@(string.IsNullOrEmpty(Id) ? true : false) StartIcon="@Icons.Material.Filled.Archive" Color="Color.Secondary" Size="Size.Medium">Restore</MudButton>
-            }
-            else
-            {
-                <MudButton Variant="Variant.Filled" @onclick="ArchiveOrRestore" Disabled=@(string.IsNullOrEmpty(Id) ? true : false) StartIcon="@Icons.Material.Filled.Unarchive" Color="Color.Secondary" Size="Size.Medium">Archive</MudButton>
-            }
+            <MudButton 
+                Variant="Variant.Filled" 
+                @onclick="ArchiveOrRestore" 
+                Disabled="@string.IsNullOrEmpty(Id)" 
+                StartIcon="@(_getAssetType.Archived ? Icons.Material.Filled.Unarchive : Icons.Material.Filled.Archive)" 
+                Color="Color.Secondary" 
+                Size="Size.Medium">
+                @( _getAssetType.Archived ? "Restore" : "Archive")
+            </MudButton>
         </MudStack>
     </MudStack>
 
@@ -54,10 +59,14 @@
                         </div>
                     </MudSelectItem>
                 } 
+
             </MudSelect>
         }
     </MudForm>
 </MudStack>
+<SectionContent SectionName="@nameof(MenuItemList)">
+    <MenuItemList Service="AssetTypesService" BaseRoute="/settings/asset-types"/>
+</SectionContent>
 
 @code {
     [Parameter] public string? Id { get; set; }
@@ -69,11 +78,12 @@
     protected override async Task OnParametersSetAsync()
     {
         _loading = true;
-        _getAssetType = new GetAssetType();
         _autoGenerateShortName = false;
+        _getAssetType = new GetAssetType();
+
         if (Id is not null)
         {
-            _getAssetType = await AssetTypesService.GetAssetTypeById(Id);
+            _getAssetType = await AssetTypesService.GetAssetTypeById(Id)!;
         }
 
         _loading = false;
@@ -94,6 +104,7 @@
         if (Id is not null)
         {
             await AssetTypesService.Update(_getAssetType);
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
         }
         else
         {
@@ -104,16 +115,16 @@
                 newAssetType.Icon = _getAssetType.Icon;
             }
 
-            await AssetTypesService.Create(newAssetType);
-            _getAssetType = new GetAssetType();
-            StateHasChanged();
+            _getAssetType = await AssetTypesService.Create(newAssetType);
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getAssetType.ToMenuItem());
         }
-
+        StateHasChanged();
     }
 
     private async void ArchiveOrRestore()
     {
         _getAssetType.Archived = !_getAssetType.Archived;
         await AssetTypesService.Update(_getAssetType);
+        MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
     }
 }
