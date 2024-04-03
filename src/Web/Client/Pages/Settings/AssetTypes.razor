@@ -1,12 +1,11 @@
 ﻿@page "/settings/asset-types"
 @page "/settings/asset-types/{id}"
-@using MRA.AssetsManagement.Web.Shared.AssetTypes
-@using MRA.AssetsManagement.Web.Client.Common.Extensions
 @layout SettingsLayout
 @inject IAssetTypesService AssetTypesService
 @inject IIconService IconService
-
 @inject ISnackbar Snackbar
+
+
 
 <PageTitle>Asset Types</PageTitle>
 
@@ -28,6 +27,7 @@
 
     <MudDivider/>
     <MudForm Disabled=@_getAssetType.Archived Style="max-width: 420px" Class="pa-4">
+
         @if (_loading)
         {
             <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px"/>
@@ -44,24 +44,6 @@
                 <MudCheckBox T="bool" @bind-Value="_autoGenerateShortName" Label="Auto Generate" CheckedChanged="AutoGenerateShortName"></MudCheckBox>
             </MudItem>
             <MudSelect @bind-Value="_getAssetType.Icon" Immediate=true Label="Icon" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mt-3">
-           @*      <MudSelectItem Value="@(Icons.Material.Outlined.Computer)">
-                    <div class="d-flex">
-                        <MudIcon Icon="@Icons.Material.Outlined.Computer" Class="mr-1" />
-                        <span>Computer</span>
-                    </div>
-                </MudSelectItem>
-                <MudSelectItem Value="@(Icons.Material.Outlined.LaptopMac)">
-                    <div class="d-flex">
-                        <MudIcon Icon="@Icons.Material.Outlined.LaptopMac" Class="mr-1" />
-                        <span>Laptop</span>
-                    </div>
-                </MudSelectItem>
-                <MudSelectItem Value="@(Icons.Material.Outlined.DesktopWindows)">
-                    <div class="d-flex">
-                        <MudIcon Icon="@Icons.Material.Outlined.DesktopWindows" Class="mr-1" />
-                        <span>Monitor</span>
-                    </div>
-                </MudSelectItem>  *@
 
                @foreach (var icon in IconService.GetIcons())
                 {
@@ -71,14 +53,11 @@
                             <span>@icon.Key</span>
                         </div>
                     </MudSelectItem>
-                }
-               
+                } 
             </MudSelect>
         }
-
     </MudForm>
 </MudStack>
-
 
 @code {
     [Parameter] public string? Id { get; set; }
@@ -101,7 +80,6 @@
 
         StateHasChanged();
     }
-
 
     private void AutoGenerateShortName()
     {
@@ -138,5 +116,4 @@
         _getAssetType.Archived = !_getAssetType.Archived;
         await AssetTypesService.Update(_getAssetType);
     }
-
 }
