@@ -49,7 +49,7 @@
 
                @foreach (var icon in IconService.GetIcons())
                 {
-                    <MudSelectItem Value="@(icon.Value)">
+                    <MudSelectItem Value="@(icon.Key)">
                         <div class="d-flex">
                             <MudIcon Icon="@icon.Value" Class="mr-1" />
                             <span>@icon.Key</span>
