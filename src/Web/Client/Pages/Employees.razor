@@ -83,15 +83,15 @@ else
 
     private async void CreateOrUpdate()
     {
-        if (Id is not null)
+        if (Id is null)
         {
-            //update
+            _getEmployee = await EmployeesService.Create(_createEmployee);
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getEmployee.ToMenuItem());
         }
 
         else
         {
-            _getEmployee = await EmployeesService.Create(_createEmployee);
-            MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getEmployee.ToMenuItem());
+            //update
         }
         StateHasChanged();
     }
