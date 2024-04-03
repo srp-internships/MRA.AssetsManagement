@@ -13,7 +13,7 @@ public class TagsController : ApiControllerBase
     public async Task<ActionResult<Tag>> Create(CreateTagCommand command, CancellationToken cancellationToken)
     {
         var createdTag = await Mediator.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(Create), createdTag);
+        return CreatedAtAction(nameof(GetById), new {createdTag.Id} ,createdTag);
     }
 
     [HttpGet]

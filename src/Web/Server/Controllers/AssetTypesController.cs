@@ -26,7 +26,7 @@ public class AssetTypesController : ApiControllerBase
     public async Task<ActionResult<GetAssetType>> Create(CreateAssetTypeRequest request, CancellationToken cancellationToken)
     {
         var result = await Mediator.Send(new CreateAssetTypeCommand(request), cancellationToken);
-        return CreatedAtAction(nameof(Create), result);
+        return CreatedAtAction(nameof(GetById), new { result.Id }, result);
     }
 
     [HttpPut]
