@@ -15,7 +15,33 @@
     <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px" />
     <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px" />
 }
-else if(Id is not null)
+else if(Id is null)
+{
+    <EditForm Model="_createEmployee" OnValidSubmit="CreateOrUpdate">
+        <FluentValidationValidator />
+        <MudStack Row=true Class="d-flex justify-space-between mb-5">
+            <MudText Typo="Typo.h4">Employee</MudText>
+            <MudButton ButtonType=ButtonType.Submit Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary" Size="Size.Medium">Save</MudButton>
+        </MudStack>
+        <MudDivider />
+        <MudStack Class="mt-3 pa-4" Style=" max-width: 500px">
+            <MudTextField @bind-Value=_createEmployee.Email Label="Email" InputType="InputType.Email" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.Email)" />
+            <MudStack Row=true>
+                <MudTextField @bind-Value=_createEmployee.FirstName Label="First name" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.FirstName)" />
+                <MudTextField @bind-Value=_createEmployee.LastName Label="Last name" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.LastName)" />
+            </MudStack>
+            <MudStack Row=true>
+                <MudTextField @bind-Value=_createEmployee.Username Label="Username" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.Username)" />
+                <MudTextField @bind-Value=_createEmployee.PhoneNumber Label="Phone" Margin="Margin.Dense" Variant="Variant.Outlined" />
+            </MudStack>
+            <MudStack Row=true>
+                <MudTextField @bind-Value=_createEmployee.Password Label="Password" InputType="InputType.Password" Margin="Margin.Dense" Variant="Variant.Outlined" For=@(() => _createEmployee.Password) />
+                <MudTextField @bind-Value=_createEmployee.ConfirmPassword Label="Confirm password" InputType="InputType.Password" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.ConfirmPassword)" />
+            </MudStack>
+        </MudStack>
+    </EditForm>
+}
+else
 {
     <MudText Typo="Typo.h5">@_getEmployee.FullName</MudText>
     <MudDivider />
@@ -27,32 +53,6 @@ else if(Id is not null)
         <MudText>Phone</MudText>
         <MudLink Href="@($"tel:{_getEmployee.PhoneNumber}")">@_getEmployee.PhoneNumber</MudLink>
     </MudStack>
-}
-else
-{
-    <EditForm Model="_createEmployee" OnValidSubmit="CreateOrUpdate">
-        <FluentValidationValidator />
-        <MudStack Row=true Class="d-flex justify-space-between mb-5">
-            <MudText Typo="Typo.h4">Employee</MudText>  
-            <MudButton ButtonType=ButtonType.Submit Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary" Size="Size.Medium">Save</MudButton>
-        </MudStack>
-        <MudDivider />
-        <MudStack Class="mt-3 pa-4" Style=" max-width: 500px">
-                <MudTextField @bind-Value=_createEmployee.Email Label="Email" InputType="InputType.Email" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.Email)"/>
-                <MudStack Row=true>
-                    <MudTextField @bind-Value=_createEmployee.FirstName Label="First name" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.FirstName)" />
-                    <MudTextField @bind-Value=_createEmployee.LastName Label="Last name" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.LastName)" />
-                </MudStack>
-                <MudStack Row=true>
-                    <MudTextField @bind-Value=_createEmployee.Username Label="Username" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.Username)" />
-                    <MudTextField @bind-Value=_createEmployee.PhoneNumber Label="Phone" Margin="Margin.Dense" Variant="Variant.Outlined" />
-                </MudStack>
-                <MudStack Row=true>
-                    <MudTextField @bind-Value=_createEmployee.Password Label="Password" InputType="InputType.Password" Margin="Margin.Dense" Variant="Variant.Outlined" For=@(() => _createEmployee.Password) />
-                    <MudTextField @bind-Value=_createEmployee.ConfirmPassword Label="Confirm password" InputType="InputType.Password" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.ConfirmPassword)" />
-                </MudStack> 
-        </MudStack>
-    </EditForm>
 }
 
 
