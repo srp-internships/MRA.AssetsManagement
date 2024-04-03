@@ -16,7 +16,10 @@ public class DocumentEntitySeeder : EntitySeeder<Document>
     {
         if (await _repository.AnyAsync()) return;
 
-        var assets = await _context.Assets.GetAllAsync();
+        var macMini = await _context.Assets.GetAsync("660510ad00baa1f0e906225f");
+        var lgMonitor = await _context.Assets.GetAsync("660510ad00baa1f0e9062266");
+        var dellLaptop = await _context.Assets.GetAsync("660510ad00baa1f0e9062260");
+        var chair = await _context.Assets.GetAsync("6605130500baa1f0e906232a");
 
         await _repository.CreateAsync(default, [
             new PurchaseDocument
@@ -25,10 +28,10 @@ public class DocumentEntitySeeder : EntitySeeder<Document>
                 Date = DateTime.Now.AddMonths(-2),
                 Details =
                 [
-                    new() { Id = assets.ElementAt(2).Id, Price = 30000, Quantity = 3, Asset = assets.ElementAt(2) },
-                    new() { Id = assets.ElementAt(1).Id, Price = 14000, Quantity = 2, Asset = assets.ElementAt(1) },
-                    new() { Id = assets.ElementAt(0).Id, Price = 20000, Quantity = 2, Asset = assets.ElementAt(0) },
-                    new() { Id = assets.ElementAt(3).Id, Price = 1500, Quantity = 1, Asset = assets.ElementAt(3) }
+                    new() { Id = macMini.Id, Price = 30000, Quantity = 3, Asset = macMini },
+                    new() { Id = lgMonitor.Id, Price = 14000, Quantity = 2, Asset = lgMonitor },
+                    new() { Id = dellLaptop.Id, Price = 20000, Quantity = 2, Asset = dellLaptop },
+                    new() { Id = chair.Id, Price = 1500, Quantity = 1, Asset = chair }
                 ],
                 Vendor = "Some Vendor"
             }
