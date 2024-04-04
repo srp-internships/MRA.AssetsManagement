@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using MRA.AssetsManagement.Application.Common.Exceptions;
+using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
 using MRA.AssetsManagement.Domain.Entities.Employee;
 
 namespace MRA.AssetsManagement.Application.Features.Employees.Queries;
@@ -23,6 +25,11 @@ public class GetEmployeeByEmailQueryHandler : IRequestHandler<GetEmployeeByEmail
     public async Task<Employee> Handle(GetEmployeeByEmailQuery request, CancellationToken cancellationToken)
     {
         var response = await _employeeService.GetByEmail(request.Email);
-        return response;
+        if (response is not null)
+        {
+            return response;
+        }
+
+        throw new NotFoundEntityException();
     }
 }

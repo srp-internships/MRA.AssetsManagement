@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Common.Exceptions;
 
-using Serilog;
-
 namespace MRA.AssetsManagement.Web.Server.Filters
 {
     public class ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger) : ExceptionFilterAttribute

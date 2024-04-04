@@ -1,4 +1,6 @@
 ﻿using MediatR;
+
+using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
 using MRA.AssetsManagement.Web.Shared.Employees;
 
 namespace MRA.AssetsManagement.Application.Features.Employees.Command;

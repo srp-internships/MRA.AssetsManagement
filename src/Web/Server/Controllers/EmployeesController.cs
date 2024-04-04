@@ -24,12 +24,12 @@ public class EmployeesController : ApiControllerBase
         return await _mediator.Send(new GetEmployeesQuery(),cancellationToken);
     }
     
-    [HttpGet("Id/{id}")]
+    [HttpGet("id/{id}")]
     public async Task<ActionResult<Employee>> GetById(string id, CancellationToken cancellationToken)
     {
         return await _mediator.Send(new GetEmployeeByIdQuery(id), cancellationToken);
     }
-    [HttpGet("{email}")]
+    [HttpGet("email/{email}")]
     public async Task<ActionResult<Employee>> GetByEmail(string email,CancellationToken cancellationToken)
     {
         return await _mediator.Send(new GetEmployeeByEmailQuery(email),cancellationToken);
