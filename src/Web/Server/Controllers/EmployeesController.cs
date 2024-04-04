@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Features.Employees.Queries;
 using MRA.AssetsManagement.Domain.Entities.Employee;
 using MRA.AssetsManagement.Web.Server.Controllers;
+using MRA.AssetsManagement.Web.Shared.Employees;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -34,8 +35,8 @@ public class EmployeesController : ApiControllerBase
     }
     
     [HttpPost]
-    public async Task<ActionResult<string>> Create(CreateEmployeeCommand command, CancellationToken cancellationToken)
+    public async Task<ActionResult<string>> Create(CreateEmployeeRequest request, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(command,cancellationToken);
+        return await _mediator.Send(new CreateEmployeeCommand(request),cancellationToken);
     }
 }
