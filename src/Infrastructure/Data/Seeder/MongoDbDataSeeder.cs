@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder.Entities;
@@ -14,8 +15,11 @@ public class MongoDbDataSeeder : IDataSeeder
     private readonly ILogger<MongoDbDataSeeder> _logger;
     private readonly IEntitySeeder[] _entitySeeders;
 
-    public MongoDbDataSeeder(IApplicationDbContext context, ILogger<MongoDbDataSeeder> logger)
+    public MongoDbDataSeeder(IApplicationDbContext context, ILogger<MongoDbDataSeeder> logger, IServiceScopeFactory serviceScopeFactory)
     {
+        using IServiceScope scope = serviceScopeFactory.CreateScope();
+        var employeeService = scope.ServiceProvider.GetRequiredService<IEmployeeService>();
+        
         _logger = logger;
         _entitySeeders =
         [

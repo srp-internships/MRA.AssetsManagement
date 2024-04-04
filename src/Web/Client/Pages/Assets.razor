@@ -8,6 +8,7 @@
 <MudTable Items="@Elements" Hover="true" Dense="true" FixedHeader="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Assets</MudText>
+        <MudChip Href="#" Color="Color.Primary">New</MudChip>
         <div style="width: 75%"></div>
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
@@ -17,6 +18,7 @@
         <MudTh>Type</MudTh>
         <MudTh>Name</MudTh>
         <MudTh>Assigned To</MudTh>
+        <MudTh>Last Modified</MudTh>
         <MudTh>From</MudTh>
     </HeaderContent>
     <RowTemplate>
@@ -37,6 +39,9 @@
             <MudTd DataLabel="Assigned To">
                 <MudSkeleton/>
             </MudTd>
+            <MudTd DataLabel="Last Modified">
+                <MudSkeleton/>
+            </MudTd>
             <MudTd DataLabel="From">
                 <MudSkeleton/>
             </MudTd>
@@ -55,6 +60,7 @@
             </MudTd>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Assigned To">@context.AssignedTo</MudTd>
+            <MudTd DataLabel="From">@context.LastModified.ToString("dd MMMM yyyy")</MudTd>
             <MudTd DataLabel="From">@context.From.ToString("dd MMMM yyyy")</MudTd>
         }
     </RowTemplate>

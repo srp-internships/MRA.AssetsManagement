@@ -7,6 +7,7 @@ public class GetAssetSerial
     public AssetSerialType AssetSerialType { get; set; } = null!;
     public string Name { get; set; } = null!;
     public string? AssignedTo { get; set; }
+    public DateTime LastModified { get; set; }
     public DateTime From { get; set; }
 }
 
