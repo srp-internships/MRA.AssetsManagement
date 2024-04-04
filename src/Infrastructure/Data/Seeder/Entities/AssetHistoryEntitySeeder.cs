@@ -1,4 +1,5 @@
 using MRA.AssetsManagement.Application.Data;
+using MRA.AssetsManagement.Domain;
 using MRA.AssetsManagement.Domain.Entities;
 using MRA.AssetsManagement.Domain.Enums;
 
@@ -17,54 +18,29 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
     {
         if (await _repository.AnyAsync()) return;
 
-        var assetSerials = (await _context.AssetSerials.GetAllAsync()).ToList();
+        var pc1 = await _context.AssetSerials.GetAsync(x => x.Id == "660aab4f7e86b88cd4bbacc8");
+        var pc2 = await _context.AssetSerials.GetAsync(x => x.Id == "660aab797e86b88cd4bbacc9");
+        var pc3 = await _context.AssetSerials.GetAsync(x => x.Id == "660aab937e86b88cd4bbacca");
 
-        List<AssetHistory> histories = [];
-
-        foreach (var serial in assetSerials)
-        {
-            histories.Add(new AssetHistory
+        var abbos = new UserDisplay() { FirstName = "Abbos", LastName = "Sidiqov", Username = "abbosidiqov" };
+        var nizomjon = new UserDisplay() { FirstName = "Nizomjon", LastName = "Rahmonberdiev", Username = "nizomjon" };
+        var shuhrat = new UserDisplay() { FirstName = "Shuhrat", LastName = "Rahmonov", Username = "shuhrat" };
+        AssetHistory[] histories = [
+            // PC-000001
+            new AssetHistory
             {
-                AssetSerial = new()
-                {
-                    Id = serial.Id, Asset = serial.Asset, Serial = serial.Serial, Status = AssetStatus.Available
-                },
-                DateTime = DateTime.Now.AddDays(new Random().Next(-90, -50))
-            });
-            if (serial.Status == AssetStatus.Available) continue;
-
-            histories.Add(new AssetHistory
+                AssetSerial = pc1,
+                DateTime = DateTime.Now.AddMonths(-2),
+            },
+            new AssetHistory
             {
-                AssetSerial = new()
-                {
-                    Id = serial.Id, Asset = serial.Asset, Serial = serial.Serial, Status = AssetStatus.Taken
-                },
-                DateTime = DateTime.Now.AddDays(new Random().Next(-50, -40))
-            });
-            if (serial.Status == AssetStatus.Taken) continue;
+                AssetSerial = pc1 with {Status = AssetStatus.Taken, Employee = abbos },
+                DateTime = DateTime.Now.AddMonths(-2).AddDays(5),
+                UserId = "nizomjon"
+            }
+        ];
 
-            histories.Add(new AssetHistory
-            {
-                AssetSerial = new AssetSerial
-                {
-                    Id = serial.Id, Asset = serial.Asset, Serial = serial.Serial, Status = AssetStatus.Broken
-                },
-                DateTime = DateTime.Now.AddDays(new Random().Next(-39, -20))
-            });
-            if (serial.Status == AssetStatus.Broken) continue;
-
-            histories.Add(new AssetHistory
-            {
-                AssetSerial = new AssetSerial
-                {
-                    Id = serial.Id,
-                    Asset = serial.Asset,
-                    Serial = serial.Serial,
-                    Status = AssetStatus.Deprecated
-                },
-                DateTime = DateTime.Now.AddDays(new Random().Next(-19, -2))
-            });
-        }
+        
 
         await _repository.CreateAsync(default, histories.ToArray());
     }
