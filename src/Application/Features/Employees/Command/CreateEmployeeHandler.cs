@@ -27,6 +27,9 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
     public async Task<GetEmployee> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
         var response = await _employeeService.Create(request.CreateEmployeeRequest);
-        return _mapper.Map<GetEmployee>(request.CreateEmployeeRequest);
+        var employee = _mapper.Map<GetEmployee>(request.CreateEmployeeRequest);
+        employee.Id = response;
+
+        return employee;
     }
 }
