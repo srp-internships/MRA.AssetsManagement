@@ -7,7 +7,7 @@ namespace MRA.AssetsManagement.Infrastructure.Data.Configurations;
 
 public class TagConfiguration : BaseConfiguration<Tag>
 {
-    public TagConfiguration(IMongoDatabase database) : base(database, "tags")
+    public TagConfiguration(IMongoDatabase database, string collectionName) : base(database, collectionName)
     {
     }
 
