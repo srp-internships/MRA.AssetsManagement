@@ -1,11 +1,102 @@
 @page "/settings/tags"
+@page "/settings/tags/{id}"
 @layout SettingsLayout
 @attribute [Authorize]
+@using MRA.AssetsManagement.Web.Client.Common.Extensions
+@using MRA.AssetsManagement.Web.Client.Components.MenuItems
+@using MRA.AssetsManagement.Web.Shared.Tags
+@inject ITagsService TagsService
+@inject IMenuItemService MenuItemService;
+@inject NavigationManager NavigationManager;
 
-<PageTitle>Tags</PageTitle>
+<MudStack>
+    <MudStack Row="true" Class="d-flex justify-space-between">
+        <MudText Typo="Typo.h4">Tags</MudText>
+        <MudStack Class="mb-3" Row="true">
+            <MudButton Variant="Variant.Filled" @onclick=CreateOrUpdate StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary" Size="Size.Medium">Save</MudButton>
+            <MudButton Variant="Variant.Filled" @onclick="Delete" Disabled=@(string.IsNullOrEmpty(Id) ? true : false) StartIcon="@Icons.Material.Filled.Delete" Color="Color.Secondary" Size="Size.Medium">Delete</MudButton>
+        </MudStack>
+    </MudStack>
 
-<h3>Tags</h3>
+    <MudDivider />
+    <MudForm id="form" Style="max-width: 420px" Class="pa-4">
+        @if (_loading)
+        {
+            <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px" />
+            <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px" />
+            <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px" />
+        }
+        else
+        {
+            <MudTextField Class="mt-3" T="string" @bind-Value="_getTag.Name"
+                          Margin="Margin.Dense" Variant=Variant.Outlined
+                          Label="Name" Required="true" RequiredError="Name is required!" Immediate="true" />
+
+            <MudStack Class="mt-3" Style="position: relative" Row=true AlignItems="AlignItems.End">
+                <MudColorPicker @bind-Text="@_getTag.Color" DisableToolbar="false" Label="Color" Adornment="Adornment.None"
+                                PickerVariant="PickerVariant.Inline" Margin=Margin.Dense Variant=Variant.Outlined
+                                ColorPickerView="ColorPickerView.Spectrum" DisableInputs=true />
+                <MudPaper Class="mb-3 mr-3" Style="@($"background-color: {_getTag.Color}; position:absolute; right: 0")" Width="25px" Height="25px"></MudPaper>
+
+
+            </MudStack>
+        }
+
+    </MudForm>
+</MudStack>
+<SectionContent SectionName="@nameof(MenuItemList)">
+    <MenuItemList Service="TagsService" BaseRoute="@TagsUrl" />
+</SectionContent>
 
 @code {
+    [Parameter]
+    public string? Id { get; set; }
+
+    const string TagsUrl = "/settings/tags";
     
+    GetTag _getTag = new GetTag();
+    bool _loading = false;
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _loading = true;
+        _getTag = new GetTag();
+        if (Id is not null)
+        {
+            _getTag = await TagsService.GetTagById(Id);
+        }
+        _loading = false;
+        StateHasChanged();
+    }
+
+
+    private async void CreateOrUpdate()
+    {
+        if (Id is not null)
+        {
+            await TagsService.Update(_getTag);
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getTag.ToMenuItem());
+        }
+        else
+        {
+            CreateTagRequest newTag = new CreateTagRequest()
+            {
+                Name = _getTag.Name,
+                Color = _getTag.Color
+            };
+
+            _getTag = await TagsService.Create(newTag);
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getTag.ToMenuItem());
+        }
+        StateHasChanged();
+    }
+
+    private async void Delete()
+    {
+        await TagsService.Delete(_getTag.Id);
+        MenuItemService.OnChangeMenuItem(MenuItemEvent.Delete, _getTag.ToMenuItem());
+        NavigationManager.NavigateTo(TagsUrl);
+        StateHasChanged();
+    }
 }

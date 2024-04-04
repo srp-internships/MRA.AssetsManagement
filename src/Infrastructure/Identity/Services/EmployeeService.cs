@@ -31,8 +31,12 @@ public class EmployeeService : IEmployeeService
         SetAuthorizationHeader();
         var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>(
             $"{_apiBaseUrl}User/GetListUsers/ByFilter");
-        var emplooyes = _mapper.Map<List<Employee>>(response);
-        return emplooyes;
+        if (response is not null)
+        {
+            var emplooyes = _mapper.Map<List<Employee>>(response);
+            return emplooyes;
+        }
+        return new List<Employee>();
     }
 
     public async Task<Employee> GetById(string id)
@@ -43,12 +47,13 @@ public class EmployeeService : IEmployeeService
         return employee;
     }
 
-    public async Task<Employee> GetByEmail(string email)
+    public async Task<Employee?> GetByEmail(string email)
     {
         SetAuthorizationHeader();
         var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>(
                 $"{_apiBaseUrl}User/GetListUsers/ByFilter?Email={email}");
-            return _mapper.Map<Employee>( response.FirstOrDefault());
+        return response is null ? null :  _mapper.Map<Employee>( response.FirstOrDefault());         
+        
     }
 
     public async Task<string> Create(CreateEmployeeRequest createEmployeeRequest)
