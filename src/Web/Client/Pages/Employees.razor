@@ -87,6 +87,7 @@ else
         {
             _getEmployee = await EmployeesService.Create(_createEmployee);
             MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getEmployee.ToMenuItem());
+            _createEmployee = new CreateEmployeeRequest();
         }
 
         else

@@ -35,7 +35,7 @@ public class EmployeesController : ApiControllerBase
     }
     
     [HttpPost]
-    public async Task<ActionResult<string>> Create(CreateEmployeeRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<GetEmployee>> Create(CreateEmployeeRequest request, CancellationToken cancellationToken)
     {
         return await _mediator.Send(new CreateEmployeeCommand(request),cancellationToken);
     }

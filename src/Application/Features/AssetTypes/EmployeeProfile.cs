@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MRA.AssetsManagement.Application.Features.Employees;
 using MRA.AssetsManagement.Domain.Entities.Employee;
+using MRA.AssetsManagement.Web.Shared.Employees;
 
 namespace MRA.AssetsManagement.Application.Features.AssetTypes.Mappings;
 
@@ -11,6 +12,9 @@ public class EmployeeProfile : Profile
         CreateMap<CreateEmployeeRequest, Employee>();
         CreateMap<Employee, CreateEmployeeRequest>();
         CreateMap<Employee, EmployeeResponse>();
+        CreateMap<CreateEmployeeRequest, GetEmployee>()
+            .ForMember(d => d.FullName, o
+                => o.MapFrom(s => $"{s.FirstName} {s.LastName}"));
         CreateMap<EmployeeResponse, Employee>()
             .ForMember(d=>d.FirstName,o
                 =>o.MapFrom(s=>GetSubStringBeforeSpace(s.FullName)))
