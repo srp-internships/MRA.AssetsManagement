@@ -122,6 +122,7 @@
 
             _getAssetType = await AssetTypesService.Create(newAssetType);
             MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getAssetType.ToMenuItem());
+            _getAssetType = new GetAssetType();
         }
         StateHasChanged();
     }
