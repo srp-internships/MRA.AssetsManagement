@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Features.Assets.Queries;
 using MRA.AssetsManagement.Domain.Entities;
 
@@ -6,6 +7,7 @@ namespace MRA.AssetsManagement.Web.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class AssetsController : ApiControllerBase
     {
         [HttpGet]

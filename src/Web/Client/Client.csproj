@@ -17,6 +17,7 @@
     <PackageReference Include="MRA.BlazorComponents" Version="1.8.0" />
     <PackageReference Include="MudBlazor" Version="6.17.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.0" />
   </ItemGroup>
 
   <ItemGroup>

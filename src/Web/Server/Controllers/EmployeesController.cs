@@ -1,9 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MRA.AssetsManagement.Application.Features.Employees.Command;
 using MRA.AssetsManagement.Application.Features.Employees.Queries;
 using MRA.AssetsManagement.Domain.Entities.Employee;
-using MRA.AssetsManagement.Web.Server.Controllers;
+
+namespace MRA.AssetsManagement.Web.Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -22,7 +24,7 @@ public class EmployeesController : ApiControllerBase
         return await _mediator.Send(new GetEmployeesQuery(),cancellationToken);
     }
     
-    [HttpGet("{id}")]
+    [HttpGet("Id/{id}")]
     public async Task<ActionResult<Employee>> GetById(string id, CancellationToken cancellationToken)
     {
         return await _mediator.Send(new GetEmployeeByIdQuery(id), cancellationToken);

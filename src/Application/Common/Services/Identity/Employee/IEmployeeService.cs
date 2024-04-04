@@ -1,4 +1,5 @@
 ﻿using MRA.AssetsManagement.Domain.Entities.Employee;
+using MRA.AssetsManagement.Web.Shared.Employees;
 
 public interface IEmployeeService
 {

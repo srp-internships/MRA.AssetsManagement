@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Features.Tags.Commands;
 using MRA.AssetsManagement.Application.Features.Tags.Queries;
@@ -10,6 +11,7 @@ public class TagsController : ApiControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesDefaultResponseType]
+    [Authorize]
     public async Task<ActionResult<Tag>> Create(CreateTagCommand command, CancellationToken cancellationToken)
     {
         var createdTag = await Mediator.Send(command, cancellationToken);

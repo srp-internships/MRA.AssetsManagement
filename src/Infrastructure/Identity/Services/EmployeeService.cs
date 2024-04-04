@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Application.Features.Employees;
 using MRA.AssetsManagement.Domain.Entities.Employee;
+using MRA.AssetsManagement.Web.Shared.Employees;
 
 namespace MRA.AssetsManagement.Infrastructure.Identity.Services;
 

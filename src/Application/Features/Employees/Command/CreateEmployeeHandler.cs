@@ -1,4 +1,7 @@
 ﻿using MediatR;
+using MRA.AssetsManagement.Web.Shared.Employees;
+
+namespace MRA.AssetsManagement.Application.Features.Employees.Command;
 
 public class CreateEmployeeCommand : IRequest<string>
 {
