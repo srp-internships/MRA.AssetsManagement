@@ -18,4 +18,10 @@ public class AssetConfiguration : BaseConfiguration<Asset>
         classMap.MapMember(x => x.Name).SetElementName("name");
         classMap.MapMember(x => x.AssetTypeId).SetElementName("assetTypeId");
     }
+
+    protected override void Configure()
+    {
+        var indexKeysDefinition = Builders<Asset>.IndexKeys.Ascending(x => x.Name).Ascending(x => x.AssetTypeId);
+        Collection.Indexes.CreateOne(new CreateIndexModel<Asset>(indexKeysDefinition, new CreateIndexOptions() {Unique = true}));
+    }
 }

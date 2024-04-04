@@ -31,4 +31,9 @@ public class AssetSerialConfiguration : BaseConfiguration<AssetSerial>
             initializer.MapMember(x => x.UserName).SetElementName("lastName");
         });
     }
+    protected override void Configure()
+    {
+        var indexKeysDefinition = Builders<AssetSerial>.IndexKeys.Ascending(x => x.Serial);
+        Collection.Indexes.CreateOne(new CreateIndexModel<AssetSerial>(indexKeysDefinition, new CreateIndexOptions() { Unique = true }));
+    }
 }

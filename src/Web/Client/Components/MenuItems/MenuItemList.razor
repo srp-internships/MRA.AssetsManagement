@@ -1,4 +1,5 @@
 ﻿@inject IMenuItemService MenuItemService;
+@inject IIconService IconService;
 @implements IDisposable;
 
 <MudStack Spacing="4">
@@ -23,7 +24,7 @@
             @foreach (var menuItem in MenuItems)
             {
                 <MudNavLink Disabled="@menuItem.Disabled" Href="@menuItem.Route"
-                            Icon="@menuItem.Icon">
+                            Icon="@IconService.GetIcon(menuItem.Icon)">
                     @menuItem.Title
                 </MudNavLink>
             }

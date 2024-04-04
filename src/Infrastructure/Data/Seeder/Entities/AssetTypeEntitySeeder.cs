@@ -14,10 +14,10 @@ public class AssetTypeEntitySeeder : EntitySeeder<AssetType>
         if (await _repository.AnyAsync()) return;
 
         await _repository.CreateAsync(default,
-            new AssetType() { Id = "6602b5508836f41c710e02ed", Name = "PC", ShortName = "PC", Icon = "pc" },
-            new AssetType() { Id = "6602b5508836f41c710e02ee", Name = "Laptop", ShortName = "LPT", Icon = "laptop" },
-            new AssetType() { Id = "6602b5508836f41c710e02ef", Name = "Chair", ShortName = "CHR", Icon = "chair" },
-            new AssetType() { Id = "6602b5508836f41c710e02f0", Name = "Monitor", ShortName = "MTR", Icon = "monitor" }
+            new AssetType() { Id = "6602b5508836f41c710e02ed", Name = "PC", ShortName = "PC", Icon = "PC" },
+            new AssetType() { Id = "6602b5508836f41c710e02ee", Name = "Laptop", ShortName = "LPT", Icon = "Laptop" },
+            new AssetType() { Id = "6602b5508836f41c710e02ef", Name = "Chair", ShortName = "CHR", Icon = "Office chairs" },
+            new AssetType() { Id = "6602b5508836f41c710e02f0", Name = "Monitor", ShortName = "MTR", Icon = "Monitor" }
         );
     }
 }
