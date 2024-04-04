@@ -61,8 +61,8 @@ public class AuthService : IAuthService
     {
         var token = await _localStorageService.GetItemAsync<JwtTokenResponse>("authToken");
         var handler = new JwtSecurityTokenHandler();
-        var jsonToken = handler.ReadToken(token.AccessToken) as JwtSecurityToken;
-        var claimList = jsonToken.Claims.ToList();
+        var jsonToken = handler.ReadToken(token!.AccessToken) as JwtSecurityToken;
+        var claimList = jsonToken!.Claims.ToList();
         var username = claimList.FirstOrDefault(cl => cl.Type.Contains("username"))?.Value;
         
         return username;

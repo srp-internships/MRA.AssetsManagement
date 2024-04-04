@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using MRA.AssetsManagement.Application.Common.Security;
+using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
 using MRA.AssetsManagement.Application.Features.Employees;
 using MRA.AssetsManagement.Domain.Entities.Employee;
 using MRA.AssetsManagement.Web.Shared.Employees;
@@ -39,7 +40,7 @@ public class EmployeeService : IEmployeeService
         return new List<Employee>();
     }
 
-    public async Task<Employee> GetById(string id)
+    public async Task<Employee?> GetById(string id)
     {
         SetAuthorizationHeader();
         var response = await _http.GetFromJsonAsync<EmployeeResponse>($"{_apiBaseUrl}User/{id}");
