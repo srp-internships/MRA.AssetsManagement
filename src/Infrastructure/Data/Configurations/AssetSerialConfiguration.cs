@@ -20,4 +20,9 @@ public class AssetSerialConfiguration : BaseConfiguration<AssetSerial>
         classMap.MapMember(x => x.Status).SetElementName("status");
         classMap.MapMember(x => x.EmployeeId).SetElementName("employeeId");
     }
+    protected override void Configure()
+    {
+        var indexKeysDefinition = Builders<AssetSerial>.IndexKeys.Ascending(x => x.Serial);
+        Collection.Indexes.CreateOne(new CreateIndexModel<AssetSerial>(indexKeysDefinition, new CreateIndexOptions() { Unique = true }));
+    }
 }

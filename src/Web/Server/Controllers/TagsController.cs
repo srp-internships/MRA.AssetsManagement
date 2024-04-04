@@ -9,16 +9,13 @@ namespace MRA.AssetsManagement.Web.Server.Controllers;
 public class TagsController : ApiControllerBase
 {
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesDefaultResponseType]
     [Authorize]
     public async Task<ActionResult<Tag>> Create(CreateTagCommand command, CancellationToken cancellationToken)
     {
         var createdTag = await Mediator.Send(command, cancellationToken);
-        var uri = new Uri($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/" +
-                          $"{ControllerContext.ActionDescriptor.ControllerName}");
-        //REVIEW: MPT-59
-        return Ok(createdTag);
+        return CreatedAtAction(nameof(GetById), new {createdTag.Id} ,createdTag);
     }
 
     [HttpGet]

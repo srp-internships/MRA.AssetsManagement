@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MRA.AssetsManagement.Web.Client;
 using MRA.AssetsManagement.Web.Client.Services.AssetTypes;
+using MRA.AssetsManagement.Web.Client.Services.Icons;
 using MRA.AssetsManagement.Web.Client.Services.Tags;
 using MRA.AssetsManagement.Web.Client.Components.MenuItems;
 using MRA.AssetsManagement.Web.Client.Services.AuthService;
@@ -21,6 +22,8 @@ builder.Services.AddHttpClientService();
 builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddScoped<IIconService, IconService>();
+
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 builder.Services.AddAuthorizationCore();
