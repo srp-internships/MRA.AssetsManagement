@@ -6,6 +6,7 @@ using MRA.AssetsManagement.Web.Client;
 using MRA.AssetsManagement.Web.Client.Services.AssetTypes;
 using MRA.AssetsManagement.Web.Client.Services.Icons;
 using MRA.AssetsManagement.Web.Client.Services.Tags;
+using MRA.AssetsManagement.Web.Client.Services.Employees;
 using MRA.AssetsManagement.Web.Client.Components.MenuItems;
 using MRA.AssetsManagement.Web.Client.Services.AuthService;
 using MRA.BlazorComponents.HttpClient;
@@ -35,4 +36,5 @@ builder.Services.AddScoped<ITagsService, TagsService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+builder.Services.AddScoped<IEmployeesService, EmployeesService>();
 await builder.Build().RunAsync();

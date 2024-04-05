@@ -11,6 +11,9 @@ public class EmployeeProfile : Profile
         CreateMap<CreateEmployeeRequest, Employee>();
         CreateMap<Employee, CreateEmployeeRequest>();
         CreateMap<Employee, EmployeeResponse>();
+        CreateMap<CreateEmployeeRequest, GetEmployee>()
+            .ForMember(d => d.FullName, o
+                => o.MapFrom(s => $"{s.FirstName} {s.LastName}"));
         CreateMap<EmployeeResponse, Employee>()
             .ForMember(d=>d.FirstName,o
                 =>o.MapFrom(s=>GetSubStringBeforeSpace(s.FullName)))
