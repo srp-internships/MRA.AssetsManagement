@@ -2,6 +2,7 @@
 
 using MediatR;
 
+using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
 using MRA.AssetsManagement.Web.Shared.Employees;
 
 public class CreateEmployeeCommand : IRequest<GetEmployee>
