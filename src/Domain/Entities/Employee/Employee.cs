@@ -9,6 +9,7 @@ public class Employee : IEntity
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string FullName => $"{FirstName} {LastName}";
+    public string UserName { get; set; } = null!;
     public string Email { get; set; } = null!;
 
     [JsonIgnore] public string Password { get; set; } = string.Empty;
