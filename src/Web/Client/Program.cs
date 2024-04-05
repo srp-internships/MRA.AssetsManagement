@@ -6,6 +6,7 @@ using MRA.AssetsManagement.Web.Client;
 using MRA.AssetsManagement.Web.Client.Services.AssetTypes;
 using MRA.AssetsManagement.Web.Client.Services.Icons;
 using MRA.AssetsManagement.Web.Client.Services.Tags;
+using MRA.AssetsManagement.Web.Client.Services.Employees;
 using MRA.AssetsManagement.Web.Client.Components.MenuItems;
 using MRA.BlazorComponents.HttpClient;
 using MudBlazor.Services;
@@ -31,5 +32,5 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IAssetTypesService, AssetTypesService>();
 builder.Services.AddScoped<ITagsService, TagsService>();
-
+builder.Services.AddScoped<IEmployeesService, EmployeesService>();
 await builder.Build().RunAsync();
