@@ -15,11 +15,8 @@ public class MongoDbDataSeeder : IDataSeeder
     private readonly ILogger<MongoDbDataSeeder> _logger;
     private readonly IEntitySeeder[] _entitySeeders;
 
-    public MongoDbDataSeeder(IApplicationDbContext context, ILogger<MongoDbDataSeeder> logger, IServiceScopeFactory serviceScopeFactory)
+    public MongoDbDataSeeder(IApplicationDbContext context, ILogger<MongoDbDataSeeder> logger)
     {
-        using IServiceScope scope = serviceScopeFactory.CreateScope();
-        var employeeService = scope.ServiceProvider.GetRequiredService<IEmployeeService>();
-        
         _logger = logger;
         _entitySeeders =
         [
