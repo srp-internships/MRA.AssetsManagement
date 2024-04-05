@@ -1,7 +1,82 @@
 @page "/assets"
+@using MRA.AssetsManagement.Web.Shared.Assets
+@using MRA.AssetsManagement.Web.Client.Services.Assets
+@inject IAssetsService AssetsService
+
 <PageTitle>Assets</PageTitle>
-<h3>Assets</h3>
+
+<MudTable Items="@Elements" Hover="true" Dense="true" FixedHeader="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Assets</MudText>
+        <MudChip Href="#" Color="Color.Primary">New</MudChip>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Status</MudTh>
+        <MudTh>Serial</MudTh>
+        <MudTh>Type</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Assigned To</MudTh>
+        <MudTh>Last Modified</MudTh>
+        <MudTh>From</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        @if (_loading)
+        {
+            <MudTd DataLabel="Status">
+                <MudSkeleton/>
+            </MudTd>
+            <MudTd DataLabel="Serial">
+                <MudSkeleton/>
+            </MudTd>
+            <MudTd DataLabel="Type">
+                <MudSkeleton/>
+            </MudTd>
+            <MudTd DataLabel="Name">
+                <MudSkeleton/>
+            </MudTd>
+            <MudTd DataLabel="Assigned To">
+                <MudSkeleton/>
+            </MudTd>
+            <MudTd DataLabel="Last Modified">
+                <MudSkeleton/>
+            </MudTd>
+            <MudTd DataLabel="From">
+                <MudSkeleton/>
+            </MudTd>
+        }
+        else
+        {
+            <MudTd DataLabel="Status">
+                <StatusComponent Status="@context.Status"></StatusComponent>
+            </MudTd>
+            <MudTd DataLabel="Serial">@context.Serial</MudTd>
+            <MudTd DataLabel="Type">
+                <MudStack Row="true">
+                    <MudIcon Icon="@context.AssetSerialType.Icon"></MudIcon>
+                    <MudText>@context.AssetSerialType.Name</MudText>
+                </MudStack>
+            </MudTd>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Assigned To">@context.AssignedTo</MudTd>
+            <MudTd DataLabel="From">@context.LastModified.ToString("dd MMMM yyyy")</MudTd>
+            <MudTd DataLabel="From">@context.From.ToString("dd MMMM yyyy")</MudTd>
+        }
+    </RowTemplate>
+</MudTable>
 
 @code {
-    
+
+    private string searchString1 = "";
+    private bool _loading = true;
+
+    private IEnumerable<GetAssetSerial> Elements = new List<GetAssetSerial>(Enumerable.Range(1, 5).Select(x => new GetAssetSerial()));
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await AssetsService.GetAssetSerials();
+        _loading = false;
+    }
+
 }

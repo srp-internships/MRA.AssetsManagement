@@ -28,12 +28,11 @@ public class EmployeeService : IEmployeeService
     public async Task<List<Employee>> GetAll()
     {
         SetAuthorizationHeader();
-        var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>(
-            $"{_apiBaseUrl}User/GetListUsers/ByFilter");
+        var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>($"{_apiBaseUrl}/User/GetListUsers/ByFilter");
         if (response is not null)
         {
-            var emplooyes = _mapper.Map<List<Employee>>(response);
-            return emplooyes;
+            var employees = _mapper.Map<List<Employee>>(response);
+            return employees;
         }
         return new List<Employee>();
     }
