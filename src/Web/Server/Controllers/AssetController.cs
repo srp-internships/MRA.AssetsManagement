@@ -2,18 +2,15 @@
 using MRA.AssetsManagement.Application.Features.Assets.Queries;
 using MRA.AssetsManagement.Domain.Entities;
 
-namespace MRA.AssetsManagement.Web.Server.Controllers
+namespace MRA.AssetsManagement.Web.Server.Controllers;
+
+public class AssetsController : ApiControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AssetsController : ApiControllerBase
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<IEnumerable<Asset>>> Get(CancellationToken cancellationToken)
     {
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Asset>>> Get(CancellationToken cancellationToken)
-        {
-            var query = new GetAssetsQuery();
-            var assets = await Mediator.Send(query, cancellationToken);
-            return Ok(assets);
-        }
+        return Ok(await Mediator.Send(new GetAssetsQuery(), cancellationToken));
     }
 }

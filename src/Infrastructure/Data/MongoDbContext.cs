@@ -18,19 +18,26 @@ public class MongoDbContext : IApplicationDbContext
         var client = new MongoClient(options.Value.ConnectionString);
         _database = client.GetDatabase(options.Value.DatabaseName);
 
-        AssetTypes = GetRepository<AssetTypeConfiguration, AssetType>();
-        Tags = GetRepository<TagConfiguration, Tag>();
-        Assets = GetRepository<AssetConfiguration, Asset>();
+        AssetTypes = GetRepository<AssetTypeConfiguration, AssetType>("asset-types");
+        Tags = GetRepository<TagConfiguration, Tag>("tags");
+        Documents = GetRepository<DocumentConfiguration, Document>("documents");
+        AssetSerials = GetRepository<AssetSerialConfiguration, AssetSerial>("asset-serials");
+        Assets = GetRepository<AssetConfiguration, Asset>("assets");
+        AssetHistories = GetRepository<AssetHistoryConfiguration, AssetHistory>("asset-histories");
     }
 
     public IRepository<AssetType> AssetTypes { get; }
     public IRepository<Tag> Tags { get; }
+    public IRepository<Document> Documents { get; }
+    public IRepository<AssetSerial> AssetSerials { get; }
     public IRepository<Asset> Assets { get; }
+    public IRepository<AssetHistory> AssetHistories { get; }
 
-    private MongoRepository<TEntity> GetRepository<TConfiguration, TEntity>() where TConfiguration : BaseConfiguration<TEntity>
+
+    private MongoRepository<TEntity> GetRepository<TConfiguration, TEntity>(string collectionName) where TConfiguration : BaseConfiguration<TEntity>
                                                                             where TEntity : IEntity
     {
-        var config = (TConfiguration) Activator.CreateInstance(typeof(TConfiguration), _database)!;
+        var config = (TConfiguration) Activator.CreateInstance(typeof(TConfiguration), args: [_database, collectionName])!;
         return new MongoRepository<TEntity>(config.Collection);
     }
 }

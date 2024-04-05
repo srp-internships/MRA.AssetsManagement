@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-
-using MRA.AssetsManagement.Application.Features.Assets.Queries;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Commands;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Queries;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
@@ -23,13 +21,12 @@ public class AssetTypesController : ApiControllerBase
 
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesDefaultResponseType]
     public async Task<ActionResult<GetAssetType>> Create(CreateAssetTypeRequest request, CancellationToken cancellationToken)
     {
         var result = await Mediator.Send(new CreateAssetTypeCommand(request), cancellationToken);
-        //REVIEW: MPT-59
-        return Ok(result);
+        return CreatedAtAction(nameof(GetById), new { result.Id }, result);
     }
 
     [HttpPut]
