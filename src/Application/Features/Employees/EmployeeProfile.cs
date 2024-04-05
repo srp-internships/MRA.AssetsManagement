@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using MRA.AssetsManagement.Application.Features.Employees;
 using MRA.AssetsManagement.Domain.Entities.Employee;
 using MRA.AssetsManagement.Web.Shared.Employees;
 
-namespace MRA.AssetsManagement.Application.Features.AssetTypes.Mappings;
+namespace MRA.AssetsManagement.Application.Features.Employees;
 
 public class EmployeeProfile : Profile
 {
