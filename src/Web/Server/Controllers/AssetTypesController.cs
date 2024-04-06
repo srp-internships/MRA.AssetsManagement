@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Commands;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Queries;
@@ -5,6 +6,7 @@ using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
+[Authorize]
 public class AssetTypesController : ApiControllerBase
 {
     [HttpGet]

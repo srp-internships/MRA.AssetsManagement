@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder.Entities;

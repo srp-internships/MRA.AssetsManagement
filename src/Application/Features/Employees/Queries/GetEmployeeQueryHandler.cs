@@ -1,5 +1,9 @@
 ﻿using MediatR;
+
+using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
 using MRA.AssetsManagement.Domain.Entities.Employee;
+
+namespace MRA.AssetsManagement.Application.Features.Employees.Queries;
 
 public class GetEmployeesQuery : IRequest<List<Employee>>
 {
