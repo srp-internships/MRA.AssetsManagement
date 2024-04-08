@@ -18,7 +18,15 @@ public class AssetsController : ApiControllerBase
     {
         return Ok(await Mediator.Send(new GetAssetsQuery(), cancellationToken));
     }
-    
+
+    [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<IEnumerable<Asset>>> GetAssetsById(string id, CancellationToken cancellationToken)
+    {
+        return Ok(await Mediator.Send(new GetAssetsByIdQuery(id), cancellationToken));
+    }
+
     [HttpGet("serial")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
@@ -30,7 +38,7 @@ public class AssetsController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult<Document>> CreatePurchase(CreatePurchaseCommand command)
+    public async Task<ActionResult<Document>> CreatePurchase(CreatePurchaseCommand command, CancellationToken cancellationToken)
     {
         var document = await Mediator.Send(command);
         return Ok(document);
