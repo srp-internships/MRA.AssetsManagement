@@ -13,11 +13,11 @@ using MRA.AssetsManagement.Web.Server;
 using MRA.AssetsManagement.Web.Server.Filters;
 
 using Serilog;
+using Serilog.Events;
 
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 builder.Services.AddControllersWithViews(options =>
@@ -41,26 +41,12 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.Configure<MongoDbOption>(builder.Configuration.GetSection("MongoDb"));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8
-            .GetBytes(builder.Configuration.GetSection("JWT:Secret").Value!)),
-        ValidateIssuer = false,
-        ValidateAudience = false
-    });
-
 builder.Services.AddHttpContextAccessor();
 builder.Services
     .AddApplication()
     .AddInfrastructure();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Host.UseSerilog();
-
-Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
-
+builder.Services.AddLogging();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -78,7 +64,6 @@ else
     app.UseHsts();
 }
 
-
 using (var scope = app.Services.CreateScope())
 {
     var databaseOption = scope.ServiceProvider.GetService<IOptions<MongoDbOption>>();
@@ -88,8 +73,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseMiddleware<RequestLogContextMiddleware>();
-app.UseSerilogRequestLogging();
+
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
@@ -102,5 +86,4 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
-
 app.Run();
