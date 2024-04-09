@@ -1,7 +1,7 @@
 ﻿version: '3.4'
 
 services:
-  apiserver:
+  api:
     image: abb0s0088/mra-assets-server
     build:
       context: .
@@ -9,9 +9,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
     ports:
-      - "5001:80"
+      - "5203:5203"
     depends_on:
       - mongodb
   

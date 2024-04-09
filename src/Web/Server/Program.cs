@@ -31,7 +31,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
-        Description = """Standard Authorization header using the Bearer scheme. Exampel: "{token}" """,
+        Description = """Standard Authorization header using the Bearer scheme. Example: "{token}" """,
         In = ParameterLocation.Header,
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey

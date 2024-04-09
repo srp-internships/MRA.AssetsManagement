@@ -27,7 +27,6 @@ builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.H
 
 builder.Services.AddAuthorizationCore();
 
-
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IAssetTypesService, AssetTypesService>();
 builder.Services.AddScoped<ITagsService, TagsService>();
