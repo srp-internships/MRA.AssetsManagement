@@ -9,6 +9,7 @@
 @inject IIconService IconService
 @inject IAssetSerialService AssetSerialService
 @implements IDisposable
+@attribute [Authorize]
 
 <PageTitle>Assets</PageTitle>
 <MudTable Items="@AssetsService.Serials" Hover="true" Dense="true" FixedHeader="true" T="GetAssetSerial" OnRowClick="OnSerialSelect">

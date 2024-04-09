@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+
+using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Infrastructure.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;

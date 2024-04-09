@@ -3,8 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Features.Employees.Queries;
 using MRA.AssetsManagement.Domain.Entities.Employee;
-using MRA.AssetsManagement.Web.Server.Controllers;
 using MRA.AssetsManagement.Web.Shared.Employees;
+
+namespace MRA.AssetsManagement.Web.Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

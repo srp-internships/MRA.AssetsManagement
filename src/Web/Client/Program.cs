@@ -9,6 +9,7 @@ using MRA.AssetsManagement.Web.Client.Services.Icons;
 using MRA.AssetsManagement.Web.Client.Services.Tags;
 using MRA.AssetsManagement.Web.Client.Services.Employees;
 using MRA.AssetsManagement.Web.Client.Components.MenuItems;
+using MRA.AssetsManagement.Web.Client.Services.AuthService;
 using MRA.AssetsManagement.Web.Client.Services.Assets;
 using MRA.AssetsManagement.Web.Client.Services.AssetSerials;
 using MRA.BlazorComponents.HttpClient;
@@ -37,6 +38,9 @@ builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IAssetTypesService, AssetTypesService>();
 builder.Services.AddScoped<ITagsService, TagsService>();
 builder.Services.AddScoped<IAssetsService, AssetsService>();
+builder.Services.AddScoped<CustomAuthStateProvider>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 builder.Services.AddScoped<IEmployeesService, EmployeesService>();
 builder.Services.AddScoped<IAssetSerialService, AssetSerialService>();
 
