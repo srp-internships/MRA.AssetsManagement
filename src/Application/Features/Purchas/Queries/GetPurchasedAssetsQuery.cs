@@ -14,7 +14,6 @@ public class GetPurchasedAssetsQuery : IRequest<List<GetPurchasedAssets?>>
         PurchasedAssetsRequest = purchasedAssetsRequest;
     }
 }
-
 public class GetPurchasedAssetsQueryHandler : IRequestHandler<GetPurchasedAssetsQuery, List<GetPurchasedAssets?>>
 {
     private readonly IApplicationDbContext _context;
@@ -25,7 +24,6 @@ public class GetPurchasedAssetsQueryHandler : IRequestHandler<GetPurchasedAssets
         _context = context;
         _mapper = mapper;
     }
-
     public async Task<List<GetPurchasedAssets?>> Handle(GetPurchasedAssetsQuery request, CancellationToken cancellationToken)
     {
         var documents = await _context.Documents.GetAllAsync(cancellationToken);
@@ -35,21 +33,21 @@ public class GetPurchasedAssetsQueryHandler : IRequestHandler<GetPurchasedAssets
                         && x.Date <= request.PurchasedAssetsRequest.ToDate)
             .ToList();
 
-        var serials = await _context.AssetSerials.GetAllAsync(cancellationToken);
         var assetsTypes = await _context.AssetTypes.GetAllAsync(cancellationToken);
 
-        return (from document in listOfDocuments
-            from detail in document.Details
-            where request.PurchasedAssetsRequest.AssetId is null || detail.Asset.Id == request.PurchasedAssetsRequest.AssetId
-            let asserSerial = serials.Where(x => x.Asset.Id == detail.Asset.Id).ToList()
-            from serial in asserSerial
-            select new GetPurchasedAssets()
-            {
-                AssetName = detail.Asset.Name,
-                AssetSerial = serial.Serial,
-                AssetType = assetsTypes.FirstOrDefault(x => x.Id == detail.Asset.AssetTypeId)?.Name,
-                Price = detail.Price / asserSerial.Count(),
-                Quantity = 1
-            }).ToList();
+        var response = new List<GetPurchasedAssets?>();
+
+        foreach (var document in listOfDocuments)
+        {
+            response.AddRange(from detail in document.Details 
+                where request.PurchasedAssetsRequest.AssetTypeId is null 
+                      || detail.Asset.AssetTypeId == request.PurchasedAssetsRequest.AssetTypeId 
+                select new GetPurchasedAssets() 
+                    { AssetName = detail.Asset.Name, AssetType = assetsTypes
+                        .FirstOrDefault(x => x.Id == detail.Asset.AssetTypeId)?
+                        .Name, Price = detail.Price, Quantity = detail.Quantity });
+        }
+
+        return response;
     }
 }
