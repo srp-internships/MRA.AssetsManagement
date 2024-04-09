@@ -10,6 +10,7 @@ using MRA.AssetsManagement.Web.Client.Services.Tags;
 using MRA.AssetsManagement.Web.Client.Services.Employees;
 using MRA.AssetsManagement.Web.Client.Components.MenuItems;
 using MRA.AssetsManagement.Web.Client.Services.Assets;
+using MRA.AssetsManagement.Web.Client.Services.AssetSerials;
 using MRA.BlazorComponents.HttpClient;
 
 using MudBlazor.Services;
@@ -37,5 +38,6 @@ builder.Services.AddScoped<IAssetTypesService, AssetTypesService>();
 builder.Services.AddScoped<ITagsService, TagsService>();
 builder.Services.AddScoped<IAssetsService, AssetsService>();
 builder.Services.AddScoped<IEmployeesService, EmployeesService>();
+builder.Services.AddScoped<IAssetSerialService, AssetSerialService>();
 
 await builder.Build().RunAsync();
