@@ -7,8 +7,7 @@ using MRA.AssetsManagement.Web.Shared.Employees;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
+
 [Authorize]
 public class EmployeesController : ApiControllerBase
 {
