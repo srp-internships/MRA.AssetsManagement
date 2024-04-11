@@ -120,7 +120,10 @@
             await AssetsService.CreatePurchase(newAssetPurchase);   
             NavigationManager.NavigateTo("/assets");
         }
-        SnackBar.Add("Vendor is required field!", Severity.Error);
+        else
+        {
+            SnackBar.Add("Vendor is required field!", Severity.Error);
+        }
     }
 
     private async Task CreateNewAsset(string assetTypeId)
