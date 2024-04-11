@@ -6,7 +6,7 @@
 @inject IEmployeesService EmployeesService
 @inject NavigationManager NavigationManager
 
-<MudDrawer @bind-Open="@showDrawer" Width="400px" Height="100%" Anchor="Anchor.End" Elevation="1"
+<MudDrawer @bind-Open="@showDrawer" Width="28rem" Height="100%" Anchor="Anchor.End" Elevation="1"
     Variant="@DrawerVariant.Temporary" DisableOverlay="true">
     <MudDrawerHeader Class="pa-1">
         <div
@@ -75,6 +75,8 @@
                     </MudSelect>
                 </MudStack>
             }
+
+            <AssetSerialHistory Serial="@Serial" ShowHistory="@showHistory" />
         </MudStack>
     </MudNavMenu>
 </MudDrawer>
@@ -86,6 +88,7 @@
     GetAssetSerial assetSerial = null!;
     private IEnumerable<UserDisplay> UserDisplays = [];
     private bool showDrawer;
+    private bool showHistory = false;
     private bool isLoading = true;
     private bool isSerialHasChanged = false;
 
@@ -106,6 +109,7 @@
         {
             assetSerial = await AssetSerialService.GetBySerial(Serial);
             isLoading = false;
+            showHistory = false;
         }
     }
 
