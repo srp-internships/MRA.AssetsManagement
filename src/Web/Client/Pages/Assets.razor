@@ -8,11 +8,10 @@
 @inject NavigationManager NavigationManager
 @inject IIconService IconService
 @inject IAssetSerialService AssetSerialService
-@implements IDisposable
 @attribute [Authorize]
 
 <PageTitle>Assets</PageTitle>
-<MudTable Items="@AssetsService.Serials" Hover="true" Dense="true" FixedHeader="true" T="GetAssetSerial" OnRowClick="OnSerialSelect">
+<MudTable Items="@Elements" Hover="true" Dense="true" FixedHeader="true" T="GetAssetSerial" OnRowClick="OnSerialSelect">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Assets</MudText>
         <MudChip Href="#" Color="Color.Primary">New</MudChip>
@@ -76,7 +75,7 @@
 
 @if (Serial is not null)
 {
-    <AssetSerialDetail Serial="@Serial"></AssetSerialDetail>
+    <AssetSerialDetail Serial="@Serial" OnCloseButtonClicked="@(() => StateHasChanged())"></AssetSerialDetail>
 }
 
 @code {
@@ -89,9 +88,8 @@
     protected override async Task OnInitializedAsync()
     {
         loading = true;
-        await AssetsService.GetAssetSerials();
+        Elements = await AssetsService.GetAssetSerials();
         loading = false;
-        AssetSerialService.OnChange += StateHasChanged;
     }
 
     private void OnSerialSelect(TableRowClickEventArgs<GetAssetSerial> args)
@@ -103,6 +101,4 @@
     {
         Elements = await AssetsService.GetAssetSerials();
     }
-
-    public void Dispose() => AssetSerialService.OnChange -= StateHasChanged;
 }

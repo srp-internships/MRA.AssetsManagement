@@ -2,30 +2,26 @@ using AutoMapper;
 
 using MediatR;
 
-using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
-
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Web.Shared.Assets;
 using MRA.AssetsManagement.Web.Shared.Employees;
+using MRA.AssetsManagement.Web.Shared.Enums;
 
 namespace MRA.AssetsManagement.Application.Features.AssetSerials.Queries;
 
-public record GetAssetSerialBySerialQuery(string Serial) : IRequest<GetAssetSerial>;
+public record GetSingleAssetSerialQuery(string Serial) : IRequest<GetAssetSerial>;
 
-public class GetAssetSerialBySerialQueryHandler(IApplicationDbContext context,
-                                                IEmployeeService employeeService,
-                                                IMapper mapper) : IRequestHandler<GetAssetSerialBySerialQuery, GetAssetSerial>
+public class GetSingleAssetSerialQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetSingleAssetSerialQuery, GetAssetSerial>
 {
-    public async Task<GetAssetSerial> Handle(GetAssetSerialBySerialQuery request, CancellationToken cancellationToken)
+    public async Task<GetAssetSerial> Handle(GetSingleAssetSerialQuery request, CancellationToken cancellationToken)
     {
         var serial = await context.AssetSerials.GetAsync(x => x.Serial == request.Serial, cancellationToken);
-        var employees = await employeeService.GetAll();
         var assetTypes = await context.AssetTypes.GetAllAsync(cancellationToken);
 
         return new GetAssetSerial
         {
             Id = serial.Id,
-            Status = serial.Status.ToString(),
+            Status = Enum.Parse<AssetStatus>(serial.Status.ToString()),
             Serial = serial.Serial,
             Name = serial.Asset.Name,
             LastModified = serial.LastModifiedAt,

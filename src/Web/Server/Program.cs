@@ -23,7 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<ApiExceptionFilterAttribute>();
-}).AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+});
 
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();

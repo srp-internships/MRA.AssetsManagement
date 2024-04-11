@@ -12,13 +12,15 @@
         <div
             style="width: 100%; display: flex; flex-direction: row; justify-content: space-between; align-items: center">
             <div>
-                <MudIconButton Icon="@Icons.Material.Rounded.Close"
-                    OnClick="@(e => NavigationManager.NavigateTo("/assets"))"></MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Rounded.Close" OnClick="@(e => {
+                        NavigationManager.NavigateTo("/assets");
+                        OnCloseButtonClicked.InvokeAsync();
+                    })"></MudIconButton>
             </div>
             @if (isLoading)
             {
                 <div style="display: flex; width: 100%; padding-left: 1rem; padding-right: 1rem">
-                    <MudSkeleton Height="1rem" Width="100%"/>
+                    <MudSkeleton Height="1rem" Width="100%" />
                 </div>
             }
             else
@@ -51,12 +53,13 @@
                     <MudText>
                         <b>Status: </b>
                     </MudText>
-                    <MudSelect Value="assetSerial.Status" T="string" Margin="Margin.Dense" Variant="Variant.Outlined"
+                    <MudSelect Value="assetSerial.Status" T="AssetStatus" Margin="Margin.Dense" Variant="Variant.Outlined"
                         ValueChanged="@OnStatusItemChanged">
-                        <MudSelectItem Value="@("Available")" />
-                        <MudSelectItem Value="@("Taken")" />
-                        <MudSelectItem Value="@("Broken")" />
-                        <MudSelectItem Value="@("Deprecated")" />
+                        <MudSelectItem Value="@(AssetStatus.Available)">@(AssetStatus.Available.ToString())</MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Taken)">@(AssetStatus.Taken.ToString())</MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Broken)">@(AssetStatus.Broken.ToString())</MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Deprecated)">@(AssetStatus.Deprecated.ToString())
+                        </MudSelectItem>
                     </MudSelect>
                 </MudStack>
                 <MudStack Row="true" AlignItems="AlignItems.Center">
@@ -79,6 +82,7 @@
 @code {
 
     [Parameter] public string Serial { get; set; } = null!;
+    [Parameter] public EventCallback OnCloseButtonClicked { get; set; }
     GetAssetSerial assetSerial = null!;
     private IEnumerable<UserDisplay> UserDisplays = [];
     private bool showDrawer;
@@ -105,9 +109,9 @@
         }
     }
 
-    private void OnStatusItemChanged(string newValue)
+    private void OnStatusItemChanged(AssetStatus newValue)
     {
-        if (newValue != "Taken")
+        if (newValue != AssetStatus.Taken)
             assetSerial.Employee = null;
         assetSerial.Status = newValue;
         isSerialHasChanged = true;
@@ -119,8 +123,8 @@
 
         isSerialHasChanged = true;
 
-        if (assetSerial.Status == "Available")
-            assetSerial.Status = "Taken";
+        if (assetSerial.Status == AssetStatus.Available)
+            assetSerial.Status = AssetStatus.Taken;
     }
 
     private async Task OnSave()
