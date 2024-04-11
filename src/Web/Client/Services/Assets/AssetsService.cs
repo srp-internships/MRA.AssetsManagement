@@ -20,9 +20,9 @@ public class AssetsService(IHttpClientService httpClient, ISnackbar snackbar, IW
         return response.Result!;
     }
 
-    public async Task<IEnumerable<GetAsset>> GetAssetsById(string id)
+    public async Task<IEnumerable<GetAsset>> GetAssetsByTypeId(string typeId)
     {
-        var response = await httpClient.GetFromJsonAsync<IEnumerable<GetAsset>>($"{_baseAddress}api/assets/{id}");
+        var response = await httpClient.GetFromJsonAsync<IEnumerable<GetAsset>>($"{_baseAddress}api/assets/{typeId}");
         snackbar.ShowIfError(response, "Error was occured.");
         return response.Result!;
     }
@@ -31,5 +31,12 @@ public class AssetsService(IHttpClientService httpClient, ISnackbar snackbar, IW
     {
         var response = await httpClient.PostAsJsonAsync($"{_baseAddress}api/assets/purchase", newAssetPurchase);
         snackbar.ShowIfError(response, "Error was occured.");
+    }
+
+    public async Task<GetAsset> CreateAsset(CreateAssetRequest newAsset)
+    {
+        var response = await httpClient.PostAsJsonAsync<GetAsset>($"{_baseAddress}api/assets", newAsset);
+        snackbar.ShowIfError(response, "Error was occured.");
+        return response.Result!;
     }
 }

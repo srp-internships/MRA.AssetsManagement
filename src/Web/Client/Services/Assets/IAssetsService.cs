@@ -6,6 +6,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.Assets;
 public interface IAssetsService
 {
     Task<IEnumerable<GetAssetSerial>> GetAssetSerials();
-    Task<IEnumerable<GetAsset>> GetAssetsById(string id);
+    Task<IEnumerable<GetAsset>> GetAssetsByTypeId(string typeId);
     Task CreatePurchase(CreateAssetPurchaseRequest newAssetPurchase);
+    Task<GetAsset> CreateAsset(CreateAssetRequest newAsset);
 }
