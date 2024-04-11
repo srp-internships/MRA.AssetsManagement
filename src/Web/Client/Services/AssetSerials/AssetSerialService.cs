@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 using MRA.AssetsManagement.Web.Shared.Assets;
-using MRA.AssetsManagement.Web.Shared.AssetSerialHistory;
 using MRA.AssetsManagement.Web.Shared.AssetSerials;
 using MRA.BlazorComponents.HttpClient.Services;
 using MRA.BlazorComponents.Snackbar.Extensions;
