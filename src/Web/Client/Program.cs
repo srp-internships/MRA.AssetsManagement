@@ -11,6 +11,8 @@ using MRA.AssetsManagement.Web.Client.Services.Employees;
 using MRA.AssetsManagement.Web.Client.Components.MenuItems;
 using MRA.AssetsManagement.Web.Client.Services.AuthService;
 using MRA.AssetsManagement.Web.Client.Services.Assets;
+using MRA.AssetsManagement.Web.Client.Services.Report;
+using MRA.AssetsManagement.Web.Client.Services.ReportService;
 using MRA.BlazorComponents.HttpClient;
 
 using MudBlazor.Services;
@@ -39,6 +41,7 @@ builder.Services.AddScoped<ITagsService, TagsService>();
 builder.Services.AddScoped<IAssetsService, AssetsService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddScoped<IEmployeesService, EmployeesService>();
 

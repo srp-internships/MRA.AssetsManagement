@@ -5,7 +5,7 @@ using MRA.AssetsManagement.Web.Shared.Purchas;
 
 namespace MRA.AssetsManagement.Application.Features.Purchas.Queries;
 
-public class GetPurchasedAssetsQuery : IRequest<List<GetPurchasedAssets?>>
+public class GetPurchasedAssetsQuery : IRequest<List<GetPurchasedAssets>>
 {
     public readonly PurchasedAssetsRequest PurchasedAssetsRequest;
 
@@ -14,7 +14,7 @@ public class GetPurchasedAssetsQuery : IRequest<List<GetPurchasedAssets?>>
         PurchasedAssetsRequest = purchasedAssetsRequest;
     }
 }
-public class GetPurchasedAssetsQueryHandler : IRequestHandler<GetPurchasedAssetsQuery, List<GetPurchasedAssets?>>
+public class GetPurchasedAssetsQueryHandler : IRequestHandler<GetPurchasedAssetsQuery, List<GetPurchasedAssets>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ public class GetPurchasedAssetsQueryHandler : IRequestHandler<GetPurchasedAssets
         _context = context;
         _mapper = mapper;
     }
-    public async Task<List<GetPurchasedAssets?>> Handle(GetPurchasedAssetsQuery request, CancellationToken cancellationToken)
+    public async Task<List<GetPurchasedAssets>> Handle(GetPurchasedAssetsQuery request, CancellationToken cancellationToken)
     {
         var documents = await _context.Documents.GetAllAsync(cancellationToken);
 
@@ -47,7 +47,21 @@ public class GetPurchasedAssetsQueryHandler : IRequestHandler<GetPurchasedAssets
                         .FirstOrDefault(x => x.Id == detail.Asset.AssetTypeId)?
                         .Name, Price = detail.Price, Quantity = detail.Quantity });
         }
-
-        return response;
+        var uniqueAssets = response
+            .Where(asset => asset != null)
+            .GroupBy(asset => new {asset?.AssetType })
+            .Select(group =>
+            {
+                var totalPrice = group.Sum(asset => asset!.Price * asset.Quantity);
+                return new GetPurchasedAssets
+                {
+                    AssetName = group.First()?.AssetName,
+                    AssetType = group.First()?.AssetType,
+                    Quantity = group.Sum(asset => asset!.Quantity),
+                    Price = totalPrice
+                };
+            })
+            .ToList();
+        return uniqueAssets;
     }
 }
