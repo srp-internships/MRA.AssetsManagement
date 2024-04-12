@@ -5,6 +5,7 @@ using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 using MRA.AssetsManagement.Application.Common.Behaviors;
+using MRA.AssetsManagement.Application.Common.Services.SlugGeneratorService;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
 namespace MRA.AssetsManagement.Application;
@@ -19,7 +20,8 @@ public static class ConfigureServices
         services.AddValidatorsFromAssemblyContaining<CreateAssetTypeRequest>();
         services.AddValidatorsFromAssembly(assembly);
         services.AddAutoMapper(assembly);
-        
+        services.AddSingleton<ISlugGeneratorService, SlugGeneratorService>();
+
         services.AddMediatR(configuration =>
         {
             configuration.RegisterServicesFromAssembly(assembly);

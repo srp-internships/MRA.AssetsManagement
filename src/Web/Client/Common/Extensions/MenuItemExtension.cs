@@ -9,7 +9,7 @@ public static class MenuItemExtension
 {
     public static MenuItem ToMenuItem(this GetAssetType assetType)
     {
-        return new MenuItem(assetType.Id, assetType.Name, assetType.Icon, $"/settings/asset-types/{assetType.Id}");
+        return new MenuItem(assetType.Id, assetType.Name, assetType.Icon, $"/settings/asset-types/{assetType.Slug}");
     }
     
     public static MenuItem ToMenuItem(this GetTag tag)
