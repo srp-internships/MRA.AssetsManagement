@@ -65,13 +65,13 @@
 
 <MudDialog IsVisible=@_isOpen>
     <TitleContent>
-        <MudText Typo=Typo.h4 Align="Align.Center">NewAsset</MudText>
+        <MudText Typo=Typo.h4 Align="Align.Center">New Asset</MudText>
         <MudDivider />
     </TitleContent>
     <DialogContent>
         <EditForm Model="_newAsset" OnValidSubmit="@(() => CreateNewAsset(_selectedAssetType.Id))" Context="editContext">
             <FluentValidationValidator />
-            <MudText Class="mb-3" Typo="Typo.h5">Type: @_selectedAssetType.Name</MudText>
+            <MudText Class="mb-3" Typo="Typo.h6">Type: @_selectedAssetType.Name</MudText>
             <MudTextField @bind-Value=_newAsset.Name Label="Name" Margin="Margin.Dense" Variant="Variant.Outlined" />
             <MudStack Row=true Class="justify-end mt-3">
                 <MudButton Color="Color.Tertiary" Variant=Variant.Filled ButtonType="ButtonType.Submit">Create</MudButton>
@@ -131,6 +131,7 @@
         _newAsset.AssetTypeId = assetTypeId;
         await AssetsService.CreateAsset(_newAsset);
         OpenDialog();
+        _newAsset = new CreateAssetRequest();
     }   
 
     private void AddRow()
@@ -142,7 +143,7 @@
 
     private decimal CalculateTotalPrice()
     {
-        var totalPrice =  AssetPurchases.Sum(ap => ap.Quantity * ap.Price);
+        var totalPrice =  AssetPurchases.Sum(ap => ap.Price);
         return totalPrice;
     }
 
