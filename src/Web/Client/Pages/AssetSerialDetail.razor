@@ -79,6 +79,7 @@
     [Parameter] public EventCallback OnSaveButtonClicked { get; set; }
     GetAssetSerial assetSerial = null!;
     private IEnumerable<UserDisplay> UserDisplays = [];
+    private bool showHistory = false;
     private bool isLoading = true;
     private bool isSerialHasChanged = false;
 
@@ -99,6 +100,7 @@
             assetSerial = await AssetSerialService.GetBySerial(Serial);
             isLoading = false;
             prevSerial = Serial;
+            showHistory = false;
         }
     }
 
