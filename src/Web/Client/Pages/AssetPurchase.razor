@@ -93,7 +93,7 @@
     private GetAssetType _selectedAssetType = null!;
 
     private CreateAssetRequest _newAsset = new CreateAssetRequest();
-    private List<GetAssetType> AssetTypes = null!;
+    private List<GetAssetType> AssetTypes = new List<GetAssetType>();
     private List<GetAsset> Assets = new List<GetAsset>();
 
     Func<GetAssetType, string> AssetTypeToStirng = at => at.Name;
@@ -101,8 +101,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        AssetTypes =  await AssetTypesService.GetAll();
         AssetPurchases.Add(new CreateAssetPurchaseDetail());
+        AssetTypes =  await AssetTypesService.GetAll();
     }
 
     private async void GetAssets(string id)
