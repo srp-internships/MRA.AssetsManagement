@@ -67,7 +67,7 @@
             </MudTd>
             <MudTd DataLabel="Name">@context.Name</MudTd>
             <MudTd DataLabel="Assigned To">@context.Employee?.FullName</MudTd>
-            <MudTd DataLabel="From">@context.LastModified.ToString("dd MMMM yyyy")</MudTd>
+            <MudTd DataLabel="LastModified">@context.LastModified.ToString("dd MMMM yyyy")</MudTd>
             <MudTd DataLabel="From">@context.From.ToString("dd MMMM yyyy")</MudTd>
         }
     </RowTemplate>
@@ -75,7 +75,7 @@
 
 @if (Serial is not null)
 {
-    <AssetSerialDetail Serial="@Serial" OnCloseButtonClicked="@(() => StateHasChanged())"></AssetSerialDetail>
+    <AssetSerialDetail Serial="@Serial" OnSaveButtonClicked="OnClose" />
 }
 
 @code {
@@ -99,6 +99,13 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        @* Elements = await AssetsService.GetAssetSerials(); *@
+    }
+
+    private async Task OnClose()
+    {
+        loading = true;
         Elements = await AssetsService.GetAssetSerials();
+        loading = false;
     }
 }

@@ -5,17 +5,15 @@
 @inject IAssetSerialService AssetSerialService
 @inject IEmployeesService EmployeesService
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 
-<MudDrawer @bind-Open="@showDrawer" Width="28rem" Height="100%" Anchor="Anchor.End" Elevation="1"
+<MudDrawer Open="true" Width="400px" Height="100%" Anchor="Anchor.End" Elevation="1"
     Variant="@DrawerVariant.Temporary" DisableOverlay="true">
     <MudDrawerHeader Class="pa-1">
         <div
             style="width: 100%; display: flex; flex-direction: row; justify-content: space-between; align-items: center">
             <div>
-                <MudIconButton Icon="@Icons.Material.Rounded.Close" OnClick="@(e => {
-                        NavigationManager.NavigateTo("/assets");
-                        OnCloseButtonClicked.InvokeAsync();
-                    })"></MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Rounded.Close" OnClick="@(() => NavigationManager.NavigateTo("/assets"))"></MudIconButton>
             </div>
             @if (isLoading)
             {
@@ -55,24 +53,17 @@
                     </MudText>
                     <MudSelect Value="assetSerial.Status" T="AssetStatus" Margin="Margin.Dense" Variant="Variant.Outlined"
                         ValueChanged="@OnStatusItemChanged">
-                        <MudSelectItem Value="@(AssetStatus.Available)">@(AssetStatus.Available.ToString())</MudSelectItem>
-                        <MudSelectItem Value="@(AssetStatus.Taken)">@(AssetStatus.Taken.ToString())</MudSelectItem>
-                        <MudSelectItem Value="@(AssetStatus.Broken)">@(AssetStatus.Broken.ToString())</MudSelectItem>
-                        <MudSelectItem Value="@(AssetStatus.Deprecated)">@(AssetStatus.Deprecated.ToString())
-                        </MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Available)"><MudText Color="Color.Success">@(AssetStatus.Available.ToString())</MudText></MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Taken)"><MudText Color="Color.Info">@(AssetStatus.Taken.ToString())</MudText></MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Broken)"><MudText Color="Color.Error">@(AssetStatus.Broken.ToString())</MudText></MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Deprecated)">@(AssetStatus.Deprecated.ToString())</MudSelectItem>
                     </MudSelect>
                 </MudStack>
                 <MudStack Row="true" AlignItems="AlignItems.Center">
                     <MudText>
                         <b>Assigned To: </b>
                     </MudText>
-                    <MudSelect T="UserDisplay" Variant="Variant.Outlined" Margin="Margin.Dense"
-                        Value="@assetSerial.Employee" ValueChanged="OnAssignedPersonChanged">
-                        @foreach (var userDisplay in UserDisplays)
-                        {
-                            <MudSelectItem Value="@userDisplay">@($"{userDisplay.FullName}")</MudSelectItem>
-                        }
-                    </MudSelect>
+                    <MudAutocomplete Value="@assetSerial.Employee" T="UserDisplay" Margin="Margin.Dense" SearchFunc="@SearchEmployees" Variant="Variant.Outlined" ValueChanged="@(e => OnAssignedPersonChanged(e))"/>
                 </MudStack>
             }
 
@@ -84,32 +75,30 @@
 @code {
 
     [Parameter] public string Serial { get; set; } = null!;
-    [Parameter] public EventCallback OnCloseButtonClicked { get; set; }
+    private string prevSerial = string.Empty;
+    [Parameter] public EventCallback OnSaveButtonClicked { get; set; }
     GetAssetSerial assetSerial = null!;
     private IEnumerable<UserDisplay> UserDisplays = [];
-    private bool showDrawer;
-    private bool showHistory = false;
     private bool isLoading = true;
     private bool isSerialHasChanged = false;
 
     protected override async Task OnInitializedAsync()
     {
-        showDrawer = true;
         UserDisplays = (await EmployeesService.GetEmployees()).Select(x => new UserDisplay
-            {
-                UserName = x.UserName,
-                FirstName = x.FullName.Split(" ")[0],
-                LastName = x.FullName.Split(" ")[1]
-            }).OrderBy(x => x.FirstName);
+        {
+            UserName = x.UserName,
+            FirstName = x.FullName.Split(" ")[0],
+            LastName = x.FullName.Split(" ")[1]
+        }).OrderBy(x => x.FirstName);
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Serial is not null)
+        if (Serial is not null && prevSerial != Serial)
         {
             assetSerial = await AssetSerialService.GetBySerial(Serial);
             isLoading = false;
-            showHistory = false;
+            prevSerial = Serial;
         }
     }
 
@@ -133,11 +122,32 @@
 
     private async Task OnSave()
     {
+        if (assetSerial.Status == AssetStatus.Taken && assetSerial.Employee is null)
+        {
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+            Snackbar.Add("Please, select the Employee", Severity.Error);
+            return;
+        }
+
         await AssetSerialService.UpdateSerial(new()
-            {
-                Id = assetSerial.Id,
-                Status = assetSerial.Status,
-                UserDisplay = assetSerial.Employee
-            });
+        {
+            Id = assetSerial.Id,
+            Status = assetSerial.Status,
+            UserDisplay = assetSerial.Employee
+        });
+
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+        Snackbar.Add("Serial succesfully updated", Severity.Success);
+        await OnSaveButtonClicked.InvokeAsync();
+        NavigationManager.NavigateTo("/assets");
+    }
+
+    private async Task<IEnumerable<UserDisplay>> SearchEmployees(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return await Task.FromResult(UserDisplays.ToArray());
+        
+        value = value.ToUpper().Trim();
+        return await Task.FromResult(UserDisplays.Where(x => x.FirstName.ToUpper().Contains(value) || x.LastName.ToUpper().Contains(value)));
     }
 }
