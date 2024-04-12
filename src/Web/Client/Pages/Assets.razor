@@ -75,7 +75,7 @@
 
 @if (Serial is not null)
 {
-    <AssetSerialDetail Serial="@Serial" OnSaveButtonClicked="OnClose" />
+    <AssetSerialDetail Serial="@Serial" OnSaveButtonClicked="OnAssetSerialHasChanged" />
 }
 
 @code {
@@ -102,7 +102,7 @@
         @* Elements = await AssetsService.GetAssetSerials(); *@
     }
 
-    private async Task OnClose()
+    private async Task OnAssetSerialHasChanged()
     {
         loading = true;
         Elements = await AssetsService.GetAssetSerials();
