@@ -14,7 +14,7 @@ public static class MenuItemExtension
     
     public static MenuItem ToMenuItem(this GetTag tag)
     {
-        return new MenuItem(tag.Id, tag.Name, "", $"/settings/tags/{tag.Id}");
+        return new MenuItem(tag.Id, tag.Name, "", $"/settings/tags/{tag.Slug}");
     }
 
     public static MenuItem ToMenuItem(this GetEmployee employee)

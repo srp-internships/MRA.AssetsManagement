@@ -14,9 +14,9 @@ public class TagEntitySeeder : EntitySeeder<Tag>
         if (await _repository.AnyAsync()) return;
         
         await _repository.CreateAsync(default,
-            new () { Name = "outdated", Color = "#DD0000" },
-            new () { Name = "fast", Color = "#007C00" },
-            new () { Name = "issues", Color = "#5600AC" }
+            new () { Name = "outdated", Slug="outdated" ,Color = "#DD0000" },
+            new () { Name = "fast", Slug="fast" ,Color = "#007C00" },
+            new () { Name = "issues", Slug="issues" ,Color = "#5600AC" }
         );
     }
 }
