@@ -19,6 +19,6 @@ public static class MenuItemExtension
 
     public static MenuItem ToMenuItem(this GetEmployee employee)
     {
-        return new MenuItem(employee.Id, employee.FullName, "", $"/employees/{employee.Id}");
+        return new MenuItem(employee.Id, employee.FullName, "", $"/employees/{employee.UserName}");
     }
 }
