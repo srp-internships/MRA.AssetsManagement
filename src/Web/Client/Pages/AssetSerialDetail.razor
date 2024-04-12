@@ -5,6 +5,7 @@
 @inject IAssetSerialService AssetSerialService
 @inject IEmployeesService EmployeesService
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 
 <MudDrawer @bind-Open="@showDrawer" Width="400px" Height="100%" Anchor="Anchor.End" Elevation="1"
     Variant="@DrawerVariant.Temporary" DisableOverlay="true">
@@ -12,10 +13,7 @@
         <div
             style="width: 100%; display: flex; flex-direction: row; justify-content: space-between; align-items: center">
             <div>
-                <MudIconButton Icon="@Icons.Material.Rounded.Close" OnClick="@(e => {
-                        NavigationManager.NavigateTo("/assets");
-                        OnCloseButtonClicked.InvokeAsync();
-                    })"></MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Rounded.Close" OnClick="@(() => NavigationManager.NavigateTo("/assets"))"></MudIconButton>
             </div>
             @if (isLoading)
             {
@@ -82,7 +80,8 @@
 @code {
 
     [Parameter] public string Serial { get; set; } = null!;
-    [Parameter] public EventCallback OnCloseButtonClicked { get; set; }
+    private string prevSerial = string.Empty;
+    [Parameter] public EventCallback OnSaveButtonClicked { get; set; }
     GetAssetSerial assetSerial = null!;
     private IEnumerable<UserDisplay> UserDisplays = [];
     private bool showDrawer;
@@ -93,19 +92,20 @@
     {
         showDrawer = true;
         UserDisplays = (await EmployeesService.GetEmployees()).Select(x => new UserDisplay
-            {
-                UserName = x.UserName,
-                FirstName = x.FullName.Split(" ")[0],
-                LastName = x.FullName.Split(" ")[1]
-            }).OrderBy(x => x.FirstName);
+        {
+            UserName = x.UserName,
+            FirstName = x.FullName.Split(" ")[0],
+            LastName = x.FullName.Split(" ")[1]
+        }).OrderBy(x => x.FirstName);
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Serial is not null)
+        if (Serial is not null && prevSerial != Serial)
         {
             assetSerial = await AssetSerialService.GetBySerial(Serial);
             isLoading = false;
+            prevSerial = Serial;
         }
     }
 
@@ -130,10 +130,14 @@
     private async Task OnSave()
     {
         await AssetSerialService.UpdateSerial(new()
-            {
-                Id = assetSerial.Id,
-                Status = assetSerial.Status,
-                UserDisplay = assetSerial.Employee
-            });
+        {
+            Id = assetSerial.Id,
+            Status = assetSerial.Status,
+            UserDisplay = assetSerial.Employee
+        });
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+        Snackbar.Add("Serial succesfull updated", Severity.Success);
+        await OnSaveButtonClicked.InvokeAsync();
+        NavigationManager.NavigateTo("/assets");
     }
 }
