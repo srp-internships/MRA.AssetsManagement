@@ -9,5 +9,6 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
         Task<GetEmployee> GetEmployeeByUserName(string userName);
         Task<GetEmployee> Create(CreateEmployeeRequest newEmployee);
         Task<List<GetEmployeeAssetSerials>> GetEmployeeAssetsSerials(string userName);
+        Task<IEnumerable<GetEmployee>> GetEmployees();
     }
 }
