@@ -4,27 +4,33 @@
 @using MRA.AssetsManagement.Web.Shared.Purchas
 @inject IReportService ReportService
 
+<MudCard Class="pa-3">
+    <MudCartContent>
+        <MudItem>
+            <MudStack Row="true" Justify="Justify.SpaceBetween">
+                <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Size="Size.Small" OnClick="MinusTwoDays"/>
+                <MudDateRangePicker @bind-DateRange="_dateRange" Variant="Variant.Outlined" Margin="Margin.Dense" DateChanged="HandleDateChanged" MaxDate="DateTime.Today"/>
+                <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowRight" Size="Size.Small" OnClick="AddTwoDays"/>
+                <MudSelect Margin="Margin.Dense" T="string" Label="Type" Variant="Variant.Outlined" @bind-Value="@SelectedType" @onchange="HandleSelectChange">
+                    @foreach (var type in _types)
+                    {
+                        <MudSelectItem Value="@type.Name">@type.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSpacer/>
+                <MudButton Disabled="@_processing" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Primary">
+                    <MudText>Go</MudText>
+                </MudButton>
+            </MudStack>
+        </MudItem>
+        <MudItem Class="mt-3">
+            <h5>All units: @_purches.Count</h5>
+        </MudItem>
+    </MudCartContent>
+</MudCard>
 
 <MudTable Items="@_purches" Hover="true" Dense="true" FixedHeader="true">
-    <ToolBarContent>
-        <MudStack Row="true" Justify="Justify.SpaceBetween">
-            <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Size="Size.Small" OnClick="MinusTwoDays"/>
-            <MudDateRangePicker @bind-DateRange="_dateRange" Variant="Variant.Outlined" Margin="Margin.Dense" DateChanged="HandleDateChanged" MaxDate="DateTime.Today"/>
-            <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowRight" Size="Size.Small" OnClick="AddTwoDays"/>
-            <MudSelect Margin="Margin.Dense" T="string" Label="Type" Variant="Variant.Outlined" @bind-Value="@SelectedType" @onchange="HandleSelectChange">
-                @foreach (var type in _types)
-                {
-                    <MudSelectItem Value="@type.Name">@type.Name</MudSelectItem>
-                }
-            </MudSelect>
-        
-            <MudSpacer />
-            <MudButton  Disabled="@_processing" OnClick="ProcessSomething" Variant="Variant.Filled" Color="Color.Primary">
-                <MudText>Click me</MudText>
-            </MudButton>
-        </MudStack>
-        <h5>All units: @_purches.Count</h5>
-    </ToolBarContent>
     <HeaderContent>
         <MudTh>Type</MudTh>
         <MudTh>Name</MudTh>
@@ -60,10 +66,14 @@
         }
     </RowTemplate>
     <FooterContent>
-       <MudTd><b>Total price</b></MudTd>
-               <MudTd></MudTd>
-               <MudTd><b>@TotalPrice</b></MudTd>
-               <MudTd></MudTd>
+        <MudTd>
+            <b>Total price</b>
+        </MudTd>
+        <MudTd></MudTd>
+        <MudTd>
+            <b>@TotalPrice</b>
+        </MudTd>
+        <MudTd></MudTd>
     </FooterContent>
 </MudTable>
 
@@ -79,8 +89,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _types = await ReportService.Fetch2();
-        _types.Add(new GetAssetType(){Name = "All"});
+        _types = await ReportService.GetTypes();
+        _types.Add(new GetAssetType() { Name = "All" });
         _loading = true;
     }
 
@@ -91,6 +101,13 @@
             SelectedType = null;
         }
         SelectedType = args.Value?.ToString();
+        StateHasChanged();
+    }
+
+    private void HandleDateChanged(DateRange newDateRange)
+    {
+        _dateRange.Start = newDateRange.Start;
+        _dateRange.End = newDateRange.End;
         StateHasChanged();
     }
 
@@ -106,15 +123,21 @@
         StateHasChanged();
     }
 
-    async Task ProcessSomething()
+    private async Task ProcessSomething()
     {
         _loading = true;
         var id = _types.FirstOrDefault(x => x.Name == SelectedType)?.Id;
+        if (id == null)
+        {
+        }
         _purches = await ReportService.GetPurchases(new PurchasedAssetsRequest()
         {
-            FromDate = _dateRange.Start, ToDate = _dateRange.End, AssetTypeId = id
+            FromDate = _dateRange.Start!.Value,
+            ToDate = _dateRange.End!.Value,
+            AssetTypeId = id
         });
         _loading = false;
         StateHasChanged();
     }
+
 }
