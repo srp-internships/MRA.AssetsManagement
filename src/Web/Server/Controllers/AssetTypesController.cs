@@ -15,10 +15,10 @@ public class AssetTypesController : ApiControllerBase
         return Ok(await Mediator.Send(new GetAssetTypesQuery(), cancellationToken));
     }
     
-    [HttpGet("{id}")]
-    public async Task<ActionResult<IEnumerable<GetAssetType>>> GetById(string id, CancellationToken cancellationToken)
+    [HttpGet("{slug}")]
+    public async Task<ActionResult<IEnumerable<GetAssetType>>> GetBySlug(string slug, CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetSingleAssetTypeQuery(id), cancellationToken));
+        return Ok(await Mediator.Send(new GetSingleAssetTypeQuery(slug), cancellationToken));
     }
 
 
@@ -28,7 +28,7 @@ public class AssetTypesController : ApiControllerBase
     public async Task<ActionResult<GetAssetType>> Create(CreateAssetTypeRequest request, CancellationToken cancellationToken)
     {
         var result = await Mediator.Send(new CreateAssetTypeCommand(request), cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { result.Id }, result);
+        return CreatedAtAction(nameof(GetBySlug), new { result.Slug }, result);
     }
 
     [HttpPut]

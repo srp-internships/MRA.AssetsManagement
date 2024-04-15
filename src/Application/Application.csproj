@@ -25,11 +25,12 @@
         <PackageReference Include="MRA.Configurations" Version="2.0.5" />
         <PackageReference Include="MRA.Identity.Application.Contract" Version="1.0.2" />
         <PackageReference Include="MRApiCommon" Version="1.0.9" />
+        <PackageReference Include="NickBuhro.Translit" Version="1.4.5" />
         <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+        <PackageReference Include="Slugify.Core" Version="4.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Common\Services\" />
         <Folder Include="Features\Services\" />
     </ItemGroup>
 
