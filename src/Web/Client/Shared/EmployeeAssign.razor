@@ -1,13 +1,24 @@
+@using MRA.AssetsManagement.Web.Client.Pages
 @using MRA.AssetsManagement.Web.Shared.Assets
 @inject IEmployeesService EmployeesService
 
-<MudTable Items="@Elements" GroupBy="@groupDefinition">
+<MudTable Class="mt-4" Items="@Elements" GroupBy="@groupDefinition">
     <ColGroup>
         <col style="width: 60px;" />
         <col />
         <col />
         <col />
     </ColGroup>
+    <HeaderContent>
+        <MudTh>Asset Name</MudTh>
+        <MudTh>Serial</MudTh>
+        <MudTh>From</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Asset Name">@context.AssetName</MudTd>
+        <MudTd DataLabel="Serial">@context.Serial</MudTd>
+        <MudTd DataLabel="From">@context.From.ToString("dd MMMM yyyy")</MudTd>
+    </RowTemplate>
 </MudTable>
 
 @code {

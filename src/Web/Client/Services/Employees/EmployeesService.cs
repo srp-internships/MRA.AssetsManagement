@@ -39,7 +39,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
 
         public async Task<List<GetEmployeeAssetSerials>> GetEmployeeAssetsSerials(string userName)
         {
-            var response = await httpClient.GetFromJsonAsync<List<GetEmployeeAssetSerials>>($"{_baseAddress}api/employees/serials/${userName}");
+            var response = await httpClient.GetFromJsonAsync<List<GetEmployeeAssetSerials>>($"{_baseAddress}api/employees/serials/{userName}");
             snackbar.ShowIfError(response, "Occured some errors");
             return response.Result!;
         }
