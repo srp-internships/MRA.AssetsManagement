@@ -1,6 +1,6 @@
 ﻿@page "/employees"
 @attribute [Authorize]
-@page "/employees/{id}"
+@page "/employees/{userName}"
 @using MRA.AssetsManagement.Web.Client.Common.Extensions
 @using MRA.AssetsManagement.Web.Client.Components.MenuItems
 @using MRA.AssetsManagement.Web.Shared.Employees
@@ -16,7 +16,7 @@
     <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px" />
     <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px" />
 }
-else if(Id is null)
+else if(UserName is null)
 {
     <EditForm Model="_createEmployee" OnValidSubmit="CreateOrUpdate">
         <FluentValidationValidator />
@@ -67,7 +67,7 @@ else
 
 
 @code {
-    [Parameter] public string? Id { get; set; }
+    [Parameter] public string? UserName { get; set; }
 
     GetEmployee _getEmployee = null!;
     CreateEmployeeRequest _createEmployee = new CreateEmployeeRequest();
@@ -76,9 +76,9 @@ else
     protected override async Task OnParametersSetAsync()
     {
         _loading = true;
-        if (Id is not null)
+        if (UserName is not null)
         {
-            _getEmployee = await EmployeesService.GetEmployeeById(Id);
+            _getEmployee = await EmployeesService.GetEmployeeByUserName(UserName!);
         }
         _loading = false;
         StateHasChanged();
@@ -86,7 +86,7 @@ else
 
     private async void CreateOrUpdate()
     {
-        if (Id is null)
+        if (UserName is null)
         {
             _getEmployee = await EmployeesService.Create(_createEmployee);
             MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getEmployee.ToMenuItem());

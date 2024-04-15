@@ -15,9 +15,9 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 
         private readonly string _baseAddress = environment.BaseAddress;
 
-        public async Task<GetAssetType> GetAssetTypeById(string id)
+        public async Task<GetAssetType> GetAssetTypeBySlug(string slug)
         {
-            var response = await httpClient.GetFromJsonAsync<GetAssetType>($"{_baseAddress}api/assettypes/{id}");
+            var response = await httpClient.GetFromJsonAsync<GetAssetType>($"{_baseAddress}api/assettypes/{slug}");
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }
