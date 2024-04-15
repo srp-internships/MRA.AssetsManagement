@@ -1,12 +1,30 @@
 @using MRA.AssetsManagement.Web.Shared.Assets
 @inject IEmployeesService EmployeesService
 
+<MudTable Items="@Elements" GroupBy="@groupDefinition">
+    <ColGroup>
+        <col style="width: 60px;" />
+        <col />
+        <col />
+        <col />
+    </ColGroup>
+</MudTable>
 
 @code {
     private List<GetEmployeeAssetSerials> Elements = new List<GetEmployeeAssetSerials>();
+    [Parameter] public string UserName { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
-        @* Elements = await EmployeesService.GetEmployeeAssetsSerials(); *@
+        Elements = await EmployeesService.GetEmployeeAssetsSerials(UserName);
     }
+
+    private TableGroupDefinition<GetEmployeeAssetSerials> groupDefinition = new()
+    {
+        GroupName = "Asset Types",
+        Indentation = false,
+        Expandable = true,
+        IsInitiallyExpanded = false,
+        Selector = x => x.AssetType
+    };
 }

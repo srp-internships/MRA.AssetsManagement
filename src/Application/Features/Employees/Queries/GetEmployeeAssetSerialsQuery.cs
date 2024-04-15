@@ -18,6 +18,7 @@ public class GetEmployeeAssetSerialsQueryHandler(IApplicationDbContext context) 
         var assetSerials = await context.AssetSerials.GetAllAsync(x => x.Employee != null &&
                                                                     x.Employee.UserName == request.UserName &&
                                                                     x.Status == Domain.Enums.AssetStatus.Taken);
+                                                                    
         var history = (await context.AssetHistories.GetAllAsync(x => assetSerials.Contains(x.AssetSerial) && x.AssetSerial.Status == Domain.Enums.AssetStatus.Taken))
                                                     .OrderByDescending(x => x.AssetSerial.LastModifiedAt);
         var assetTypeIds = assetSerials.Select(x => x.Asset.AssetTypeId);
