@@ -66,9 +66,10 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
                 {
                     Asset = detail.Asset,
                     Status = AssetStatus.Available,
-                    CreatedAt = request.Date,
-                    LastModifiedAt = request.Date,
-                    Serial = assetType.ShortName + "-" + new string('0', 6-((++assetTypeCountDict[detail.Asset.AssetTypeId]).ToString().Length)) + assetTypeCountDict[detail.Asset.AssetTypeId]
+                    Serial = assetType.ShortName + "-" + $"{++assetTypeCountDict[detail.Asset.AssetTypeId]}".PadLeft(6, '0'),
+                    CreatedAt = DateTime.Now,
+                    LastModifiedAt = DateTime.Now,
+                    CreatedBy = _currentUserService.GetUserId().ToString()
                 };
                 assetSerials.Add(assetSerial);
                 
