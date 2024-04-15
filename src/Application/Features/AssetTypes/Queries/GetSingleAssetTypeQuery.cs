@@ -7,7 +7,7 @@ using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
 namespace MRA.AssetsManagement.Application.Features.AssetTypes.Queries;
 
-public record GetSingleAssetTypeQuery(string Id) : IRequest<GetAssetType>;
+public record GetSingleAssetTypeQuery(string Slug) : IRequest<GetAssetType>;
 
 
 
@@ -29,7 +29,7 @@ public class GetSingleAssetTypeQueryHandler : IRequestHandler<GetSingleAssetType
 
     public async Task<GetAssetType> Handle(GetSingleAssetTypeQuery request, CancellationToken cancellationToken)
     {
-        var result = await _context.AssetTypes.GetAsync(x => x.Id == request.Id, cancellationToken);
+        var result = await _context.AssetTypes.GetAsync(x => x.Slug == request.Slug, cancellationToken);
         return _mapper.Map<GetAssetType>(result);
     }
 }

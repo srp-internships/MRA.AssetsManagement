@@ -4,6 +4,7 @@ using FluentValidation;
 
 using MediatR;
 
+using MRA.AssetsManagement.Application.Common.Services.SlugGeneratorService;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Domain.Entities;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
@@ -51,17 +52,19 @@ public class CreateAssetTypeCommandHandler : IRequestHandler<CreateAssetTypeComm
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
+    private readonly ISlugGeneratorService _slugGeneratorService;
 
-    public CreateAssetTypeCommandHandler(IApplicationDbContext context, IMapper mapper)
+    public CreateAssetTypeCommandHandler(IApplicationDbContext context, IMapper mapper, ISlugGeneratorService slugGeneratorService)
     {
         _context = context;
         _mapper = mapper;
+        _slugGeneratorService = slugGeneratorService;
     }
 
-    public async Task<GetAssetType> Handle(CreateAssetTypeCommand request, CancellationToken cancellationToken)
+    public async Task<GetAssetType> Handle(CreateAssetTypeCommand request ,CancellationToken cancellationToken)
     {
         var assetType = _mapper.Map<AssetType>(request.AssetType);
-
+        assetType.Slug = _slugGeneratorService.GenerateSlug(assetType.Name);
         await _context.AssetTypes.CreateAsync(cancellationToken, assetType);
         return _mapper.Map<GetAssetType>(assetType);
     }
