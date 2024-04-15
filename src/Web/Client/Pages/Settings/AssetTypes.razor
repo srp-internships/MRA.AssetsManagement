@@ -44,8 +44,8 @@
                           Margin="Margin.Dense" Variant=Variant.Outlined
                           Label="Name" Required="true" RequiredError="Name is required!" TextChanged="AutoGenerateShortName" Immediate="true"/>
             <MudItem Class="d-flex mt-3">
-                <MudTextField T="string" @bind-Value="@_getAssetType.ShortName" Margin="Margin.Dense" Variant=Variant.Outlined Label="Short name" Required="true" RequiredError="Short name is required!"/>
-                <MudCheckBox T="bool" @bind-Value="_autoGenerateShortName" Label="Auto Generate" CheckedChanged="AutoGenerateShortName"></MudCheckBox>
+                <MudTextField T="string" @bind-Value="@_getAssetType.ShortName" Disabled=@(Slug != null ? true : false) Margin="Margin.Dense" Variant=Variant.Outlined Label="Short name" Required="true" RequiredError="Short name is required!"/>
+                <MudCheckBox T="bool" @bind-Value="_autoGenerateShortName" Disabled=@(Slug != null ? true : false) Label="Auto Generate" CheckedChanged="AutoGenerateShortName"></MudCheckBox>
             </MudItem>
             <MudSelect @bind-Value="_getAssetType.Icon" Immediate=true Label="Icon" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mt-3">
 
