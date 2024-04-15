@@ -66,17 +66,19 @@
                     <MudAutocomplete Value="@assetSerial.Employee" T="UserDisplay" Margin="Margin.Dense" SearchFunc="@SearchEmployees" Variant="Variant.Outlined" ValueChanged="@(e => OnAssignedPersonChanged(e))"/>
                 </MudStack>
             }
+
+            <AssetSerialHistory Serial="@Serial" ShowHistory="@showHistory" />
         </MudStack>
     </MudNavMenu>
 </MudDrawer>
 
 @code {
-
     [Parameter] public string Serial { get; set; } = null!;
     private string prevSerial = string.Empty;
     [Parameter] public EventCallback OnSaveButtonClicked { get; set; }
     GetAssetSerial assetSerial = null!;
     private IEnumerable<UserDisplay> UserDisplays = [];
+    private bool showHistory = false;
     private bool isLoading = true;
     private bool isSerialHasChanged = false;
 
@@ -97,6 +99,7 @@
             assetSerial = await AssetSerialService.GetBySerial(Serial);
             isLoading = false;
             prevSerial = Serial;
+            showHistory = false;
         }
     }
 
