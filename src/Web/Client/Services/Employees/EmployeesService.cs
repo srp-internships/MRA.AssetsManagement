@@ -17,7 +17,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
 
         public async Task<GetEmployee> GetEmployeeByUserName(string userName)
         {
-            var response = await httpClient.GetFromJsonAsync<GetEmployee>($"{_baseAddress}api/employees/id/{userName}");
+            var response = await httpClient.GetFromJsonAsync<GetEmployee>($"{_baseAddress}api/employees/{userName}");
 
             return response.Result!;
         }
