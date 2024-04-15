@@ -14,7 +14,7 @@
 </MudStack>
 <MudStack Row=true Class="d-flex justify-space-between mb-3">    
     <MudTextField @bind-Value="_vendor" Style="max-width: 450px" T=string Label="Vendor" Variant="Variant.Outlined" Margin="Margin.Dense" Immediate />
-    <MudButton @onclick=AddRow StartIcon="@Icons.Material.Filled.Add" Color=Color.Tertiary Variant="Variant.Text">Add row</MudButton>
+    <MudButton @onclick=AddRow StartIcon="@Icons.Material.Filled.Add" Color=Color.Dark Variant="Variant.Text">Add row</MudButton>
 </MudStack>
 
 <MudTable Class="mb-3" Items="@AssetPurchases" Dense="true">
@@ -113,16 +113,20 @@
 
     private async void Create()
     {
-        var details = AssetPurchases.Where(ap => ap.Asset != null || ap.Quantity != 0).ToList();
-        CreateAssetPurchaseRequest newAssetPurchase = new() { Vendor = _vendor, Details = details };
-        if (!string.IsNullOrEmpty(_vendor))
+        if (string.IsNullOrEmpty(_vendor))
         {
-            await AssetsService.CreatePurchase(newAssetPurchase);   
-            NavigationManager.NavigateTo("/assets");
+            SnackBar.Add("Vendor is required field!", Severity.Error);
+        }
+        else if (AssetPurchases.Any(ap => ap.Quantity < 1 || ap.Price < 1))
+        {
+            SnackBar.Add("Price and quantity must be grater than 0!", Severity.Error);
         }
         else
         {
-            SnackBar.Add("Vendor is required field!", Severity.Error);
+            var details = AssetPurchases.Where(ap => ap.Asset != null).ToList();
+            CreateAssetPurchaseRequest newAssetPurchase = new() { Vendor = _vendor, Details = details };
+            await AssetsService.CreatePurchase(newAssetPurchase);
+            NavigationManager.NavigateTo("/assets");
         }
     }
 
