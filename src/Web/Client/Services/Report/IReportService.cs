@@ -7,5 +7,4 @@ public interface IReportService
 {
     Task<List<GetPurchasedAssets>> GetPurchases(PurchasedAssetsRequest request);
     Task<List<GetAssetType>> GetTypes();
-    Task<List<GetAssetType>> Fetch2();
 }

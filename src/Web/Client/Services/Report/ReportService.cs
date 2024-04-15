@@ -37,11 +37,4 @@ public class ReportService : IReportService
         _snackbar.ShowIfError(response, "Occured some errors");
         return response.Result!;
     }
-    
-    public async Task<List<GetAssetType>> Fetch2()
-    {
-        var response = await _httpClient.GetFromJsonAsync<List<GetAssetType>>($"{_baseUrl}api/AssetTypes");
-        _snackbar.ShowIfError(response, "Error was occured.");
-        return response.Result!;
-    }
 }
