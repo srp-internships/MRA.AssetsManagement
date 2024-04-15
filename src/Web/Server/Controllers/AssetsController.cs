@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using MRA.AssetsManagement.Application.Features.AssetHistories.Queries;
+using MRA.AssetsManagement.Application.Features.Assets.Commands;
 using MRA.AssetsManagement.Application.Features.Assets.Queries;
 using MRA.AssetsManagement.Application.Features.AssetSerials.Commands;
 using MRA.AssetsManagement.Application.Features.AssetSerials.Queries;
@@ -21,6 +22,14 @@ public class AssetsController : ApiControllerBase
     public async Task<ActionResult<IEnumerable<Asset>>> Get(CancellationToken cancellationToken)
     {
         return Ok(await Mediator.Send(new GetAssetsQuery(), cancellationToken));
+    }
+
+    [HttpGet("{typeId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<IEnumerable<Asset>>> GetAssetsByTypeId(string typeId, CancellationToken cancellationToken)
+    {
+        return Ok(await Mediator.Send(new GetAssetsByTypeIdQuery(typeId), cancellationToken));
     }
 
     [HttpGet("serial")]
@@ -63,5 +72,14 @@ public class AssetsController : ApiControllerBase
     {
         var document = await Mediator.Send(command);
         return Ok(document);
+    }
+
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<GetAsset>> CreateAsset(CreateAssetRequest request, CancellationToken cancellationToken)
+    {
+        var asset = await Mediator.Send(new CreateAssetCommand(request));
+        return CreatedAtAction(nameof(CreateAsset), asset);
     }
 }

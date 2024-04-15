@@ -1,0 +1,158 @@
+﻿@page "/assets/purchase"
+@using MRA.AssetsManagement.Web.Shared.AssetPurchases
+@using MRA.AssetsManagement.Web.Shared.Assets
+@using MRA.AssetsManagement.Web.Client.Services.Assets
+@using Blazored.FluentValidation
+@inject IAssetTypesService AssetTypesService
+@inject IAssetsService AssetsService
+@inject NavigationManager NavigationManager
+@inject ISnackbar SnackBar
+
+<MudStack Row="true" Class="d-flex justify-space-between mb-3 pa-1">
+    <MudText Typo="Typo.h4">Purchase</MudText>
+    <MudButton Variant="Variant.Filled" @onclick=Create ButtonType=ButtonType.Submit StartIcon="@Icons.Material.Filled.CreateNewFolder" Color="Color.Tertiary" Size="Size.Medium">Create</MudButton>
+</MudStack>
+<MudStack Row=true Class="d-flex justify-space-between mb-3">    
+    <MudTextField @bind-Value="_vendor" Style="max-width: 450px" T=string Label="Vendor" Variant="Variant.Outlined" Margin="Margin.Dense" Immediate />
+    <MudButton @onclick=AddRow StartIcon="@Icons.Material.Filled.Add" Color=Color.Dark Variant="Variant.Text">Add row</MudButton>
+</MudStack>
+
+<MudTable Class="mb-3" Items="@AssetPurchases" Dense="true">
+    <HeaderContent>
+        <MudTh>Type</MudTh>
+        <MudTh>
+            <MudStack Row=true Class="justify-space-between">
+                <MudText>Asset</MudText>
+                <MudIconButton @onclick=OpenDialog Class="pa-0" Disabled=@(_selectedAssetType == null ? true : false) Icon="@Icons.Material.Filled.Add" Color="Color.Tertiary" />
+            </MudStack>
+        </MudTh>
+        <MudTh>Count</MudTh>
+        <MudTh>Price</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Type">
+            <MudSelect @bind-Value=context.AssetType TextChanged=@(() => {_selectedAssetType = context.AssetType; assetSelect.ResetAsync();}) ToStringFunc=AssetTypeToStirng Label="Select Type" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant="Variant.Outlined" Clearable>
+                @foreach (var assetType in AssetTypes)
+                {
+                    <MudSelectItem Value="assetType" />
+                }
+            </MudSelect>
+        </MudTd>
+        <MudTd DataLabel="Asset">
+            <MudSelect @ref=assetSelect @bind-Value=context.Asset @onmousedown="@(() => GetAssets(context.AssetType.Id))" Disabled="@(context.AssetType == null ? true : false)" ToStringFunc=AssetToStirng Label="Select Asset" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant=" Variant.Outlined" Clearable>
+                @foreach (var asset in Assets)
+                {
+                    <MudSelectItem Value="asset" />
+                }
+            </MudSelect>
+        </MudTd>
+        <MudTd DataLabel="Quantity">
+            <MudTextField @bind-Value=context.Quantity InputType="InputType.Number" Margin=Margin.Dense Variant="Variant.Outlined" Immediate />
+        </MudTd>
+        <MudTd DataLabel="Price">
+            <MudTextField @bind-Value=context.Price Margin=Margin.Dense Variant="Variant.Outlined" Immediate MaxLength="15" />
+        </MudTd>
+    </RowTemplate>
+    <FooterContent>
+        <MudTh><MudText Typo="Typo.h5">Total:</MudText></MudTh>
+        <MudTh />
+        <MudTh/>
+        <MudTh>
+            <MudText Typo="Typo.h5" Align="Align.Center">@CalculateTotalPrice()</MudText>
+        </MudTh>
+    </FooterContent>
+</MudTable>
+
+<MudDialog IsVisible=@_isOpen>
+    <TitleContent>
+        <MudText Typo=Typo.h4 Align="Align.Center">New Asset</MudText>
+        <MudDivider />
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="_newAsset" OnValidSubmit="@(() => CreateNewAsset(_selectedAssetType.Id))" Context="editContext">
+            <FluentValidationValidator />
+            <MudText Class="mb-3" Typo="Typo.h6">Type: @_selectedAssetType.Name</MudText>
+            <MudTextField @bind-Value=_newAsset.Name Label="Name" Margin="Margin.Dense" Variant="Variant.Outlined" />
+            <MudStack Row=true Class="justify-end mt-3">
+                <MudButton Color="Color.Tertiary" Variant=Variant.Filled ButtonType="ButtonType.Submit">Create</MudButton>
+                <MudButton Variant=Variant.Filled OnClick="OpenDialog">Cancel</MudButton>
+            </MudStack>
+        </EditForm>
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+    private List<CreateAssetPurchaseDetail> AssetPurchases = new List<CreateAssetPurchaseDetail>();
+
+    private string _vendor { get; set; } = null!;
+    private bool _isOpen = false;
+    private bool _disabled = true;
+
+    private MudSelect<GetAsset> assetSelect = null!;
+    private GetAssetType _selectedAssetType = null!;
+
+    private CreateAssetRequest _newAsset = new CreateAssetRequest();
+    private List<GetAssetType> AssetTypes = new List<GetAssetType>();
+    private List<GetAsset> Assets = new List<GetAsset>();
+
+    Func<GetAssetType, string> AssetTypeToStirng = at => at.Name;
+    Func<GetAsset, string> AssetToStirng = a => a.Name;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AssetPurchases.Add(new CreateAssetPurchaseDetail());
+        AssetTypes =  await AssetTypesService.GetAll();
+    }
+
+    private async void GetAssets(string id)
+    {
+        Assets = (await AssetsService.GetAssetsByTypeId(id)).ToList();
+        StateHasChanged();
+    }
+
+    private async void Create()
+    {
+        if (string.IsNullOrEmpty(_vendor))
+        {
+            SnackBar.Add("Vendor is required field!", Severity.Error);
+        }
+        else if (AssetPurchases.Any(ap => ap.Quantity < 1 || ap.Price < 1))
+        {
+            SnackBar.Add("Price and quantity must be grater than 0!", Severity.Error);
+        }
+        else
+        {
+            var details = AssetPurchases.Where(ap => ap.Asset != null).ToList();
+            CreateAssetPurchaseRequest newAssetPurchase = new() { Vendor = _vendor, Details = details };
+            await AssetsService.CreatePurchase(newAssetPurchase);
+            NavigationManager.NavigateTo("/assets");
+        }
+    }
+
+    private async Task CreateNewAsset(string assetTypeId)
+    {
+        _newAsset.AssetTypeId = assetTypeId;
+        await AssetsService.CreateAsset(_newAsset);
+        OpenDialog();
+        _newAsset = new CreateAssetRequest();
+    }   
+
+    private void AddRow()
+    {
+        var newRow = new CreateAssetPurchaseDetail();
+        AssetPurchases.Add(newRow);
+        _selectedAssetType = null!;
+    }
+
+    private decimal CalculateTotalPrice()
+    {
+        var totalPrice =  AssetPurchases.Sum(ap => ap.Price);
+        return totalPrice;
+    }
+
+    private void OpenDialog()
+    {
+        _isOpen = !_isOpen;
+    }
+}
