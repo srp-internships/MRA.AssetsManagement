@@ -15,7 +15,7 @@ public class TagsController : ApiControllerBase
     public async Task<ActionResult<Tag>> Create(CreateTagCommand command, CancellationToken cancellationToken)
     {
         var createdTag = await Mediator.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(GetById), new {createdTag.Id} ,createdTag);
+        return CreatedAtAction(nameof(GetBySlug), new {createdTag.Slug} ,createdTag);
     }
 
     [HttpGet]
@@ -26,12 +26,12 @@ public class TagsController : ApiControllerBase
         return Ok(await Mediator.Send(new GetTagsQuery(), cancellationToken));
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{slug}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult<IEnumerable<Tag>>> GetById(string id, CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<Tag>>> GetBySlug(string slug, CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetSingleTagQuery(id), cancellationToken));
+        return Ok(await Mediator.Send(new GetSingleTagQuery(slug), cancellationToken));
     }
 
     [HttpPut]

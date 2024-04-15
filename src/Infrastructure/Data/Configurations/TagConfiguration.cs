@@ -15,6 +15,7 @@ public class TagConfiguration : BaseConfiguration<Tag>
     {
         base.RegisterClassMap(classMap);
         classMap.MapMember(x => x.Name).SetElementName("name");
+        classMap.MapMember(x => x.Slug).SetElementName("slug");
         classMap.MapMember(x => x.Color).SetElementName("color");
     }
 }

@@ -1,5 +1,5 @@
 @page "/settings/asset-types"
-@page "/settings/asset-types/{id}"
+@page "/settings/asset-types/{slug}"
 @layout SettingsLayout
 @inject IIconService IconService
 @using MRA.AssetsManagement.Web.Client.Components.MenuItems
@@ -20,7 +20,7 @@
             <MudButton 
                 Variant="Variant.Filled" 
                 @onclick="ArchiveOrRestore" 
-                Disabled="@string.IsNullOrEmpty(Id)" 
+                Disabled="@string.IsNullOrEmpty(Slug)" 
                 StartIcon="@(_getAssetType.Archived ? Icons.Material.Filled.Unarchive : Icons.Material.Filled.Archive)" 
                 Color="Color.Secondary" 
                 Size="Size.Medium">
@@ -68,7 +68,7 @@
 </SectionContent>
 
 @code {
-    [Parameter] public string? Id { get; set; }
+    [Parameter] public string? Slug { get; set; }
 
     GetAssetType _getAssetType = null!;
     bool _loading = false;
@@ -80,9 +80,9 @@
         _autoGenerateShortName = false;
         _getAssetType = new GetAssetType();
 
-        if (Id is not null)
+        if (Slug is not null)
         {
-            _getAssetType = await AssetTypesService.GetAssetTypeById(Id)!;
+            _getAssetType = await AssetTypesService.GetAssetTypeBySlug(Slug)!;
         }
 
         _loading = false;
@@ -100,7 +100,7 @@
 
     private async void CreateOrUpdate()
     {
-        if (Id is not null)
+        if (Slug is not null)
         {
             await AssetTypesService.Update(_getAssetType);
             MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
