@@ -21,7 +21,6 @@ public class AssetSerialService(IHttpClientService httpClient, ISnackbar snackba
         return response.Result!;
     }
 
-
     public async Task<GetAssetSerial> GetBySerial(string serial)
     {
         var response = await httpClient.GetFromJsonAsync<GetAssetSerial>($"{_baseAddress}api/assets/serial/{serial}");

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 
 using MRA.AssetsManagement.Application.Features.AssetHistories.Queries;
-
 using MRA.AssetsManagement.Application.Features.Assets.Queries;
 using MRA.AssetsManagement.Application.Features.AssetSerials.Commands;
 using MRA.AssetsManagement.Application.Features.AssetSerials.Queries;

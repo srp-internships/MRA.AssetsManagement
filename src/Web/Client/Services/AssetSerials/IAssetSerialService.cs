@@ -9,4 +9,5 @@ public interface IAssetSerialService
     Task<GetAssetSerial> GetBySerial(string id);
     Task UpdateSerial(UpdateAssetSerialRequest request);
     Task<IEnumerable<GetAssetSerialHistory>> GetAssetSerialHistories(string serial);
+    
 }
