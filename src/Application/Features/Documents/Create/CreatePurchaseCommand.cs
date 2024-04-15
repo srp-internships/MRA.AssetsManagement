@@ -1,10 +1,12 @@
 using AutoMapper;
+
 using MediatR;
 
 using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Domain.Entities;
 using MRA.AssetsManagement.Domain.Enums;
+
 using MRApiCommon.Extensions;
 
 namespace MRA.AssetsManagement.Application.Features.Documents.Create;
@@ -41,35 +43,38 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
         List<AssetSerial> assetSerials = [];
 
         var assetTypeCountDict = new Dictionary<string, int>();
-        
+
         request.Details.Select(x => x.Asset.AssetTypeId).ToList().ForEach(x =>
         {
-            Task.Run(async() =>
+            Task.Run(async () =>
             {
                 assetTypeCountDict[x] =
                     (await _context.AssetSerials.GetAllAsync(a => a.Asset.AssetTypeId == x, cancellationToken)).Count;
             }, cancellationToken);
         });
-        
+
         foreach (var detail in request.Details)
         {
             if (string.IsNullOrEmpty(detail.Asset.Id))
                 await _context.Assets.CreateAsync(cancellationToken, detail.Asset);
             else
                 detail.Asset = await _context.Assets.GetAsync(x => x.Id == detail.Asset.Id, cancellationToken);
-            
+
             var assetType = await _context.AssetTypes.GetAsync(detail.Asset.AssetTypeId, cancellationToken);
-            
+
             for (int i = 0; i < detail.Quantity; i++)
             {
                 var assetSerial = new AssetSerial
                 {
                     Asset = detail.Asset,
                     Status = AssetStatus.Available,
-                    Serial = assetType.ShortName + "-" + new string('0', 6-((++assetTypeCountDict[detail.Asset.AssetTypeId]).ToString().Length)) + assetTypeCountDict[detail.Asset.AssetTypeId]
+                    Serial = assetType.ShortName + "-" + $"{++assetTypeCountDict[detail.Asset.AssetTypeId]}".PadLeft(6, '0'),
+                    CreatedAt = DateTime.Now,
+                    LastModifiedAt = DateTime.Now,
+                    CreatedBy = _currentUserService.GetUserId().ToString()
                 };
                 assetSerials.Add(assetSerial);
-                
+
                 var history = new AssetHistory
                 {
                     AssetSerial = assetSerial,
@@ -78,7 +83,7 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
                 };
                 histories.Add(history);
             }
-            
+
             document.Details.Add(_mapper.Map<DocumentDetail>(detail));
         }
 

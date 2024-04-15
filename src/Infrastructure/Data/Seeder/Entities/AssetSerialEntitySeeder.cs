@@ -32,8 +32,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2).AddDays(50),
-                LastModifiedBy = nizomjon.UserName,
-                Employee = abbos
+                LastModifiedBy = nizomjon.UserName
             },
             new AssetSerial
             {
@@ -56,8 +55,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2),
-                LastModifiedBy = nizomjon.UserName,
-                Employee = abbos
+                LastModifiedBy = nizomjon.UserName
             },
             new AssetSerial
             {
@@ -80,8 +78,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2).AddDays(33),
-                LastModifiedBy = nizomjon.UserName,
-                Employee = abbos
+                LastModifiedBy = nizomjon.UserName
             },
             new AssetSerial
             {
@@ -104,8 +101,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2),
-                LastModifiedBy = nizomjon.UserName,
-                Employee = shuhrat
+                LastModifiedBy = nizomjon.UserName
             },
             new AssetSerial
             {
@@ -116,8 +112,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2).AddDays(57),
-                LastModifiedBy = nizomjon.UserName,
-                Employee = shuhrat
+                LastModifiedBy = nizomjon.UserName
             }
         ]);
     }
