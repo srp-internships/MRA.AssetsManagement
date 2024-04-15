@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
-
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Web.Shared.Tags;
 
 namespace MRA.AssetsManagement.Application.Features.Tags.Queries
 {
-    public record GetSingleTagQuery(string Id) : IRequest<GetTag>;
+    public record GetSingleTagQuery(string Slug) : IRequest<GetTag>;
 
     public class GetSingleTagQueryHandler : IRequestHandler<GetSingleTagQuery, GetTag>
     {
@@ -26,7 +19,7 @@ namespace MRA.AssetsManagement.Application.Features.Tags.Queries
 
         public async Task<GetTag> Handle(GetSingleTagQuery request, CancellationToken cancellationToken)
         {
-            var result = await _context.Tags.GetAsync(x => x.Id == request.Id, cancellationToken);
+            var result = await _context.Tags.GetAsync(x => x.Slug == request.Slug, cancellationToken);
             return _mapper.Map<GetTag>(result);
         }
     }

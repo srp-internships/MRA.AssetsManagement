@@ -39,10 +39,10 @@ public class EmployeeService : IEmployeeService
         return new List<Employee>();
     }
 
-    public async Task<Employee?> GetById(string id)
+    public async Task<Employee?> GetByUserName(string userName)
     {
         SetAuthorizationHeader();
-        var response = await _http.GetFromJsonAsync<EmployeeResponse>($"{_apiBaseUrl}/User/{id}");
+        var response = await _http.GetFromJsonAsync<EmployeeResponse>($"{_apiBaseUrl}/User/{userName}");
         var employee = _mapper.Map<Employee>(response);
         return employee;
     }
