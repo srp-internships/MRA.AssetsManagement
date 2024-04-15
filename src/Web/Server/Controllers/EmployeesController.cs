@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Features.Employees.Queries;
 using MRA.AssetsManagement.Domain.Entities.Employee;
+using MRA.AssetsManagement.Web.Shared.Assets;
 using MRA.AssetsManagement.Web.Shared.Employees;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
 [Authorize]
 public class EmployeesController : ApiControllerBase
 {
@@ -39,5 +38,11 @@ public class EmployeesController : ApiControllerBase
     public async Task<ActionResult<GetEmployee>> Create(CreateEmployeeRequest request, CancellationToken cancellationToken)
     {
         return await _mediator.Send(new CreateEmployeeCommand(request),cancellationToken);
+    }
+
+    [HttpGet("serials/{userName}")]
+    public async Task<ActionResult<IEnumerable<GetEmployeeAssetSerials>>> GetEmployeeAssetSerials(string userName, CancellationToken cancellationToken)
+    {
+        return Ok(await Mediator.Send(new GetEmployeeAssetSerialsQuery(userName)));
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MRA.AssetsManagement.Web.Client.Components.MenuItems;
+using MRA.AssetsManagement.Web.Shared.Assets;
 using MRA.AssetsManagement.Web.Shared.Employees;
 
 namespace MRA.AssetsManagement.Web.Client.Services.Employees
@@ -7,5 +8,6 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
     {
         Task<GetEmployee> GetEmployeeById(string id);
         Task<GetEmployee> Create(CreateEmployeeRequest newEmployee);
+        Task<List<GetEmployeeAssetSerials>> GetEmployeeAssetsSerials(string userName);
     }
 }
