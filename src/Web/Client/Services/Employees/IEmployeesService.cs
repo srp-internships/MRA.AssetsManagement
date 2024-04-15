@@ -5,8 +5,8 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
 {
     public interface IEmployeesService : IFetchMenuItemService
     {
-        Task<IEnumerable<GetEmployee>> GetEmployees();
         Task<GetEmployee> GetEmployeeByUserName(string userName);
         Task<GetEmployee> Create(CreateEmployeeRequest newEmployee);
+        Task<IEnumerable<GetEmployee>> GetEmployees();
     }
 }
