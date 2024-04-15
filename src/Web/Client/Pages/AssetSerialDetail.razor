@@ -118,8 +118,7 @@
 
         isSerialHasChanged = true;
 
-        if (assetSerial.Status == AssetStatus.Available)
-            assetSerial.Status = AssetStatus.Taken;
+        assetSerial.Status = AssetStatus.Taken;
     }
 
     private async Task OnSave()
