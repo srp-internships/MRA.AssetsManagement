@@ -10,7 +10,7 @@ namespace MRA.AssetsManagement.Web.Server.Controllers
     public class HomeController : ApiControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GetAssetTypeSerialDto>>> Get(CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<GetAssetTypeSerial>>> Get(CancellationToken cancellationToken)
         {
             return Ok(await Mediator.Send(new GetMyAssetTypesQuery(), cancellationToken));
         }

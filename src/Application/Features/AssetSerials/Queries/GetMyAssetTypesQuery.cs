@@ -6,9 +6,9 @@ using MRA.AssetsManagement.Web.Shared.AssetSerials;
 
 namespace MRA.AssetsManagement.Application.Features.AssetSerials.Queries
 {
-    public class GetMyAssetTypesQuery : IRequest<IReadOnlyCollection<GetAssetTypeSerialDto>>;
+    public class GetMyAssetTypesQuery : IRequest<IReadOnlyCollection<GetAssetTypeSerial>>;
 
-    public class GetMyAssetsQueryHandler : IRequestHandler<GetMyAssetTypesQuery, IReadOnlyCollection<GetAssetTypeSerialDto>>
+    public class GetMyAssetsQueryHandler : IRequestHandler<GetMyAssetTypesQuery, IReadOnlyCollection<GetAssetTypeSerial>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -21,7 +21,7 @@ namespace MRA.AssetsManagement.Application.Features.AssetSerials.Queries
             _currentUserService = currentUserService;
         }
 
-        public async Task<IReadOnlyCollection<GetAssetTypeSerialDto>> Handle(GetMyAssetTypesQuery request, CancellationToken cancellationToken)
+        public async Task<IReadOnlyCollection<GetAssetTypeSerial>> Handle(GetMyAssetTypesQuery request, CancellationToken cancellationToken)
         {
             var currentUserName = _currentUserService.GetUserName();
 
@@ -29,22 +29,23 @@ namespace MRA.AssetsManagement.Application.Features.AssetSerials.Queries
             var allUserAssetSerials = await _context.AssetSerials.GetAllAsync(cancellationToken);
             var userAssets = allUserAssetSerials.Where(a => a.Employee?.UserName == currentUserName).GroupBy(a => a.Asset.AssetTypeId);
 
-            var result = new List<GetAssetTypeSerialDto>();
+            var result = new List<GetAssetTypeSerial>();
             foreach (var userAssetGroup in userAssets)
             {
                 var assetType = allAssetTypes.FirstOrDefault(a => a.Id == userAssetGroup.Key);
                 if (assetType is null) continue;
 
-                var assetTypeSerial = new GetAssetTypeSerialDto
+                var assetTypeSerial = new GetAssetTypeSerial
                 {
                     Name = assetType.Name,
                     Icon = assetType.Icon
                 };
 
-                assetTypeSerial.AssetSerialsDto = new();
+                assetTypeSerial.AssetSerials = new();
+
                 foreach (var userAsset in userAssetGroup)
                 {
-                    assetTypeSerial.AssetSerialsDto.Add(new GetAssetSerialsDto
+                    assetTypeSerial.AssetSerials.Add(new GetAssetSerials
                     {
                         Name = userAsset.Asset.Name,
                         Serial = userAsset.Serial,
@@ -55,8 +56,7 @@ namespace MRA.AssetsManagement.Application.Features.AssetSerials.Queries
                 result.Add(assetTypeSerial);
             }
 
-            return _mapper.Map<IReadOnlyCollection<GetAssetTypeSerialDto>>(result);
-
+            return _mapper.Map<IReadOnlyCollection<GetAssetTypeSerial>>(result);
         }
     }
 }
