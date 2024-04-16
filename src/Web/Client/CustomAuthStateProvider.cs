@@ -31,7 +31,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
     }
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var path = $"{_configuration["IdentityClient"]}login?callback={_baseAddress}";
+        var path = $"{_configuration["IdentityClient"]}/login?callback={_baseAddress}";
         var authToken = await GetTokenAsync();
         var identity = new ClaimsIdentity();
         _http.DefaultRequestHeaders.Authorization = null;
@@ -55,11 +55,6 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
     private async Task<JwtTokenResponse?> GetTokenAsync()
     {
         var token = await _localStorageService.GetItemAsync<JwtTokenResponse>("authToken");
-        if (token == null!)
-        {
-            return null;
-        }
-
         return token;
     }
     private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)

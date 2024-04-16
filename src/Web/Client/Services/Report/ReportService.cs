@@ -9,32 +9,22 @@ using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.Report;
 
-public class ReportService : IReportService
+public class ReportService(
+    IHttpClientService httpClient,
+    ISnackbar snackbar,
+    IWebAssemblyHostEnvironment webAssemblyHostEnvironment)
+    : IReportService
 {
-    private readonly IHttpClientService _httpClient;
-    private readonly ISnackbar _snackbar;
-    private readonly string _baseUrl;
-    
-    public ReportService(IHttpClientService httpClient, ISnackbar snackbar, IWebAssemblyHostEnvironment webAssemblyHostEnvironment)
-    {
-        _httpClient = httpClient;
-        _snackbar = snackbar;
-        _baseUrl = webAssemblyHostEnvironment.BaseAddress;
-    }
+    private readonly string _baseUrl = webAssemblyHostEnvironment.BaseAddress;
+
     public async Task<List<GetPurchasedAssets>> GetPurchases(PurchasedAssetsRequest request)
     {
         var fromDateStr = request.FromDate?.ToString("yyyy.MM.dd", CultureInfo.InvariantCulture);
         var toDateStr = request.ToDate?.ToString("yyyy.MM.dd", CultureInfo.InvariantCulture);
 
-        var url = $"{_baseUrl}api/Report?FromDate={fromDateStr}&ToDate={toDateStr}";
-        var response = await _httpClient.GetFromJsonAsync<List<GetPurchasedAssets>>(url);
-        _snackbar.ShowIfError(response, "Occured some errors");
-        return response.Result!;
-    }
-    public async Task<List<GetAssetType>> GetTypes()
-    {
-        var response = await _httpClient.GetFromJsonAsync<List<GetAssetType>>($"{_baseUrl}api/AssetTypes");
-        _snackbar.ShowIfError(response, "Occured some errors");
+        var url = $"{_baseUrl}api/Report?FromDate={fromDateStr}&ToDate={toDateStr}&AssetTypeId={request.AssetTypeId}";
+        var response = await httpClient.GetFromJsonAsync<List<GetPurchasedAssets>>(url);
+        snackbar.ShowIfError(response, "Occured some errors");
         return response.Result!;
     }
 }

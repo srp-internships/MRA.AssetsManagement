@@ -6,5 +6,4 @@ namespace MRA.AssetsManagement.Web.Client.Services.ReportService;
 public interface IReportService
 {
     Task<List<GetPurchasedAssets>> GetPurchases(PurchasedAssetsRequest request);
-    Task<List<GetAssetType>> GetTypes();
 }

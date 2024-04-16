@@ -4,18 +4,24 @@
 @using MRA.AssetsManagement.Web.Shared.Purchas
 @inject IReportService ReportService
 @inject IAssetTypesService AssetTypesService
+@inject IIconService IconService
 
 <MudCard Class="pa-3">
     <MudCartContent>
         <MudItem>
             <MudStack Row="true" Justify="Justify.SpaceBetween">
                 <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Size="Size.Small" OnClick="MinusTwoDays"/>
-                <MudDateRangePicker @bind-DateRange="_dateRange" Variant="Variant.Outlined" Margin="Margin.Dense" DateChanged="HandleDateChanged" MaxDate="DateTime.Today"/>
+                <MudDateRangePicker @bind-DateRange="_dateRange" Variant="Variant.Outlined" Margin="Margin.Dense" MaxDate="DateTime.Today"/>
                 <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowRight" Size="Size.Small" OnClick="AddTwoDays"/>
-                <MudSelect Margin="Margin.Dense" T="string" Label="Type" Variant="Variant.Outlined" @bind-Value="@SelectedType" @onchange="HandleSelectChange">
+                <MudSelect Margin="Margin.Dense" T="string" Label="Type" Variant="Variant.Outlined" @bind-Value="@SelectedType">
                     @foreach (var type in _types)
                     {
-                        <MudSelectItem Value="@type.Name">@type.Name</MudSelectItem>
+                        <MudSelectItem Value="@type.Name">
+                            <MudStack Row="true" Spacing="2">
+                                <MudIcon Icon="@IconService.GetIcon(type.Name)" />
+                                <MudText>@type.Name</MudText>
+                            </MudStack>
+                        </MudSelectItem>
                     }
                 </MudSelect>
 
@@ -57,7 +63,8 @@
         else
         {
             <MudTd DataLabel="Type">
-                <MudStack Row="true">
+                <MudStack Row="true" Spacing="2">
+                    <MudIcon Icon="@IconService.GetIcon(context.AssetType!)" />
                     <MudText>@context.AssetType</MudText>
                 </MudStack>
             </MudTd>
@@ -90,28 +97,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _types = await ReportService.GetTypes();
-        _types.Add(new GetAssetType() { Name = "All" });
+        _types = await AssetTypesService.GetAll();
+        _types.Add(new GetAssetType() { Name = "All", Icon = "circle"});
         _loading = true;
     }
-
-    private void HandleSelectChange(ChangeEventArgs args)
-    {
-        if (args.Value?.ToString() == "All")
-        {
-            SelectedType = null;
-        }
-        SelectedType = args.Value?.ToString();
-        StateHasChanged();
-    }
-
-    private void HandleDateChanged(DateRange newDateRange)
-    {
-        _dateRange.Start = newDateRange.Start;
-        _dateRange.End = newDateRange.End;
-        StateHasChanged();
-    }
-
+   
     private void AddTwoDays()
     {
         _dateRange = new DateRange(_dateRange.Start?.AddDays(2), _dateRange.End?.AddDays(2));

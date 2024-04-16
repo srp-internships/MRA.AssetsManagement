@@ -1,39 +1,26 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Web.Shared.Purchas;
 
 namespace MRA.AssetsManagement.Application.Features.Purchas.Queries;
 
-public class GetPurchasedAssetsQuery : IRequest<List<GetPurchasedAssets>>
+public class GetPurchasedAssetsQuery(PurchasedAssetsRequest purchasedAssetsRequest) : IRequest<List<GetPurchasedAssets>>
 {
-    public readonly PurchasedAssetsRequest PurchasedAssetsRequest;
-
-    public GetPurchasedAssetsQuery(PurchasedAssetsRequest purchasedAssetsRequest)
-    {
-        PurchasedAssetsRequest = purchasedAssetsRequest;
-    }
+    public readonly PurchasedAssetsRequest PurchasedAssetsRequest = purchasedAssetsRequest;
 }
-public class GetPurchasedAssetsQueryHandler : IRequestHandler<GetPurchasedAssetsQuery, List<GetPurchasedAssets>>
+public class GetPurchasedAssetsQueryHandler(IApplicationDbContext context)
+    : IRequestHandler<GetPurchasedAssetsQuery, List<GetPurchasedAssets>>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetPurchasedAssetsQueryHandler(IApplicationDbContext context, IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
     public async Task<List<GetPurchasedAssets>> Handle(GetPurchasedAssetsQuery request, CancellationToken cancellationToken)
     {
-        var documents = await _context.Documents.GetAllAsync(cancellationToken);
+        var documents = await context.Documents.GetAllAsync(cancellationToken);
 
         var listOfDocuments = documents
-            .Where(x => x.Date >= request.PurchasedAssetsRequest.FromDate
-                        && x.Date <= request.PurchasedAssetsRequest.ToDate)
+            .Where(x => x.Date.Date >= request.PurchasedAssetsRequest.FromDate!.Value.Date
+                        && x.Date.Date <= request.PurchasedAssetsRequest.ToDate!.Value.Date)
             .ToList();
 
-        var assetsTypes = await _context.AssetTypes.GetAllAsync(cancellationToken);
+        var assetsTypes = await context.AssetTypes.GetAllAsync(cancellationToken);
 
         var response = new List<GetPurchasedAssets?>();
 
