@@ -15,7 +15,7 @@ public class AssetHistoryConfiguration : BaseConfiguration<AssetHistory>
         base.RegisterClassMap(classMap);
 
         classMap.MapMember(x => x.UserId).SetElementName("userId");
-        classMap.MapMember(x => x.AssetSerial).SetElementName("serial");
+        classMap.MapMember(x => x.HistoryAssetSerial).SetElementName("serial");
         classMap.MapMember(x => x.DateTime).SetElementName("dateTime");
     }
     

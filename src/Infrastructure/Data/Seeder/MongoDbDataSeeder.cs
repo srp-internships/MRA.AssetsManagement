@@ -1,3 +1,5 @@
+using AutoMapper;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MRA.AssetsManagement.Application.Data;
@@ -13,11 +15,13 @@ public interface IDataSeeder
 public class MongoDbDataSeeder : IDataSeeder
 {
     private readonly ILogger<MongoDbDataSeeder> _logger;
+    private readonly IMapper _mapper;
     private readonly IEntitySeeder[] _entitySeeders;
 
-    public MongoDbDataSeeder(IApplicationDbContext context, ILogger<MongoDbDataSeeder> logger)
+    public MongoDbDataSeeder(IApplicationDbContext context, ILogger<MongoDbDataSeeder> logger, IMapper mapper)
     {
         _logger = logger;
+        _mapper = mapper;
         _entitySeeders =
         [
             new AssetTypeEntitySeeder(context.AssetTypes),
@@ -25,7 +29,7 @@ public class MongoDbDataSeeder : IDataSeeder
             new AssetSerialEntitySeeder(context),
             new TagEntitySeeder(context.Tags),
             new DocumentEntitySeeder(context),
-            new AssetHistoryEntitySeeder(context)
+            new AssetHistoryEntitySeeder(context, mapper)
         ];
     }
     public async Task SeedData(bool isDevelopment)
