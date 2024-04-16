@@ -27,8 +27,8 @@ public class AssetSerialConfiguration : BaseConfiguration<AssetSerial>
         BsonClassMap.RegisterClassMap<UserDisplay>(initializer =>
         {
             initializer.MapMember(x => x.UserName).SetElementName("userName");
-            initializer.MapMember(x => x.UserName).SetElementName("firstName");
-            initializer.MapMember(x => x.UserName).SetElementName("lastName");
+            initializer.MapMember(x => x.FirstName).SetElementName("firstName");
+            initializer.MapMember(x => x.LastName).SetElementName("lastName");
         });
     }
     protected override void Configure()

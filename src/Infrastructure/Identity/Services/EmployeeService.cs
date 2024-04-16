@@ -30,7 +30,7 @@ public class EmployeeService : IEmployeeService
     public async Task<List<Employee>> GetAll()
     {
         SetAuthorizationHeader();
-        var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>($"{_apiBaseUrl}User/GetListUsers/ByFilter");
+        var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>($"{_apiBaseUrl}/User/GetListUsers/ByFilter");
         if (response is not null)
         {
             var employees = _mapper.Map<List<Employee>>(response);
@@ -42,7 +42,7 @@ public class EmployeeService : IEmployeeService
     public async Task<Employee?> GetByUserName(string userName)
     {
         SetAuthorizationHeader();
-        var response = await _http.GetFromJsonAsync<EmployeeResponse>($"{_apiBaseUrl}User/{userName}");
+        var response = await _http.GetFromJsonAsync<EmployeeResponse>($"{_apiBaseUrl}/User/{userName}");
         var employee = _mapper.Map<Employee>(response);
         return employee;
     }
@@ -51,14 +51,14 @@ public class EmployeeService : IEmployeeService
     {
         SetAuthorizationHeader();
         var response = await _http.GetFromJsonAsync<List<EmployeeResponse>>(
-                $"{_apiBaseUrl}User/GetListUsers/ByFilter?Email={email}");
+                $"{_apiBaseUrl}/User/GetListUsers/ByFilter?Email={email}");
         return response is null ? null :  _mapper.Map<Employee>( response.FirstOrDefault());         
         
     }
 
     public async Task<string> Create(CreateEmployeeRequest createEmployeeRequest)
     {
-        var response = await _http.PostAsJsonAsync($"{_apiBaseUrl}Auth/register", createEmployeeRequest);
+        var response = await _http.PostAsJsonAsync($"{_apiBaseUrl}/Auth/register", createEmployeeRequest);
         var userId = await response.Content.ReadAsStringAsync();
         return userId;
     }

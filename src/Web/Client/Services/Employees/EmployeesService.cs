@@ -5,6 +5,7 @@ using MRA.AssetsManagement.Web.Client.Components.MenuItems;
 using MRA.AssetsManagement.Web.Shared.Employees;
 using MRA.BlazorComponents.HttpClient.Services;
 using MRA.BlazorComponents.Snackbar.Extensions;
+
 using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.Employees
@@ -15,8 +16,15 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
 
         public async Task<GetEmployee> GetEmployeeByUserName(string userName)
         {
-            var response = await httpClient.GetFromJsonAsync<GetEmployee>($"{_baseAddress}api/employees/id/{userName}");
+            var response = await httpClient.GetFromJsonAsync<GetEmployee>($"{_baseAddress}api/employees/{userName}");
 
+            return response.Result!;
+        }
+
+        public async Task<IEnumerable<GetEmployee>> GetEmployees()
+        {
+            var response = await httpClient.GetFromJsonAsync<IEnumerable<GetEmployee>>($"{_baseAddress}api/employees");
+            snackbar.ShowIfError(response, "Error was occured");
             return response.Result!;
         }
 
