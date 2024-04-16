@@ -27,6 +27,11 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         return await _collection.Find(filter).ToListAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyCollection<T>> GetPagedListAsync(int skip, int take, CancellationToken cancellationToken = default)
+    {
+        return await _collection.Find(_filterBuilder.Empty).Skip(skip).Limit(take).ToListAsync(cancellationToken);
+    }
+
     public async Task<T> GetAsync(string id, CancellationToken cancellationToken = default)
     {
         FilterDefinition<T> filter = _filterBuilder.Eq(e => e.Id, id);
