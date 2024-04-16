@@ -37,7 +37,7 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             // PC-000001
             new AssetHistory
             {
-                AssetSerial = pc1 with {Status = AssetStatus.Available, Employee = abbos },
+                AssetSerial = pc1 with {Status = AssetStatus.Available },
                 DateTime = DateTime.Now.AddMonths(-2),
                 UserId = nizomjon.UserName
             },
@@ -49,14 +49,14 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             },
             new AssetHistory
             {
-                AssetSerial = pc1 with {Status = AssetStatus.Broken, Employee = abbos },
+                AssetSerial = pc1 with {Status = AssetStatus.Broken },
                 DateTime = DateTime.Now.AddMonths(-2).AddDays(50),
                 UserId = nizomjon.UserName
             },
             // PC-000002
             new AssetHistory
             {
-                AssetSerial = pc2 with {Status = AssetStatus.Available, Employee = shuhrat },
+                AssetSerial = pc2 with {Status = AssetStatus.Available },
                 DateTime = DateTime.Now.AddMonths(-2),
                 UserId = nizomjon.UserName
             },
@@ -69,14 +69,14 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             //PC-000003
             new AssetHistory
             {
-                AssetSerial = pc3 with {Status = AssetStatus.Available, Employee = abbos },
+                AssetSerial = pc3 with {Status = AssetStatus.Available },
                 DateTime = DateTime.Now.AddMonths(-2),
                 UserId = nizomjon.UserName
             },
             //LPT-000001
             new AssetHistory
             {
-                AssetSerial = lpt1 with {Status = AssetStatus.Available, Employee = shuhrat },
+                AssetSerial = lpt1 with {Status = AssetStatus.Available },
                 DateTime = DateTime.Now.AddMonths(-2),
                 UserId = nizomjon.UserName
             },
@@ -89,7 +89,7 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             //LPT-000002
             new AssetHistory
             {
-                AssetSerial = lpt2 with {Status = AssetStatus.Available, Employee = abbos },
+                AssetSerial = lpt2 with {Status = AssetStatus.Available },
                 DateTime = DateTime.Now.AddMonths(-2),
                 UserId = nizomjon.UserName
             },
@@ -101,14 +101,14 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             },
             new AssetHistory
             {
-                AssetSerial = lpt2 with {Status = AssetStatus.Broken, Employee = abbos },
+                AssetSerial = lpt2 with {Status = AssetStatus.Broken },
                 DateTime = DateTime.Now.AddMonths(-2).AddDays(33),
                 UserId = nizomjon.UserName
             },
             // MTR-000001
             new AssetHistory
             {
-                AssetSerial = mtr1 with {Status = AssetStatus.Available, Employee = abbos },
+                AssetSerial = mtr1 with {Status = AssetStatus.Available},
                 DateTime = DateTime.Now.AddMonths(-2),
                 UserId = nizomjon.UserName
             },
@@ -121,14 +121,14 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             // MTR-000002
             new AssetHistory
             {
-                AssetSerial = mtr2 with {Status = AssetStatus.Available, Employee = shuhrat },
+                AssetSerial = mtr2 with {Status = AssetStatus.Available },
                 DateTime = DateTime.Now.AddMonths(-2),
                 UserId = nizomjon.UserName
             },
             // CHR-000001
             new AssetHistory
             {
-                AssetSerial = chr1 with {Status = AssetStatus.Available, Employee = shuhrat },
+                AssetSerial = chr1 with {Status = AssetStatus.Available },
                 DateTime = DateTime.Now.AddMonths(-2),
                 UserId = nizomjon.UserName
             },
@@ -140,13 +140,13 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             },
             new AssetHistory
             {
-                AssetSerial = chr1 with {Status = AssetStatus.Broken, Employee = shuhrat },
+                AssetSerial = chr1 with {Status = AssetStatus.Broken },
                 DateTime = DateTime.Now.AddMonths(-2).AddDays(50),
                 UserId = nizomjon.UserName
             },
             new AssetHistory
             {
-                AssetSerial = chr1 with {Status = AssetStatus.Deprecated, Employee = shuhrat },
+                AssetSerial = chr1 with {Status = AssetStatus.Deprecated },
                 DateTime = DateTime.Now.AddMonths(-2).AddDays(57),
                 UserId = nizomjon.UserName
             }
