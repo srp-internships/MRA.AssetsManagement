@@ -1,6 +1,6 @@
 ﻿@page "/employees"
-@attribute [Authorize]
 @page "/employees/{userName}"
+@attribute [Authorize]
 @using MRA.AssetsManagement.Web.Client.Common.Extensions
 @using MRA.AssetsManagement.Web.Client.Components.MenuItems
 @using MRA.AssetsManagement.Web.Shared.Employees
@@ -55,7 +55,7 @@ else
         <MudLink Href="@($"tel:{_getEmployee.PhoneNumber}")">@_getEmployee.PhoneNumber</MudLink>
     </MudStack>
 
-    <EmployeeAssign UserName="@UserName" />
+    <EmployeeAssign UserName="@UserName" Employee="@_getEmployee" />
 }
 
 
@@ -68,7 +68,6 @@ else
 
 @code {
     [Parameter] public string? UserName { get; set; }
-
     GetEmployee _getEmployee = null!;
     CreateEmployeeRequest _createEmployee = new CreateEmployeeRequest();
     bool _loading = false;

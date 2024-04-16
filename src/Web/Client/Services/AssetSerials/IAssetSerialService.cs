@@ -7,4 +7,5 @@ public interface IAssetSerialService
 {
     Task<GetAssetSerial> GetBySerial(string id);
     Task UpdateSerial(UpdateAssetSerialRequest request);
+    Task<List<GetAssetSerial>> GetAssetSerials(string assetTypeId);
 }

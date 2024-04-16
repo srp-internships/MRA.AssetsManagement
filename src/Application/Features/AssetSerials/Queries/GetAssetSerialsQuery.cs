@@ -14,14 +14,13 @@ public class GetAssetSerialsQuery : IRequest<IEnumerable<GetAssetSerial>>
 {
 }
 
-public class GetAssetSerialsQueryHandler(IApplicationDbContext context, IEmployeeService employeeService, IMapper mapper)
+public class GetAssetSerialsQueryHandler(IApplicationDbContext context, IMapper mapper)
     : IRequestHandler<GetAssetSerialsQuery, IEnumerable<GetAssetSerial>>
 {
     public async Task<IEnumerable<GetAssetSerial>> Handle(GetAssetSerialsQuery request,
         CancellationToken cancellationToken)
     {
         var serials = await context.AssetSerials.GetAllAsync(cancellationToken);
-        var employees = await employeeService.GetAll();
         var assetTypes = await context.AssetTypes.GetAllAsync(cancellationToken);
 
         return serials.Select(x => new GetAssetSerial

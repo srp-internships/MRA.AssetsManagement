@@ -42,6 +42,12 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 
             return response.Result!.Select(mi => mi.ToMenuItem()).ToList();
         }
-        
+
+        public async Task<List<GetAssetTypeWithAssetsCount>> GetAssetTypeWithAssetsCount()
+        {
+            var response = await httpClient.GetFromJsonAsync<List<GetAssetTypeWithAssetsCount>>($"{_baseAddress}api/assettypes/with-count");
+            snackbar.ShowIfError(response, "Error was occured.");
+            return response.Result!;
+        }
     }
 }

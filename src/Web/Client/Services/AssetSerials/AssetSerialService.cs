@@ -13,6 +13,14 @@ public class AssetSerialService(IHttpClientService httpClient, ISnackbar snackba
 {
     private readonly string _baseAddress = environment.BaseAddress;
 
+    public async Task<List<GetAssetSerial>> GetAssetSerials(string assetTypeId)
+    {
+        var response = await httpClient.GetFromJsonAsync<List<GetAssetSerial>>($"{_baseAddress}api/assettypes/serials/{assetTypeId}");
+        snackbar.ShowIfError(response, "Occured some errors");
+        return response.Result!;
+    }
+
+
     public async Task<GetAssetSerial> GetBySerial(string serial)
     {
         var response = await httpClient.GetFromJsonAsync<GetAssetSerial>($"{_baseAddress}api/assets/serial/{serial}");
