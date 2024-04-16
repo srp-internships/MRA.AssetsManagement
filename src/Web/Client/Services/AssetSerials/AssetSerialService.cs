@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 using MRA.AssetsManagement.Web.Shared.Assets;
+using MRA.AssetsManagement.Web.Shared.AssetSerialHistory;
 using MRA.AssetsManagement.Web.Shared.AssetSerials;
 using MRA.BlazorComponents.HttpClient.Services;
 using MRA.BlazorComponents.Snackbar.Extensions;
@@ -19,7 +20,13 @@ public class AssetSerialService(IHttpClientService httpClient, ISnackbar snackba
         snackbar.ShowIfError(response, "Occured some errors");
         return response.Result!;
     }
-
+    
+    public async Task<IEnumerable<GetAssetSerialHistory>> GetAssetSerialHistories(string serial)
+    {
+        var response = await httpClient.GetFromJsonAsync<IEnumerable<GetAssetSerialHistory>>($"{_baseAddress}api/assets/histories/{serial}");
+        snackbar.ShowIfError(response, "Occured some errors");
+        return response.Result!;
+    }
 
     public async Task<GetAssetSerial> GetBySerial(string serial)
     {

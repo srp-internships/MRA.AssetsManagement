@@ -14,7 +14,7 @@
 <MudTable Items="@Elements" Hover="true" Dense="true" FixedHeader="true" T="GetAssetSerial" OnRowClick="OnSerialSelect">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Assets</MudText>
-        <MudChip Href="#" Color="Color.Primary">New</MudChip>
+        <MudChip Href="/assets/purchase" Color="Color.Primary">New</MudChip>
         <MudSpacer />
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start"
             AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
