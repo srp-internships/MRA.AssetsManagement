@@ -2,25 +2,36 @@
 
 services:
   api:
-    image: abb0s0088/mra-assets-server
+    image: abb0s0088/mra-assets-server:latest
+    container_name: assets-api
     build:
       context: .
       dockerfile: ./Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
-      - ASPNETCORE_HTTPS_PORTS=8001
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=http://+:443
+      - ASPNETCORE_HTTPS_PORT=8001
       - ASPNETCORE_Kestrel__Certificates__Default__Password=cert1234
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     volumes:
       - ${HOME}/.aspnet/https:/https/
     ports:
-      - "8000:80"
       - "8001:443"
     depends_on:
       - mongodb
+      - seq
   
   mongodb:
     image: mongo:latest
+    container_name: assets-db
     ports:
       - "27017:27017"
+  
+  seq:
+    image: datalust/seq:latest
+    container_name: assets-seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "5341:5341"
+      - "8000:80"

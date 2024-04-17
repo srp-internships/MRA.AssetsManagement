@@ -1,6 +1,5 @@
-using System.Text.Json.Serialization;
-using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MRA.AssetsManagement.Application;
@@ -13,7 +12,6 @@ using MRA.AssetsManagement.Web.Server;
 using MRA.AssetsManagement.Web.Server.Filters;
 
 using Serilog;
-using Serilog.Events;
 
 using Swashbuckle.AspNetCore.Filters;
 
@@ -42,17 +40,30 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.Configure<MongoDbOption>(builder.Configuration.GetSection("MongoDb"));
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8
+                .GetBytes(builder.Configuration.GetSection("JWT:Secret").Value!)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        });
+
 builder.Services.AddHttpContextAccessor();
 builder.Services
     .AddApplication()
     .AddInfrastructure();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Services.AddLogging();
+builder.Host.UseSerilog((context, loggerConfig) =>
+    loggerConfig.ReadFrom.Configuration(context.Configuration));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-bool isDevelopment = app.Environment.IsDevelopment();
-if (isDevelopment)
+bool development = app.Environment.IsStaging() || app.Environment.IsDevelopment();
+if (development)
 {
     app.UseWebAssemblyDebugging();
     app.UseSwagger();
@@ -71,11 +82,12 @@ using (var scope = app.Services.CreateScope())
     if (databaseOption is not null && databaseOption.Value.Seeder)
     {
         var seedService = scope.ServiceProvider.GetService<IDataSeeder>();
-        await seedService!.SeedData(isDevelopment);
+        await seedService!.SeedData(development);
     }
 }
 
-
+app.UseMiddleware<RequestLogContextMiddleware>();
+app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();

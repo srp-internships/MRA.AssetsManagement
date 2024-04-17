@@ -30,8 +30,4 @@
         <PackageReference Include="Slugify.Core" Version="4.0.1" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="Features\Services\" />
-    </ItemGroup>
-
 </Project>
