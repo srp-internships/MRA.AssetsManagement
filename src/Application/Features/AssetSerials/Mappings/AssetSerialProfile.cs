@@ -10,5 +10,6 @@ public class AssetSerialProfile : Profile
     {
         CreateMap<UserDisplay, MRA.AssetsManagement.Web.Shared.Employees.UserDisplay>().ForMember(dest => dest.FullName, opt => opt.Ignore());
         CreateMap<MRA.AssetsManagement.Web.Shared.Employees.UserDisplay, UserDisplay>();
+        CreateMap<AssetSerial, HistoryAssetSerial>();
     }
 }
