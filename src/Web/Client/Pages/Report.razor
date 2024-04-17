@@ -10,15 +10,15 @@
     <MudCartContent>
         <MudItem>
             <MudStack Row="true" Justify="Justify.SpaceBetween">
-                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowLeft" aria-label="delete" OnClick="MinusTwoDays" />
+                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowLeft" aria-label="delete" OnClick="MinusTwoDays"/>
                 <MudDateRangePicker @bind-DateRange="_dateRange" Variant="Variant.Outlined" Margin="Margin.Dense" MaxDate="DateTime.Today"/>
-                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowRight" aria-label="delete" OnClick="AddTwoDays" />
+                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowRight" aria-label="delete" OnClick="AddTwoDays"/>
                 <MudSelect Margin="Margin.Dense" T="string" Label="Type" Variant="Variant.Outlined" @bind-Value="@SelectedType">
                     @foreach (var type in _types)
                     {
                         <MudSelectItem Value="@type.Name">
                             <MudStack Row="true" Spacing="2">
-                                <MudIcon Icon="@IconService.GetIcon(type.Name)" />
+                                <MudIcon Icon="@IconService.GetIcon(type.Name)"/>
                                 <MudText>@type.Name</MudText>
                             </MudStack>
                         </MudSelectItem>
@@ -32,12 +32,12 @@
             </MudStack>
         </MudItem>
         <MudItem Class="mt-3">
-            <h5>All units: @_purches.Count</h5>
+            <h5>All units: @_purchases.Count</h5>
         </MudItem>
     </MudCartContent>
 </MudCard>
 
-<MudTable Items="@_purches" Hover="true" Dense="true" FixedHeader="true">
+<MudTable Items="@_purchases" Hover="true" Dense="true" FixedHeader="true">
     <HeaderContent>
         <MudTh>Type</MudTh>
         <MudTh>Name</MudTh>
@@ -68,12 +68,12 @@
         {
             <MudTd DataLabel="Type">
                 <MudStack Row="true" Spacing="2">
-                    <MudIcon Icon="@IconService.GetIcon(context.AssetType!)" />
+                    <MudIcon Icon="@IconService.GetIcon(context.AssetType!)"/>
                     <MudText>@context.AssetType</MudText>
                 </MudStack>
             </MudTd>
             <MudTd DataLabel="Name">@context.AssetName</MudTd>
-            <MudTd DataLabel="Date">@_dateRange.Start!.Value.Date.ToString("dd.MM.yyyy") → @_dateRange.End!.Value.Date.ToString("dd.MM.yyyy")</MudTd>
+            <MudTd DataLabel="Date">@context.DateTime</MudTd>
             <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
             <MudTd DataLabel="Price">@context.Price</MudTd>
         }
@@ -94,10 +94,10 @@
     private bool _loading = true;
     private DateRange _dateRange = new DateRange(DateTime.Today.AddDays(-2), DateTime.Today);
     private string? SelectedType { get; set; }
-    private List<GetAssetType> _types = new List<GetAssetType>();
-    private List<GetPurchasedAssets> _purches = new List<GetPurchasedAssets>();
+    private List<GetAssetType> _types = [];
+    private List<GetPurchasedAssets> _purchases = [];
     private readonly bool _processing = false;
-    private decimal TotalPrice => _purches.Sum(item => item.Price);
+    private decimal TotalPrice => _purchases.Sum(item => item.Price);
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,7 +106,7 @@
         _types.AddRange(await AssetTypesService.GetAll());
         _loading = true;
     }
-   
+
     private void AddTwoDays()
     {
         _dateRange = new DateRange(_dateRange.Start?.AddDays(2), _dateRange.End?.AddDays(2));
@@ -123,15 +123,16 @@
     {
         _loading = true;
         var id = _types.FirstOrDefault(x => x.Name == SelectedType)?.Id;
-        if (id == null)
-        {
-        }
-        _purches = await ReportService.GetPurchases(new PurchasedAssetsRequest()
+        _purchases = await ReportService.GetPurchases(new PurchasedAssetsRequest()
         {
             FromDate = _dateRange.Start!.Value,
             ToDate = _dateRange.End!.Value,
             AssetTypeId = id
         });
+        if (SelectedType != _types[0].Name)
+        {
+            _purchases = _purchases.Where(x => x.AssetType == SelectedType).ToList();
+        }
         _loading = false;
         StateHasChanged();
     }

@@ -13,30 +13,37 @@ public class GetPurchasedAssetsQueryHandler(IApplicationDbContext context)
     {
         public async Task<List<GetPurchasedAssets>> Handle(GetPurchasedAssetsQuery request, CancellationToken cancellationToken)
         {
-            var documents = await context.Documents.GetAllAsync(cancellationToken);
+            var documents = await context.Documents.GetAllAsync(x=>
+                x.Date.Date >= request.PurchasedAssetsRequest.FromDate!.Value.Date
+                && x.Date.Date <= request.PurchasedAssetsRequest.ToDate!.Value.Date.AddDays(1),cancellationToken);
 
             var assetsTypes = await context.AssetTypes.GetAllAsync(cancellationToken);
-
-            var uniqueAssets = documents
-                .Where(x => x.Date.Date >= request.PurchasedAssetsRequest.FromDate!.Value.Date
-                            && x.Date.Date <= request.PurchasedAssetsRequest.ToDate!.Value.Date)
-                .SelectMany(document => document.Details)
-                .Where(detail => request.PurchasedAssetsRequest.AssetTypeId == null || detail.Asset.AssetTypeId == request.PurchasedAssetsRequest.AssetTypeId)
-                .GroupBy(detail => detail.Asset.Name)
-                .Select(group =>
+            
+            List<GetPurchasedAssets> response = new();
+            
+            foreach (var document in documents)
+            {
+                foreach (var detail in document.Details)
                 {
-                    var totalPrice = group.Sum(detail => detail.Price);
-                    var assetType = assetsTypes.FirstOrDefault(x => x.Id == group.First().Asset.AssetTypeId);
-                    return new GetPurchasedAssets
+                    var asset = new GetPurchasedAssets()
                     {
-                        AssetName = group.Key,
-                        AssetType = assetType!.Name,
-                        Quantity = group.Sum(detail => detail.Quantity),
-                        Price = totalPrice
+                        AssetName = detail.Asset.Name,
+                        Price = detail.Price,
+                        Quantity = detail.Quantity,
+                        DateTime = document.Date
                     };
-                })
-                .ToList();
+                    if (request.PurchasedAssetsRequest.AssetTypeId == null)
+                    {
+                        asset.AssetType = assetsTypes.FirstOrDefault(x => x.Id == detail.Asset.AssetTypeId)?.Name;
+                    }
 
-            return uniqueAssets;
+                    if (detail.Asset.AssetTypeId == request.PurchasedAssetsRequest.AssetTypeId)
+                    {
+                        asset.AssetType = assetsTypes.FirstOrDefault(x => x.Id == detail.Asset.AssetTypeId)?.Name;
+                    }
+                    response.Add(asset);
+                }
+            }
+            return response;
         }
     }
