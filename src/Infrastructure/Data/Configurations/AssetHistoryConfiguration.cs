@@ -15,8 +15,16 @@ public class AssetHistoryConfiguration : BaseConfiguration<AssetHistory>
         base.RegisterClassMap(classMap);
 
         classMap.MapMember(x => x.UserId).SetElementName("userId");
-        classMap.MapMember(x => x.AssetSerial).SetElementName("serial");
+        classMap.MapMember(x => x.HistoryAssetSerial).SetElementName("serial");
         classMap.MapMember(x => x.DateTime).SetElementName("dateTime");
+
+        BsonClassMap.RegisterClassMap<HistoryAssetSerial>(initializer =>
+        {
+            initializer.MapMember(x => x.Serial).SetElementName("serial");
+            initializer.MapMember(x => x.Asset).SetElementName("asset");
+            initializer.MapMember(x => x.Status).SetElementName("status");
+            initializer.MapMember(x => x.Employee).SetElementName("employee");
+        });
     }
     
     protected override void Configure()
