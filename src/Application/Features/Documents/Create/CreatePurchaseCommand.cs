@@ -75,7 +75,7 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
                 
                 var history = new AssetHistory
                 {
-                    AssetSerial = assetSerial,
+                    HistoryAssetSerial = _mapper.Map<HistoryAssetSerial>(assetSerial),
                     DateTime = DateTime.Now,
                     UserId = _currentUserService.GetUserId().ToString()
                 };

@@ -1,3 +1,5 @@
+using AutoMapper;
+
 using MediatR;
 
 using MRA.AssetsManagement.Application.Common.Security;
@@ -17,8 +19,10 @@ public class UpdateAssetSerialCommand : IRequest<AssetSerial>
     public Web.Shared.Enums.AssetStatus Status { get; set; }
 }
 
-public class UpdateAssetSerialComandHandler(IApplicationDbContext context, ICurrentUserService currentUserService) : IRequestHandler<UpdateAssetSerialCommand, AssetSerial>
+public class UpdateAssetSerialComandHandler(IApplicationDbContext context, ICurrentUserService currentUserService, IMapper mapper) : IRequestHandler<UpdateAssetSerialCommand, AssetSerial>
 {
+    private readonly IMapper _mapper = mapper;
+
     public async Task<AssetSerial> Handle(UpdateAssetSerialCommand request, CancellationToken cancellationToken)
     {
         var assetSerial = await context.AssetSerials.GetAsync(x => x.Id == request.Id);
@@ -33,7 +37,7 @@ public class UpdateAssetSerialComandHandler(IApplicationDbContext context, ICurr
         {
             DateTime = DateTime.Now,
             UserId = currentUserService.GetUserId().ToString(),
-            AssetSerial = assetSerial
+            HistoryAssetSerial =  _mapper.Map<HistoryAssetSerial>(assetSerial)
         };
 
         await context.AssetSerials.UpdateAsync(assetSerial, cancellationToken);

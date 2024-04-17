@@ -32,6 +32,8 @@
 
     <ItemGroup>
         <Folder Include="Features\Services\" />
+        <Folder Include="Common\Services\" />
+        <Folder Include="Features\Purchase\Command\" />
     </ItemGroup>
 
 </Project>
