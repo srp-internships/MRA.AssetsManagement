@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MediatR;
-using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Web.Shared.Assets;
 using MRA.AssetsManagement.Web.Shared.Employees;
