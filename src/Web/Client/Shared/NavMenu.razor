@@ -1,6 +1,4 @@
-﻿@using MRA.AssetsManagement.Web.Client.Services.AuthService
-@using Blazored.LocalStorage
-@inject IAuthService AuthService
+﻿@using Blazored.LocalStorage
 @inject ILocalStorageService LocalStorageService
 @inject CustomAuthStateProvider CustomAuthStateProvider
 
@@ -12,7 +10,7 @@
                 <MudChip Style="font-size: 21px;" Icon="@Icons.Material.Filled.Person" Size="Size.Large" Color="Color.Primary">@_userName</MudChip>
         </ActivatorContent>
         <ChildContent>
-            <MudMenuItem @onclick="AuthService.LogoutUser">Sign Out</MudMenuItem>
+            <MudMenuItem @onclick="CustomAuthStateProvider.LogoutUser">Sign Out</MudMenuItem>
         </ChildContent>
     </MudMenu>
 </MudAppBar>
@@ -29,7 +27,6 @@
     private string? _userName;
     protected override async Task OnInitializedAsync()
     {
-        await AuthService.AddTokenToLocal();
         await CustomAuthStateProvider.GetAuthenticationStateAsync();
         _userName = await LocalStorageService.GetItemAsync<string>("userName");
         StateHasChanged();
