@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Features.Employees.Queries;
 using MRA.AssetsManagement.Domain.Entities.Employee;
-using MRA.AssetsManagement.Web.Server.Controllers;
+using MRA.AssetsManagement.Web.Shared.Employees;
 
-[ApiController]
-[Route("api/[controller]")]
+namespace MRA.AssetsManagement.Web.Server.Controllers;
+
 [Authorize]
 public class EmployeesController : ApiControllerBase
 {
@@ -22,10 +22,10 @@ public class EmployeesController : ApiControllerBase
         return await _mediator.Send(new GetEmployeesQuery(),cancellationToken);
     }
     
-    [HttpGet("id/{id}")]
-    public async Task<ActionResult<Employee>> GetById(string id, CancellationToken cancellationToken)
+    [HttpGet("{userName}")]
+    public async Task<ActionResult<Employee>> GetByUserName(string userName, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(new GetEmployeeByIdQuery(id), cancellationToken);
+        return await _mediator.Send(new GetEmployeeByIdQuery(userName), cancellationToken);
     }
     [HttpGet("email/{email}")]
     public async Task<ActionResult<Employee>> GetByEmail(string email,CancellationToken cancellationToken)
@@ -34,8 +34,8 @@ public class EmployeesController : ApiControllerBase
     }
     
     [HttpPost]
-    public async Task<ActionResult<string>> Create(CreateEmployeeCommand command, CancellationToken cancellationToken)
+    public async Task<ActionResult<GetEmployee>> Create(CreateEmployeeRequest request, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(command,cancellationToken);
+        return await _mediator.Send(new CreateEmployeeCommand(request),cancellationToken);
     }
 }

@@ -1,12 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-using MRA.AssetsManagement.Application.Features.Assets.Queries;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Commands;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Queries;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
+[Authorize]
 public class AssetTypesController : ApiControllerBase
 {
     [HttpGet]
@@ -15,21 +15,20 @@ public class AssetTypesController : ApiControllerBase
         return Ok(await Mediator.Send(new GetAssetTypesQuery(), cancellationToken));
     }
     
-    [HttpGet("{id}")]
-    public async Task<ActionResult<IEnumerable<GetAssetType>>> GetById(string id, CancellationToken cancellationToken)
+    [HttpGet("{slug}")]
+    public async Task<ActionResult<IEnumerable<GetAssetType>>> GetBySlug(string slug, CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetSingleAssetTypeQuery(id), cancellationToken));
+        return Ok(await Mediator.Send(new GetSingleAssetTypeQuery(slug), cancellationToken));
     }
 
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesDefaultResponseType]
     public async Task<ActionResult<GetAssetType>> Create(CreateAssetTypeRequest request, CancellationToken cancellationToken)
     {
         var result = await Mediator.Send(new CreateAssetTypeCommand(request), cancellationToken);
-        //REVIEW: MPT-59
-        return Ok(result);
+        return CreatedAtAction(nameof(GetBySlug), new { result.Slug }, result);
     }
 
     [HttpPut]

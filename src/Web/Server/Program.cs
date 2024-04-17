@@ -23,7 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add<ApiExceptionFilterAttribute>();
-}).AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+});
 
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
@@ -36,7 +36,8 @@ builder.Services.AddSwaggerGen(c =>
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey
     });
-    c.OperationFilter<SecurityRequirementsOperationFilter>(); 
+    c.OperationFilter<SecurityRequirementsOperationFilter>();
+    c.CustomSchemaIds(s => s.FullName?.Replace("+", "."));
 });
 
 builder.Services.Configure<MongoDbOption>(builder.Configuration.GetSection("MongoDb"));
@@ -67,7 +68,8 @@ else
 using (var scope = app.Services.CreateScope())
 {
     var databaseOption = scope.ServiceProvider.GetService<IOptions<MongoDbOption>>();
-    if (databaseOption is not null && databaseOption.Value.Seeder) {
+    if (databaseOption is not null && databaseOption.Value.Seeder)
+    {
         var seedService = scope.ServiceProvider.GetService<IDataSeeder>();
         await seedService!.SeedData(isDevelopment);
     }

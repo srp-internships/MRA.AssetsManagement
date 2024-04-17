@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 <MudThemeProvider />
-<MudDialogProvider />
+<MudDialogProvider FullWidth=true MaxWidth="MaxWidth.ExtraSmall" DisableBackdropClick="true" />
 <MudSnackbarProvider />
 
 <MudLayout>
@@ -16,7 +16,7 @@
         <MudPaper Width="250px" Elevation="0" Class="py-3">
            <MudNavMenu Color="Color.Info">
                <MudNavLink Href="/assets" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Assignment">Assets</MudNavLink>
-               <MudNavLink Href="/employees" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.AssignmentInd">Employees</MudNavLink>
+                <MudNavLink Href="/employees" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AssignmentInd">Employees</MudNavLink>
                <MudNavGroup Icon="@Icons.Material.Filled.Settings" Title="Settings"  Expanded="true">
                    <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Category"  Href="/settings/asset-types">Asset types</MudNavLink>
                     <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Tag" Href="/settings/tags">Tags</MudNavLink>

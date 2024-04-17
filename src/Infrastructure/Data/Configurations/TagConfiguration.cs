@@ -7,7 +7,7 @@ namespace MRA.AssetsManagement.Infrastructure.Data.Configurations;
 
 public class TagConfiguration : BaseConfiguration<Tag>
 {
-    public TagConfiguration(IMongoDatabase database) : base(database, "tags")
+    public TagConfiguration(IMongoDatabase database, string collectionName) : base(database, collectionName)
     {
     }
 
@@ -15,6 +15,7 @@ public class TagConfiguration : BaseConfiguration<Tag>
     {
         base.RegisterClassMap(classMap);
         classMap.MapMember(x => x.Name).SetElementName("name");
+        classMap.MapMember(x => x.Slug).SetElementName("slug");
         classMap.MapMember(x => x.Color).SetElementName("color");
     }
 }

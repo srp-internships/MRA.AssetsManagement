@@ -1,13 +1,23 @@
 ﻿@inject IMenuItemService MenuItemService;
+@inject IIconService IconService;
 @implements IDisposable;
 
 <MudStack Spacing="4">
     <MudStack Row="true">
-        <MudTextField @bind-Value="@_normalText" Label="Search" Margin="Margin.Dense" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"/>
+        <MudTextField T="string"
+            ValueChanged="(string newValue) => SearchChanged(newValue)"
+             Label="Search" 
+             Margin="Margin.Dense" 
+             Variant="Variant.Outlined"
+             Adornment="Adornment.End" 
+             AdornmentIcon="@Icons.Material.Filled.Search"
+                      Immediate="true"
+                      Clearable="true"/>
         <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary" aria-label="github" Href="@_hrefUrl"></MudIconButton>
     </MudStack>
     <MudDivider/>
     <MudNavMenu Rounded="true" Color="Color.Primary">
+
         @if (_loading)
         {
             foreach (var _ in Enumerable.Range(0, 3))
@@ -20,10 +30,10 @@
         }
         else
         {
-            @foreach (var menuItem in MenuItems)
+            @foreach (var menuItem in searchResult)
             {
                 <MudNavLink Disabled="@menuItem.Disabled" Href="@menuItem.Route"
-                            Icon="@menuItem.Icon">
+                            Icon="@IconService.GetIcon(menuItem.Icon)">
                     @menuItem.Title
                 </MudNavLink>
             }
@@ -31,17 +41,19 @@
     </MudNavMenu>
 </MudStack>
 
-
 @code {
-
-    string _normalText = "";
 
     bool _loading = false;
     string _hrefUrl = "";
 
     List<MenuItem> MenuItems { get; set; } = new();
-    [Parameter] public required IFetchMenuItemService Service { get; set; }
-    [Parameter] public required string BaseRoute { get; set; }
+    List<MenuItem> searchResult = new();
+
+    [Parameter] 
+    public required IFetchMenuItemService Service { get; set; }
+
+    [Parameter] 
+    public required string BaseRoute { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,6 +62,7 @@
         MenuItems = await Service.Fetch();
         MenuItemService.Changed += OnChanged;
         _loading = false;
+        searchResult = MenuItems;
     }
 
     private void OnChanged(MenuItemEvent menuItemEvent, MenuItem menuItem)
@@ -77,9 +90,13 @@
         StateHasChanged();
     }
 
+    private void SearchChanged(string searchText)
+    {
+        searchResult = MenuItems.Where(item => item.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
     public void Dispose()
     {
         MenuItemService.Changed -= OnChanged;
     }
-
 }

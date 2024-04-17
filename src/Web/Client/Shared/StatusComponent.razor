@@ -1,0 +1,24 @@
+@using MRA.AssetsManagement.Web.Shared.Enums
+
+@switch (Status)
+{
+    case AssetStatus.Available:
+        <MudChip Size="Size.Small" Style="background-color: #55CD97; font-weight: 500; color: white">Available</MudChip>
+        break;
+    case AssetStatus.Taken:
+        <MudChip Size="Size.Small" Style="background-color: #1CA1C1; font-weight: 500; color: white">Taken</MudChip>
+        break;
+    case AssetStatus.Broken:
+        <MudChip Size="Size.Small"  Style="background-color: #FF5C4C; font-weight: 500; color: white">Broken</MudChip>
+        break;
+    case AssetStatus.Deprecated:
+        <MudChip Size="Size.Small" Style="background-color: #94A1B3; font-weight: 500; color: white">Deprecated</MudChip>
+        break;
+}
+
+@code {
+    
+    [Parameter]
+    public AssetStatus Status { get; set; }
+    
+}

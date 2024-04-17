@@ -1,11 +1,14 @@
-﻿@page "/settings/asset-types"
-@page "/settings/asset-types/{id}"
-@using MRA.AssetsManagement.Web.Shared.AssetTypes
-@using MRA.AssetsManagement.Web.Client.Common.Extensions
-@using MRA.AssetsManagement.Web.Client.Components.MenuItems
+@page "/settings/asset-types"
+@page "/settings/asset-types/{slug}"
 @layout SettingsLayout
+@inject IIconService IconService
+@using MRA.AssetsManagement.Web.Client.Components.MenuItems
 @inject IAssetTypesService AssetTypesService;
 @inject IMenuItemService MenuItemService;
+@inject ISnackbar Snackbar
+@attribute [Authorize]
+
+
 
 <PageTitle>Asset Types</PageTitle>
 
@@ -17,7 +20,7 @@
             <MudButton 
                 Variant="Variant.Filled" 
                 @onclick="ArchiveOrRestore" 
-                Disabled="@string.IsNullOrEmpty(Id)" 
+                Disabled="@string.IsNullOrEmpty(Slug)" 
                 StartIcon="@(_getAssetType.Archived ? Icons.Material.Filled.Unarchive : Icons.Material.Filled.Archive)" 
                 Color="Color.Secondary" 
                 Size="Size.Medium">
@@ -28,6 +31,7 @@
 
     <MudDivider/>
     <MudForm Disabled=@_getAssetType.Archived Style="max-width: 420px" Class="pa-4">
+
         @if (_loading)
         {
             <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px"/>
@@ -40,40 +44,31 @@
                           Margin="Margin.Dense" Variant=Variant.Outlined
                           Label="Name" Required="true" RequiredError="Name is required!" TextChanged="AutoGenerateShortName" Immediate="true"/>
             <MudItem Class="d-flex mt-3">
-                <MudTextField T="string" @bind-Value="@_getAssetType.ShortName" Margin="Margin.Dense" Variant=Variant.Outlined Label="Short name" Required="true" RequiredError="Short name is required!"/>
-                <MudCheckBox T="bool" @bind-Value="_autoGenerateShortName" Label="Auto Generate" CheckedChanged="AutoGenerateShortName"></MudCheckBox>
+                <MudTextField T="string" @bind-Value="@_getAssetType.ShortName" Disabled=@(Slug != null) Margin="Margin.Dense" Variant=Variant.Outlined Label="Short name" Required="true" RequiredError="Short name is required!"/>
+                <MudCheckBox T="bool" @bind-Value="_autoGenerateShortName" Disabled=@(Slug != null) Label="Auto Generate" />
             </MudItem>
             <MudSelect @bind-Value="_getAssetType.Icon" Immediate=true Label="Icon" Margin="Margin.Dense" Variant="Variant.Outlined" Class="mt-3">
-                <MudSelectItem Value="@(Icons.Material.Outlined.Computer)">
-                    <div class="d-flex">
-                        <MudIcon Icon="@Icons.Material.Outlined.Computer" Class="mr-1"/>
-                        <span>Computer</span>
-                    </div>
-                </MudSelectItem>
-                <MudSelectItem Value="@(Icons.Material.Outlined.LaptopMac)">
-                    <div class="d-flex">
-                        <MudIcon Icon="@Icons.Material.Outlined.LaptopMac" Class="mr-1"/>
-                        <span>Laptop</span>
-                    </div>
-                </MudSelectItem>
-                <MudSelectItem Value="@(Icons.Material.Outlined.DesktopWindows)">
-                    <div class="d-flex">
-                        <MudIcon Icon="@Icons.Material.Outlined.DesktopWindows" Class="mr-1"/>
-                        <span>Monitor</span>
-                    </div>
-                </MudSelectItem>
+
+               @foreach (var icon in IconService.GetIcons())
+                {
+                    <MudSelectItem Value="@(icon.Key)">
+                        <div class="d-flex">
+                            <MudIcon Icon="@icon.Value" Class="mr-1" />
+                            <span>@icon.Key</span>
+                        </div>
+                    </MudSelectItem>
+                } 
+
             </MudSelect>
         }
-
     </MudForm>
 </MudStack>
 <SectionContent SectionName="@nameof(MenuItemList)">
     <MenuItemList Service="AssetTypesService" BaseRoute="/settings/asset-types"/>
 </SectionContent>
 
-
 @code {
-    [Parameter] public string? Id { get; set; }
+    [Parameter] public string? Slug { get; set; }
 
     GetAssetType _getAssetType = null!;
     bool _loading = false;
@@ -85,16 +80,15 @@
         _autoGenerateShortName = false;
         _getAssetType = new GetAssetType();
 
-        if (Id is not null)
+        if (Slug is not null)
         {
-            _getAssetType = await AssetTypesService.GetAssetTypeById(Id)!;
+            _getAssetType = await AssetTypesService.GetAssetTypeBySlug(Slug)!;
         }
 
         _loading = false;
 
         StateHasChanged();
     }
-
 
     private void AutoGenerateShortName()
     {
@@ -106,7 +100,7 @@
 
     private async void CreateOrUpdate()
     {
-        if (Id is not null)
+        if (Slug is not null)
         {
             await AssetTypesService.Update(_getAssetType);
             MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
@@ -122,6 +116,7 @@
 
             _getAssetType = await AssetTypesService.Create(newAssetType);
             MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getAssetType.ToMenuItem());
+            _getAssetType = new GetAssetType();
         }
         StateHasChanged();
     }
@@ -132,5 +127,4 @@
         await AssetTypesService.Update(_getAssetType);
         MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
     }
-
 }

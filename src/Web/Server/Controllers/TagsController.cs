@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Features.Tags.Commands;
 using MRA.AssetsManagement.Application.Features.Tags.Queries;
@@ -8,15 +9,13 @@ namespace MRA.AssetsManagement.Web.Server.Controllers;
 public class TagsController : ApiControllerBase
 {
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesDefaultResponseType]
+    [Authorize]
     public async Task<ActionResult<Tag>> Create(CreateTagCommand command, CancellationToken cancellationToken)
     {
         var createdTag = await Mediator.Send(command, cancellationToken);
-        var uri = new Uri($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/" +
-                          $"{ControllerContext.ActionDescriptor.ControllerName}");
-        //REVIEW: MPT-59
-        return Ok(createdTag);
+        return CreatedAtAction(nameof(GetBySlug), new {createdTag.Slug} ,createdTag);
     }
 
     [HttpGet]
@@ -27,12 +26,12 @@ public class TagsController : ApiControllerBase
         return Ok(await Mediator.Send(new GetTagsQuery(), cancellationToken));
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{slug}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult<IEnumerable<Tag>>> GetById(string id, CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<Tag>>> GetBySlug(string slug, CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetSingleTagQuery(id), cancellationToken));
+        return Ok(await Mediator.Send(new GetSingleTagQuery(slug), cancellationToken));
     }
 
     [HttpPut]
