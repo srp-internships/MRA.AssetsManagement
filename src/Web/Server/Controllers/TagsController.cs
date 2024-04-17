@@ -6,12 +6,12 @@ using MRA.AssetsManagement.Domain.Entities;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
+[Authorize]
 public class TagsController : ApiControllerBase
 {
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesDefaultResponseType]
-    [Authorize]
     public async Task<ActionResult<Tag>> Create(CreateTagCommand command, CancellationToken cancellationToken)
     {
         var createdTag = await Mediator.Send(command, cancellationToken);

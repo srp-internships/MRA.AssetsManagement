@@ -23,9 +23,9 @@ public class EmployeesController : ApiControllerBase
     }
     
     [HttpGet("{userName}")]
-    public async Task<ActionResult<Employee>> GetByUserName(string userName, CancellationToken cancellationToken)
+    public async Task<ActionResult<Employee?>> GetByUserName(string userName, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(new GetEmployeeByIdQuery(userName), cancellationToken);
+        return await _mediator.Send(new GetEmployeeByUserNameQuery(userName), cancellationToken);
     }
     [HttpGet("email/{email}")]
     public async Task<ActionResult<Employee>> GetByEmail(string email,CancellationToken cancellationToken)
