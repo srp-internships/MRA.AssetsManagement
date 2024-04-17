@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MRA.AssetsManagement.Application.Features.Purchas.Queries;
+using MRA.AssetsManagement.Application.Features.Purchase.Queries;
 using MRA.AssetsManagement.Web.Shared.Purchas;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
@@ -21,5 +21,4 @@ public class ReportController : ApiControllerBase
     {
         return await _mediator.Send(new GetPurchasedAssetsQuery(purchasedAssetsRequest),cancellationToken);
     }
-
 }

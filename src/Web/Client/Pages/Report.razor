@@ -10,9 +10,9 @@
     <MudCartContent>
         <MudItem>
             <MudStack Row="true" Justify="Justify.SpaceBetween">
-                <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Size="Size.Small" OnClick="MinusTwoDays"/>
+                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowLeft" aria-label="delete" OnClick="MinusTwoDays" />
                 <MudDateRangePicker @bind-DateRange="_dateRange" Variant="Variant.Outlined" Margin="Margin.Dense" MaxDate="DateTime.Today"/>
-                <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowRight" Size="Size.Small" OnClick="AddTwoDays"/>
+                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowRight" aria-label="delete" OnClick="AddTwoDays" />
                 <MudSelect Margin="Margin.Dense" T="string" Label="Type" Variant="Variant.Outlined" @bind-Value="@SelectedType">
                     @foreach (var type in _types)
                     {
@@ -41,8 +41,9 @@
     <HeaderContent>
         <MudTh>Type</MudTh>
         <MudTh>Name</MudTh>
-        <MudTh>Price</MudTh>
+        <MudTh>Date</MudTh>
         <MudTh>Quantity</MudTh>
+        <MudTh>Price</MudTh>
     </HeaderContent>
     <RowTemplate>
         @if (_loading)
@@ -53,10 +54,13 @@
             <MudTd DataLabel="Name">
                 <MudSkeleton/>
             </MudTd>
-            <MudTd DataLabel="Price">
+            <MudTd DataLabel="Date">
                 <MudSkeleton/>
             </MudTd>
             <MudTd DataLabel="Quantity">
+                <MudSkeleton/>
+            </MudTd>
+            <MudTd DataLabel="Price">
                 <MudSkeleton/>
             </MudTd>
         }
@@ -69,8 +73,9 @@
                 </MudStack>
             </MudTd>
             <MudTd DataLabel="Name">@context.AssetName</MudTd>
-            <MudTd DataLabel="Price">@context.Price</MudTd>
+            <MudTd DataLabel="Date">@_dateRange.Start!.Value.Date.ToString("dd.MM.yyyy") → @_dateRange.End!.Value.Date.ToString("dd.MM.yyyy")</MudTd>
             <MudTd DataLabel="Quantity">@context.Quantity</MudTd>
+            <MudTd DataLabel="Price">@context.Price</MudTd>
         }
     </RowTemplate>
     <FooterContent>
@@ -78,10 +83,9 @@
             <b>Total price</b>
         </MudTd>
         <MudTd></MudTd>
-        <MudTd>
-            <b>@TotalPrice</b>
-        </MudTd>
         <MudTd></MudTd>
+        <MudTd></MudTd>
+        <MudTd><b>@TotalPrice</b></MudTd>
     </FooterContent>
 </MudTable>
 
@@ -97,8 +101,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _types = await AssetTypesService.GetAll();
         _types.Add(new GetAssetType() { Name = "All", Icon = "circle"});
+        SelectedType = _types.FirstOrDefault()?.Name;
+        _types.AddRange(await AssetTypesService.GetAll());
         _loading = true;
     }
    
@@ -130,5 +135,4 @@
         _loading = false;
         StateHasChanged();
     }
-
 }
