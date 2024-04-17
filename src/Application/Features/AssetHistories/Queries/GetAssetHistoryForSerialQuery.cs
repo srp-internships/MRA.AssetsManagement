@@ -15,13 +15,13 @@ public class GetAssetHistoryForSerialQueryHandler(IApplicationDbContext context)
 {
     public async Task<IEnumerable<GetAssetSerialHistory>> Handle(GetAssetHistoryForSerialQuery request, CancellationToken cancellationToken)
     {
-        var histories = await context.AssetHistories.GetAllAsync(x => x.AssetSerial.Serial == request.Serial);
+        var histories = await context.AssetHistories.GetAllAsync(x => x.HistoryAssetSerial.Serial == request.Serial);
 
         return histories.OrderByDescending(x => x.DateTime).Select(x => new GetAssetSerialHistory
         {
-            Employee = x.AssetSerial.Employee?.FullName,
+            Employee = x.HistoryAssetSerial.Employee?.FullName,
             Date = DateOnly.FromDateTime(x.DateTime),
-            Status = Enum.Parse<AssetStatus>(x.AssetSerial.Status.ToString())
+            Status = Enum.Parse<AssetStatus>(x.HistoryAssetSerial.Status.ToString())
         });
     }
 }
