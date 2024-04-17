@@ -2,6 +2,7 @@
 
 using MRA.AssetsManagement.Web.Client.Common.Extensions;
 using MRA.AssetsManagement.Web.Client.Components.MenuItems;
+using MRA.AssetsManagement.Web.Shared.AssetSerials;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
 using MRA.BlazorComponents.HttpClient.Services;
 using MRA.BlazorComponents.Snackbar.Extensions;
@@ -49,9 +50,9 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
             return response.Result!;
         }
 
-        public async Task<List<GetAssetTypeWithAssetsCount>> GetAssetTypeWithAssetsCount()
+        public async Task<List<GetAssetTypeSerial>> GetAssetTypeSerials()
         {
-            var response = await httpClient.GetFromJsonAsync<List<GetAssetTypeWithAssetsCount>>($"{_baseAddress}api/assettypes/with-count");
+            var response = await httpClient.GetFromJsonAsync<List<GetAssetTypeSerial>>($"{_baseAddress}api/assettypes/serials");
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }

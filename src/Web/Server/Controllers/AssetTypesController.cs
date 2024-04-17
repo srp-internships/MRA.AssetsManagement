@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Features.AssetSerials.Queries;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Commands;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Queries;
+using MRA.AssetsManagement.Web.Shared.AssetSerials;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
@@ -17,8 +18,8 @@ public class AssetTypesController : ApiControllerBase
         return Ok(await Mediator.Send(new GetAssetTypesQuery(), cancellationToken));
     }
 
-    [HttpGet("with-count")]
-    public async Task<ActionResult<IEnumerable<GetAssetTypeWithAssetsCount>>> GetWithCount(CancellationToken cancellationToken)
+    [HttpGet("serials")]
+    public async Task<ActionResult<IEnumerable<GetAssetTypeSerial>>> GetWithCount(CancellationToken cancellationToken)
     {
         return Ok(await Mediator.Send(new GetAssetTypeWithAssetsCountQuery(), cancellationToken));
     }

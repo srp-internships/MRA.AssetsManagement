@@ -2,9 +2,11 @@
 @using MRA.AssetsManagement.Web.Client.Services.AssetSerials
 @using MRA.AssetsManagement.Web.Shared.Assets
 @using MRA.AssetsManagement.Web.Shared.Employees
+@using MRA.AssetsManagement.Web.Shared.AssetSerials
 @inject IEmployeesService EmployeesService
 @inject IAssetTypesService AssetTypesService
 @inject IAssetSerialService AssetSerialService
+@inject IIconService IconService
 @inject NavigationManager NavigationManager
 
 <MudTable T="GetEmployeeAssetSerials" Class="mt-4" Items="@Elements">
@@ -35,18 +37,21 @@
     @if (showAssetTypes)
     {
         <MudTextField Placeholder="Filter items" T="string" Margin="Margin.Dense" Variant="Variant.Outlined" Immediate="true" TextChanged="@((e) => filterAssetTypes = e)" Class="ps-2 pe-2"/>
-        @foreach (var assetType in AssetTypes.Where(x => x.Name.Contains(filterAssetTypes, StringComparison.InvariantCultureIgnoreCase)))
+        @foreach (var assetType in AssetTypeSerials.Where(x => x.Name.Contains(filterAssetTypes, StringComparison.InvariantCultureIgnoreCase)))
         {
-            <MudMenuItem Disabled="@(assetType.AssetsCount == 0)" OnClick="@(e => OnAssetTypeSelected(assetType.Id))" AutoClose="false">
+            <MudMenuItem Disabled="@(assetType.AssetSerials.Count == 0)" OnClick="@(e => OnAssetTypeSelected(assetType.AssetSerials))" AutoClose="false">
                 <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-                    <MudText>@assetType.Name</MudText>
-                    @if (assetType.AssetsCount == 0)
+                    <MudStack Row>
+                        <MudIcon Icon="@IconService.GetIcon(assetType.Icon)"></MudIcon>
+                        <MudText>@assetType.Name</MudText>
+                    </MudStack>
+                    @if (assetType.AssetSerials.Count == 0)
                     {
                         <MudText>Out of stock</MudText>
                     }
                     else
                     {
-                        <MudText>@assetType.AssetsCount</MudText>
+                        <MudText>@assetType.AssetSerials.Count</MudText>
                     }
                 </MudStack>
             </MudMenuItem>
@@ -69,8 +74,8 @@
 
 @code {
     private List<GetEmployeeAssetSerials> Elements = new List<GetEmployeeAssetSerials>();
-    private List<GetAssetTypeWithAssetsCount> AssetTypes = new List<GetAssetTypeWithAssetsCount>();
-    private List<GetAssetSerial> AssetSerials = new List<GetAssetSerial>();
+    private List<GetAssetTypeSerial> AssetTypeSerials = new List<GetAssetTypeSerial>();
+    private List<GetAssetSerials> AssetSerials = [];
 
     [Parameter] public string UserName { get; set; } = null!;
     [Parameter] public GetEmployee Employee {get; set;} = null!;
@@ -82,7 +87,7 @@
     protected override async Task OnInitializedAsync()
     {
         Elements = await EmployeesService.GetEmployeeAssetsSerials(UserName);
-        AssetTypes = await AssetTypesService.GetAssetTypeWithAssetsCount();
+        AssetTypeSerials = await AssetTypesService.GetAssetTypeSerials();
     }
 
     private void TogglePopover()
@@ -90,10 +95,10 @@
         showPopover = !showPopover;
     }
 
-    private async Task OnAssetTypeSelected(string assetTypeId)
+    private void OnAssetTypeSelected(List<GetAssetSerials> serials)
     {
         showAssetTypes = !showAssetTypes;
-        AssetSerials = await AssetSerialService.GetAssetSerials(assetTypeId);
+        AssetSerials = serials;
     }
 
     private async Task OnAssetSerialSelected(string assetSerialId)
@@ -111,8 +116,9 @@
             Status = Web.Shared.Enums.AssetStatus.Taken,
             UserDisplay = userDisplay
         });
+
         Elements = await EmployeesService.GetEmployeeAssetsSerials(UserName);
-        AssetTypes = await AssetTypesService.GetAssetTypeWithAssetsCount();
+        AssetTypeSerials = await AssetTypesService.GetAssetTypeSerials();
         showAssetTypes = true;
     }
 }

@@ -18,18 +18,15 @@ public class GetEmployeeAssetSerialsQueryHandler(IApplicationDbContext context) 
         var assetSerials = await context.AssetSerials.GetAllAsync(x => x.Employee != null &&
                                                                     x.Employee.UserName == request.UserName &&
                                                                     x.Status == Domain.Enums.AssetStatus.Taken);
-                                                                    
-        var history = (await context.AssetHistories.GetAllAsync(x => assetSerials.Contains(x.AssetSerial) && x.AssetSerial.Status == Domain.Enums.AssetStatus.Taken))
-                                                    .OrderByDescending(x => x.AssetSerial.LastModifiedAt);
-        var assetTypeIds = assetSerials.Select(x => x.Asset.AssetTypeId);
-        var assetTypes = await context.AssetTypes.GetAllAsync(x => assetTypeIds.Contains(x.Id));
+
+        var assetTypes = await context.AssetTypes.GetAllAsync(cancellationToken);
 
         return assetSerials.Select(x =>
             new GetEmployeeAssetSerials
             {
                 AssetName = x.Asset.Name,
                 Serial = x.Serial,
-                From = DateOnly.FromDateTime(history.First(h => h.AssetSerial.Id == x.Id).DateTime),
+                From = DateOnly.FromDateTime(x.LastModifiedAt),
                 AssetType = assetTypes.First(at => at.Id == x.Asset.AssetTypeId).Name
             }).ToList();
     }
