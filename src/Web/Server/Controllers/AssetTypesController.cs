@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using MRA.AssetsManagement.Application.Features.AssetSerials.Queries;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Commands;
 using MRA.AssetsManagement.Application.Features.AssetTypes.Queries;
 using MRA.AssetsManagement.Web.Shared.AssetSerials;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
-
 [Authorize]
 public class AssetTypesController : ApiControllerBase
 {
@@ -19,15 +17,9 @@ public class AssetTypesController : ApiControllerBase
     }
 
     [HttpGet("serials")]
-    public async Task<ActionResult<IEnumerable<GetAssetTypeSerial>>> GetWithCount(CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<GetAssetTypeSerial>>> GetAvailableAssetsWithAssetType(CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetAssetTypeWithAssetsCountQuery(), cancellationToken));
-    }
-
-    [HttpGet("serials/{assetTypeId}")]
-    public async Task<ActionResult<IEnumerable<GetAssetTypeWithAssetsCount>>> GetSerials(string assetTypeId, CancellationToken cancellationToken)
-    {
-        return Ok(await Mediator.Send(new GetAssetSerialsByAssetTypeIdQuery(assetTypeId), cancellationToken));
+        return Ok(await Mediator.Send(new GetAvailableAssetsWithAssetTypesQuery(), cancellationToken));
     }
 
     [HttpGet("{slug}")]
@@ -35,7 +27,6 @@ public class AssetTypesController : ApiControllerBase
     {
         return Ok(await Mediator.Send(new GetSingleAssetTypeQuery(slug), cancellationToken));
     }
-
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]

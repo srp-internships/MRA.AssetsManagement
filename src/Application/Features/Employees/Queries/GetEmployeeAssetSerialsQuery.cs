@@ -1,33 +1,32 @@
 using MediatR;
 
 using MRA.AssetsManagement.Application.Data;
-
-using MRA.AssetsManagement.Web.Shared.Assets;
+using MRA.AssetsManagement.Web.Shared.AssetSerials;
 
 namespace MRA.AssetsManagement.Application.Features.Employees.Queries;
 
-public class GetEmployeeAssetSerialsQuery(string userName) : IRequest<IEnumerable<GetEmployeeAssetSerials>>
+public class GetEmployeeAssetSerialsQuery(string userName) : IRequest<IEnumerable<GetAssetSerials>>
 {
     public string UserName => userName;
 }
 
-public class GetEmployeeAssetSerialsQueryHandler(IApplicationDbContext context) : IRequestHandler<GetEmployeeAssetSerialsQuery, IEnumerable<GetEmployeeAssetSerials>>
+public class GetEmployeeAssetSerialsQueryHandler(IApplicationDbContext context) : IRequestHandler<GetEmployeeAssetSerialsQuery, IEnumerable<GetAssetSerials>>
 {
-    public async Task<IEnumerable<GetEmployeeAssetSerials>> Handle(GetEmployeeAssetSerialsQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<GetAssetSerials>> Handle(GetEmployeeAssetSerialsQuery request, CancellationToken cancellationToken)
     {
         var assetSerials = await context.AssetSerials.GetAllAsync(x => x.Employee != null &&
                                                                     x.Employee.UserName == request.UserName &&
-                                                                    x.Status == Domain.Enums.AssetStatus.Taken);
+                                                                    x.Status == Domain.Enums.AssetStatus.Taken, cancellationToken);
 
         var assetTypes = await context.AssetTypes.GetAllAsync(cancellationToken);
 
         return assetSerials.Select(x =>
-            new GetEmployeeAssetSerials
+            new GetAssetSerials
             {
-                AssetName = x.Asset.Name,
+                Id = x.Id,
+                Name = x.Asset.Name,
                 Serial = x.Serial,
                 From = DateOnly.FromDateTime(x.LastModifiedAt),
-                AssetType = assetTypes.First(at => at.Id == x.Asset.AssetTypeId).Name
             }).ToList();
     }
 }

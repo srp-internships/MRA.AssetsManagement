@@ -9,7 +9,7 @@
 @inject IIconService IconService
 @inject NavigationManager NavigationManager
 
-<MudTable T="GetEmployeeAssetSerials" Class="mt-4" Items="@Elements">
+<MudTable T="GetAssetSerials" Class="mt-4" Items="@Elements">
     <HeaderContent>
         <MudTh>Serial</MudTh>
         <MudTh>Asset Name</MudTh>
@@ -17,7 +17,7 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Serial">@context.Serial</MudTd>
-        <MudTd DataLabel="Asset Name">@context.AssetName</MudTd>
+        <MudTd DataLabel="Asset Name">@context.Name</MudTd>
         <MudTd DataLabel="From">@context.From.ToString("dd MMMM yyyy")</MudTd>
     </RowTemplate>
 </MudTable>
@@ -73,7 +73,7 @@
 </MudMenu>
 
 @code {
-    private List<GetEmployeeAssetSerials> Elements = new List<GetEmployeeAssetSerials>();
+    private List<GetAssetSerials> Elements = new List<GetAssetSerials>();
     [Parameter] public List<GetAssetTypeSerial> AssetTypeSerials {get; set;} = null!;
     [Parameter] public Func<Task> UpdateAssetTypeSerials {get; set;} = null!;
     private List<GetAssetSerials> AssetSerials = [];

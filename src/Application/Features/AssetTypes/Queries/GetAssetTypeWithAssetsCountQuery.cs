@@ -5,14 +5,14 @@ using MRA.AssetsManagement.Web.Shared.AssetSerials;
 
 namespace MRA.AssetsManagement.Application.Features.AssetTypes.Queries;
 
-public class GetAssetTypeWithAssetsCountQuery : IRequest<List<GetAssetTypeSerial>>
+public class GetAvailableAssetsWithAssetTypesQuery : IRequest<List<GetAssetTypeSerial>>
 {
 
 }
 
-public class GetAssetTypeWithAssetsCountQueryHandler(IApplicationDbContext dbContext) : IRequestHandler<GetAssetTypeWithAssetsCountQuery, List<GetAssetTypeSerial>>
+public class GetAvailableAssetsWithAssetTypesQueryHandler(IApplicationDbContext dbContext) : IRequestHandler<GetAvailableAssetsWithAssetTypesQuery, List<GetAssetTypeSerial>>
 {
-    public async Task<List<GetAssetTypeSerial>> Handle(GetAssetTypeWithAssetsCountQuery request, CancellationToken cancellationToken)
+    public async Task<List<GetAssetTypeSerial>> Handle(GetAvailableAssetsWithAssetTypesQuery request, CancellationToken cancellationToken)
     {
         var assetTypes = await dbContext.AssetTypes.GetAllAsync(cancellationToken);
         var assetSerials = await dbContext.AssetSerials.GetAllAsync(x => x.Status == Domain.Enums.AssetStatus.Available, cancellationToken);
