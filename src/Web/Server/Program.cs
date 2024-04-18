@@ -1,6 +1,5 @@
-using System.Text.Json.Serialization;
-using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MRA.AssetsManagement.Application;
@@ -17,7 +16,6 @@ using Serilog;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 builder.Services.AddControllersWithViews(options =>
@@ -31,7 +29,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
-        Description = """Standard Authorization header using the Bearer scheme. Exampel: "{token}" """,
+        Description = """Standard Authorization header using the Bearer scheme. Example: "{token}" """,
         In = ParameterLocation.Header,
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey
@@ -43,30 +41,29 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.Configure<MongoDbOption>(builder.Configuration.GetSection("MongoDb"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8
-            .GetBytes(builder.Configuration.GetSection("JWT:Secret").Value!)),
-        ValidateIssuer = false,
-        ValidateAudience = false
-    });
+    .AddJwtBearer(options =>
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8
+                .GetBytes(builder.Configuration.GetSection("JWT:Secret").Value!)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        });
 
 builder.Services.AddHttpContextAccessor();
 builder.Services
     .AddApplication()
     .AddInfrastructure();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-builder.Host.UseSerilog();
-
-Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
+builder.Host.UseSerilog((context, loggerConfig) =>
+    loggerConfig.ReadFrom.Configuration(context.Configuration));
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-bool isDevelopment = app.Environment.IsDevelopment();
-if (isDevelopment)
+bool development = app.Environment.IsStaging() || app.Environment.IsDevelopment();
+if (development)
 {
     app.UseWebAssemblyDebugging();
     app.UseSwagger();
@@ -79,14 +76,13 @@ else
     app.UseHsts();
 }
 
-
 using (var scope = app.Services.CreateScope())
 {
     var databaseOption = scope.ServiceProvider.GetService<IOptions<MongoDbOption>>();
     if (databaseOption is not null && databaseOption.Value.Seeder)
     {
         var seedService = scope.ServiceProvider.GetService<IDataSeeder>();
-        await seedService!.SeedData(isDevelopment);
+        await seedService!.SeedData(development);
     }
 }
 
@@ -104,5 +100,4 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
-
 app.Run();

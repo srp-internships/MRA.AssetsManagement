@@ -16,7 +16,6 @@ namespace MRA.AssetsManagement.Web.Server.Filters
                 { ModelState: { IsValid: false } } => HandleInvalidModelStateException(context),
                 _ => HandleUnknownException(context)
             };
-
             base.OnException(context);
         }
 
