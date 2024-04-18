@@ -34,7 +34,7 @@ public class GetPagedAssetSerialsQueryHandler(IApplicationDbContext context, IMa
             Employee = mapper.Map<UserDisplay>(x.Employee),
             AssetSerialType = new(assetTypes.First(at => at.Id == x.Asset.AssetTypeId).Icon,
                 assetTypes.First(at => at.Id == x.Asset.AssetTypeId).Name)
-        }).OrderBy(x => x.Status.ToString());
+        });
         
         var result = new PagedList<GetAssetSerial> { Data = data, TotalCount = totalCount};
 

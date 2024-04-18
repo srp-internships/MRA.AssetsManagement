@@ -29,7 +29,9 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
 
     public async Task<IReadOnlyCollection<T>> GetPagedListAsync(int skip, int take, CancellationToken cancellationToken = default)
     {
-        return await _collection.Find(_filterBuilder.Empty).Skip(skip).Limit(take).ToListAsync(cancellationToken);
+        var sort = Builders<T>.Sort.Combine(Builders<T>.Sort.Ascending("status"), Builders<T>.Sort.Ascending("asset.assetTypeId"));
+
+        return await _collection.Find(_filterBuilder.Empty).Sort(sort).Skip(skip).Limit(take).ToListAsync(cancellationToken);
     }
 
     public async Task<T> GetAsync(string id, CancellationToken cancellationToken = default)
