@@ -101,9 +101,7 @@
 
     private async Task OnAssetSerialHasChanged()
     {
-        loading = true;
-        Elements = (await AssetsService.GetPagedAssetSerials(_table.CurrentPage, _table.RowsPerPage)).Data;
-        loading = false;
+        await _table.ReloadServerData();
     }
 
     private async Task<TableData<GetAssetSerial>> LoadSerials(TableState state)
