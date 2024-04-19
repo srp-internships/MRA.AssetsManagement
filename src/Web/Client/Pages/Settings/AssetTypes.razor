@@ -82,7 +82,11 @@
 
         if (Slug is not null)
         {
-            _getAssetType = await AssetTypesService.GetAssetTypeBySlug(Slug)!;
+            var response = await AssetTypesService.GetAssetTypeBySlug(Slug)!;
+            if (response != null)
+            {
+                _getAssetType = response;
+            }
         }
 
         _loading = false;
