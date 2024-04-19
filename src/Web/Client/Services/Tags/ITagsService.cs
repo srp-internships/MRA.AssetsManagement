@@ -7,7 +7,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.Tags
     {
         Task<GetTag> GetTagById(string id);
         Task<GetTag> Create(CreateTagRequest newTag);
-        Task Update(GetTag newTag);
+        Task<bool> Update(GetTag newTag);
         Task Delete(string id);
     }
 }
