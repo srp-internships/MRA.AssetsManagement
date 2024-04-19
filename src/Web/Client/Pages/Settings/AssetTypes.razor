@@ -106,8 +106,9 @@
     {
         if (Slug is not null)
         {
-            await AssetTypesService.Update(_getAssetType);
-            MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
+            var response = await AssetTypesService.Update(_getAssetType);
+            if (response)
+                MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
         }
         else
         {
@@ -130,7 +131,8 @@
     private async void ArchiveOrRestore()
     {
         _getAssetType.Archived = !_getAssetType.Archived;
-        await AssetTypesService.Update(_getAssetType);
-        MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
+        var response = await AssetTypesService.Update(_getAssetType);
+        if (response)
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
     }
 }

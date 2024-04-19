@@ -8,6 +8,6 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
         Task<List<GetAssetType>> GetAll();
         Task<GetAssetType> GetAssetTypeBySlug(string slug);
         Task<GetAssetType> Create(CreateAssetTypeRequest newAssetType);
-        Task Update(GetAssetType newGetAssetType);
+        Task<bool> Update(GetAssetType newGetAssetType);
     }
 }

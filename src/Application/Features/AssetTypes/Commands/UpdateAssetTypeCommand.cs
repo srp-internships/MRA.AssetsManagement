@@ -8,7 +8,7 @@ using MRA.AssetsManagement.Domain.Entities;
 
 namespace MRA.AssetsManagement.Application.Features.AssetTypes.Commands;
 
-public class UpdateAssetTypeCommand : IRequest
+public class UpdateAssetTypeCommand : IRequest<bool>
 {
     public string Id { get; set; } = null!;
     public string Name { get; set; } = null!;
@@ -17,7 +17,7 @@ public class UpdateAssetTypeCommand : IRequest
     public bool Archived { get; set; }
 }
 
-public class UpdateAssetTypeCommandHandler : IRequestHandler<UpdateAssetTypeCommand>
+public class UpdateAssetTypeCommandHandler : IRequestHandler<UpdateAssetTypeCommand, bool>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -28,7 +28,7 @@ public class UpdateAssetTypeCommandHandler : IRequestHandler<UpdateAssetTypeComm
         _mapper = mapper;
     }
 
-    public async Task Handle(UpdateAssetTypeCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(UpdateAssetTypeCommand request, CancellationToken cancellationToken)
     {
         var assetType = await _context.AssetTypes.GetAsync(request.Id, cancellationToken);
 
@@ -36,7 +36,9 @@ public class UpdateAssetTypeCommandHandler : IRequestHandler<UpdateAssetTypeComm
             throw new NotFoundEntityException(nameof(AssetType), request.Id);
 
         _mapper.Map(request, assetType);
-
+        
         await _context.AssetTypes.UpdateAsync(assetType, cancellationToken);
+
+        return true;
     }
 }
