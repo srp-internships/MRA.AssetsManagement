@@ -47,5 +47,13 @@ namespace MRA.AssetsManagement.Web.Client.Services.Tags
 
             return response.Result!.Select(mi => mi.ToMenuItem()).ToList();
         }
+
+        public async Task<List<GetTag>> GetAll()
+        {
+            var response = await httpClient.GetFromJsonAsync<List<GetTag>>($"{_baseAddress}api/tags");
+            snackbar.ShowIfError(response, "Error was occured.");
+            return response.Result!;
+        }
+
     }
 }

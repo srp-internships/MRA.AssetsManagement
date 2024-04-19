@@ -13,13 +13,6 @@ public class AssetsService(IHttpClientService httpClient, ISnackbar snackbar, IW
 {
     private readonly string _baseAddress = environment.BaseAddress;
 
-    public async Task<IEnumerable<GetAssetSerial>> GetAssetSerials()
-    {
-        var response = await httpClient.GetFromJsonAsync<IEnumerable<GetAssetSerial>>($"{_baseAddress}api/assets/serial");
-        snackbar.ShowIfError(response, "Error was occured");
-        return response.Result!;
-    }
-
     public async Task<IEnumerable<GetAsset>> GetAssetsByTypeId(string typeId)
     {
         var response = await httpClient.GetFromJsonAsync<IEnumerable<GetAsset>>($"{_baseAddress}api/assets/{typeId}");
