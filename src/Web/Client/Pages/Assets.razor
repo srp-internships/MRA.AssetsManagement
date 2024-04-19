@@ -80,7 +80,8 @@
 
 @code {
 
-    [Parameter] public string? Serial { get; set; }
+    [Parameter] 
+    public string? Serial { get; set; }
     private string searchString1 = "";
     private bool loading = false;
     private IEnumerable<GetAssetSerial> Elements = new List<GetAssetSerial>(Enumerable.Range(1, 5).Select(x => new GetAssetSerial()));

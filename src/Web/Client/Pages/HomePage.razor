@@ -1,0 +1,39 @@
+﻿@page "/"
+@inject IHomeService HomeService
+@inject IIconService IconService;
+@attribute [Authorize]
+
+
+<PageTitle>Home</PageTitle>
+@if (_getAssetType != null)
+{
+    @foreach (var category in _getAssetType)
+    {
+        <MudCard MudCard Width="730px">
+            <MudCardContent>
+                <MudText Typo="Typo.h5"><MudIcon Icon="@IconService.GetIcon(category.Icon)"/> @category.Name</MudText>
+                @foreach (var asset in category.AssetSerials)
+                {
+                    <MudText Typo="Typo.body2">@asset.Name   @asset.Serial</MudText>  
+                }
+               
+            </MudCardContent>
+        </MudCard>
+        <br />
+    }
+}
+else
+{
+    <p>Loading...</p>
+}
+
+
+@code {
+
+    private IEnumerable<GetAssetTypeSerial> _getAssetType;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _getAssetType = await HomeService.Get();
+    }
+}
