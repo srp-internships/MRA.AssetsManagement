@@ -23,15 +23,16 @@
         <MudTh>
             <MudStack Row=true Class="justify-space-between">
                 <MudText>Asset</MudText>
-                <MudIconButton @onclick=OpenDialog Class="pa-0" Disabled=@(_selectedAssetType == null ? true : false) Icon="@Icons.Material.Filled.Add" Color="Color.Tertiary" />
+                <MudIconButton @onclick=OpenDialog Class="pa-0" Disabled=@(_selectedAssetType == null) Icon="@Icons.Material.Filled.Add" Color="Color.Tertiary" />
             </MudStack>
         </MudTh>
-        <MudTh>Count</MudTh>
+        <MudTh>Serials</MudTh>
+        <MudTh>Date</MudTh>
         <MudTh>Price</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Type">
-            <MudSelect @bind-Value=context.AssetType TextChanged=@(() => {_selectedAssetType = context.AssetType; assetSelect.ResetAsync();}) ToStringFunc=AssetTypeToStirng Label="Select Type" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant="Variant.Outlined" Clearable>
+            <MudSelect @bind-Value=context.AssetType TextChanged="@(async() => {await SetAssets(context.AssetType);})" ToStringFunc=AssetTypeToStirng Label="Select Type" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant="Variant.Outlined" Clearable>
                 @foreach (var assetType in AssetTypes)
                 {
                     <MudSelectItem Value="assetType" />
@@ -39,24 +40,31 @@
             </MudSelect>
         </MudTd>
         <MudTd DataLabel="Asset">
-            <MudSelect @ref=assetSelect @bind-Value=context.Asset @onmousedown="@(() => GetAssets(context.AssetType.Id))" Disabled="@(context.AssetType == null ? true : false)" ToStringFunc=AssetToStirng Label="Select Asset" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant=" Variant.Outlined" Clearable>
-                @foreach (var asset in Assets)
+            <MudSelect @ref=_assetSelect @bind-Value=context.Asset Disabled="@(context.AssetType == null)" ToStringFunc=AssetToStirng Label="Select Asset" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant=" Variant.Outlined" Clearable>
+                @foreach (var asset in GetAssets(context.AssetType?.Id! ?? ""))
                 {
                     <MudSelectItem Value="asset" />
                 }
             </MudSelect>
         </MudTd>
-        <MudTd DataLabel="Quantity">
-            <MudTextField @bind-Value=context.Quantity InputType="InputType.Number" Margin=Margin.Dense Variant="Variant.Outlined" Immediate />
+        <MudTd DataLabel="Serials">
+            <MudTextField @bind-Value=context.Serials Margin=Margin.Dense Variant="Variant.Outlined" Immediate />
+        </MudTd>
+        <MudTd>
+            <MudDatePicker @bind-Date=context.Date Margin="Margin.Dense" Variant="Variant.Outlined" Label="Date" />
         </MudTd>
         <MudTd DataLabel="Price">
-            <MudTextField @bind-Value=context.Price Margin=Margin.Dense Variant="Variant.Outlined" Immediate MaxLength="15" />
+            <MudStack Row=true>
+                <MudTextField @bind-Value=context.Price Margin=Margin.Dense Variant="Variant.Outlined" Immediate MaxLength="15" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteRow(context))" />
+            </MudStack>
         </MudTd>
     </RowTemplate>
     <FooterContent>
         <MudTh><MudText Typo="Typo.h5">Total:</MudText></MudTh>
         <MudTh />
-        <MudTh/>
+        <MudTh />
+        <MudTh />
         <MudTh>
             <MudText Typo="Typo.h5" Align="Align.Center">@CalculateTotalPrice()</MudText>
         </MudTh>
@@ -84,30 +92,60 @@
 
 @code {
     private List<CreateAssetPurchaseDetail> AssetPurchases = new List<CreateAssetPurchaseDetail>();
+    private List<GetAssetType> AssetTypes = new List<GetAssetType>();
+    private Dictionary<string, List<GetAsset>> Assets = new Dictionary<string, List<GetAsset>>();
 
     private string _vendor { get; set; } = null!;
     private bool _isOpen = false;
     private bool _disabled = true;
 
-    private MudSelect<GetAsset> assetSelect = null!;
     private GetAssetType _selectedAssetType = null!;
-
     private CreateAssetRequest _newAsset = new CreateAssetRequest();
-    private List<GetAssetType> AssetTypes = new List<GetAssetType>();
-    private List<GetAsset> Assets = new List<GetAsset>();
+
+    private MudSelect<GetAsset> _assetSelect = null!;
 
     Func<GetAssetType, string> AssetTypeToStirng = at => at.Name;
     Func<GetAsset, string> AssetToStirng = a => a.Name;
 
     protected override async Task OnInitializedAsync()
     {
+        Assets.Add("", new List<GetAsset>());
         AssetPurchases.Add(new CreateAssetPurchaseDetail());
         AssetTypes =  await AssetTypesService.GetAll();
     }
 
-    private async void GetAssets(string id)
+    private async Task SetAssets(GetAssetType assetType)
     {
-        Assets = (await AssetsService.GetAssetsByTypeId(id)).ToList();
+        _selectedAssetType = assetType;
+        await _assetSelect.ResetAsync();
+
+        if (!Assets.ContainsKey(assetType.Id))
+        {
+            await UpdateAssets(assetType);
+        }
+    }
+
+    private List<GetAsset> GetAssets(string assetTypeId)
+    {
+        if (Assets.ContainsKey(assetTypeId))
+        {
+            return Assets[assetTypeId];
+        }
+        return new List<GetAsset>();
+    }
+
+    private async Task UpdateAssets(GetAssetType assetType)
+    { 
+        var response = (await AssetsService.GetAssetsByTypeId(assetType.Id)).ToList();
+        if (Assets.ContainsKey(assetType.Id))
+        {
+            Assets[assetType.Id] = response;
+        }
+        else
+        {
+            Assets.Add(assetType.Id, response);
+        }
+
         StateHasChanged();
     }
 
@@ -117,13 +155,24 @@
         {
             SnackBar.Add("Vendor is required field!", Severity.Error);
         }
-        else if (AssetPurchases.Any(ap => ap.Quantity < 1 || ap.Price < 1))
+        else if (AssetPurchases.Any(ap => ap.Serials.Trim().Length < 0 || ap.Price < 1 || ap.Asset == null 
+                                   || ap.AssetType == null || ap.Date == null))
         {
-            SnackBar.Add("Price and quantity must be grater than 0!", Severity.Error);
+            SnackBar.Add("All fields are required", Severity.Error);
         }
         else
         {
-            var details = AssetPurchases.Where(ap => ap.Asset != null).ToList();
+            var details = AssetPurchases.Where(ap => ap.Asset != null).Select(ap => new CreateAssetPurchaseDetail
+                {
+                    Asset = ap.Asset,
+                    Quantity = ap.Serials.Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries).Length,
+                    AssetType = ap.AssetType,
+                    Serials = ap.Serials,
+                    Price = ap.Price,
+                    Date = ap.Date!.Value.AddDays(1)
+            }).ToList();
+            
+
             CreateAssetPurchaseRequest newAssetPurchase = new() { Vendor = _vendor, Details = details };
             await AssetsService.CreatePurchase(newAssetPurchase);
             NavigationManager.NavigateTo("/assets");
@@ -136,6 +185,7 @@
         await AssetsService.CreateAsset(_newAsset);
         OpenDialog();
         _newAsset = new CreateAssetRequest();
+        await UpdateAssets(_selectedAssetType);
     }   
 
     private void AddRow()
@@ -143,6 +193,11 @@
         var newRow = new CreateAssetPurchaseDetail();
         AssetPurchases.Add(newRow);
         _selectedAssetType = null!;
+    }
+
+    private void DeleteRow(CreateAssetPurchaseDetail createAssetPurchaseDetail)
+    {
+        AssetPurchases.Remove(createAssetPurchaseDetail);
     }
 
     private decimal CalculateTotalPrice()
