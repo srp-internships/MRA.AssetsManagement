@@ -113,10 +113,12 @@
                 newAssetType.ShortName = _getAssetType.ShortName;
                 newAssetType.Icon = _getAssetType.Icon;
             }
-
-            _getAssetType = await AssetTypesService.Create(newAssetType);
-            MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getAssetType.ToMenuItem());
-            _getAssetType = new GetAssetType();
+            var response = await AssetTypesService.Create(newAssetType);
+            if (response != null)
+            {
+                MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, response.ToMenuItem());
+                _getAssetType = new GetAssetType();
+            }
         }
         StateHasChanged();
     }
