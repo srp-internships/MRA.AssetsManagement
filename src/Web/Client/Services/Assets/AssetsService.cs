@@ -20,6 +20,13 @@ public class AssetsService(IHttpClientService httpClient, ISnackbar snackbar, IW
         return response.Result!;
     }
 
+    public async Task<PagedList<GetAssetSerial>> GetPagedAssetSerials(int currentPage, int pageSize)
+    {
+        var response = await httpClient.GetFromJsonAsync<PagedList<GetAssetSerial>>($"{_baseAddress}api/assets/page/{currentPage}/{pageSize}");
+        snackbar.ShowIfError(response, "Error was occured.");
+        return response.Result!;
+    }
+
     public async Task<IEnumerable<GetAsset>> GetAssetsByTypeId(string typeId)
     {
         var response = await httpClient.GetFromJsonAsync<IEnumerable<GetAsset>>($"{_baseAddress}api/assets/{typeId}");
