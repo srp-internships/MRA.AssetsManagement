@@ -5,21 +5,28 @@
 
 
 <PageTitle>Home</PageTitle>
+
 @if (_getAssetType != null)
 {
-    @foreach (var category in _getAssetType)
+    @foreach (var assetType in _getAssetType)
     {
-        <MudCard MudCard Width="730px">
-            <MudCardContent>
-                <MudText Typo="Typo.h5"><MudIcon Icon="@IconService.GetIcon(category.Icon)"/> @category.Name</MudText>
-                @foreach (var asset in category.AssetSerials)
-                {
-                    <MudText Typo="Typo.body2">@asset.Name   @asset.Serial</MudText>  
-                }
-               
-            </MudCardContent>
-        </MudCard>
-        <br />
+        <MudText Typo="Typo.h4" Color="Color.Primary">
+            <MudIcon Icon="@IconService.GetIcon(assetType.Icon)" />
+            <strong>@assetType.Name</strong>
+        </MudText>
+
+        @foreach (var asset in assetType.AssetSerials)
+        {
+            <MudCard Class="mt-3 pa-4" Style="max-width: 550px">
+                <MudCardContent>
+                      <MudStack Row=true Class="d-flex justify-space-between mb-5">
+                        <MudText Typo="Typo.body1">@asset.Name </MudText>
+                        <MudText Typo="Typo.body1">@asset.Serial </MudText>
+                    </MudStack>
+                </MudCardContent>
+            </MudCard>
+            <br />
+        }
     }
 }
 else
@@ -27,10 +34,9 @@ else
     <p>Loading...</p>
 }
 
-
 @code {
 
-    private IEnumerable<GetAssetTypeSerial> _getAssetType;
+    private IEnumerable<GetAssetTypeSerial>? _getAssetType;
 
     protected override async Task OnInitializedAsync()
     {
