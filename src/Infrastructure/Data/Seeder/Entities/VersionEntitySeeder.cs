@@ -17,7 +17,7 @@ public class VersionEntitySeeder : EntitySeeder<AppVersion>
      
         await _repository.CreateAsync(default, [
             // PC
-            new AppVersion(){Version = "1"}
+            new AppVersion(){Version = 1}
         ]);
     }
 }

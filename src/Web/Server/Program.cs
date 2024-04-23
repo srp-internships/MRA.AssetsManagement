@@ -89,7 +89,7 @@ using (var scope = app.Services.CreateScope())
 
 using (var scope = app.Services.CreateScope())
 {
-    var version = builder.Configuration.GetValue<int>("AppVersion");
+    var version = builder.Configuration.GetValue<int>("MongoDb:AppVersion");
     var migrationService = scope.ServiceProvider.GetService<MongoDbMigration>();
     migrationService!.Migrate(version);
 }
