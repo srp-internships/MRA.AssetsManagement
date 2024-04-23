@@ -5,6 +5,7 @@ using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Infrastructure.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
 using MRA.AssetsManagement.Infrastructure.Identity.Services;
+using MRA.AssetsManagement.Infrastructure.Migrations;
 
 namespace MRA.AssetsManagement.Infrastructure;
 
@@ -15,6 +16,8 @@ public static class ConfigureServices
         services.AddSingleton<IApplicationDbContext, MongoDbContext>();
         services.AddSingleton<IDataSeeder, MongoDbDataSeeder>();
         services.AddScoped<IEmployeeService, EmployeeService>();
+        services.AddSingleton<MongoDbMigration>();
+        
         return services;
     }
 }

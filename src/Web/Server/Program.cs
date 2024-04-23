@@ -8,6 +8,7 @@ using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
 using MRA.AssetsManagement.Infrastructure.Identity.Services;
+using MRA.AssetsManagement.Infrastructure.Migrations;
 using MRA.AssetsManagement.Web.Server;
 using MRA.AssetsManagement.Web.Server.Filters;
 
@@ -84,6 +85,13 @@ using (var scope = app.Services.CreateScope())
         var seedService = scope.ServiceProvider.GetService<IDataSeeder>();
         await seedService!.SeedData(development);
     }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var version = builder.Configuration.GetValue<int>("AppVersion");
+    var migrationService = scope.ServiceProvider.GetService<MongoDbMigration>();
+    migrationService!.Migrate(version);
 }
 
 app.UseMiddleware<RequestLogContextMiddleware>();

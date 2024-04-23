@@ -1,68 +1,62 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
+using MRA.AssetsManagement.Domain.Entities;
 
-using MRA.AssetsManagement.Application.Data;
+using Tag = MRA.AssetsManagement.Domain.Entities.Tag;
 
 namespace MRA.AssetsManagement.Infrastructure.Migrations;
 
-public class MigrationService
+public class MyMigration2 : IMigration
 {
-    private readonly IMongoDatabase _database;
-
-    public MigrationService(string connectionString,string dataBaseName)
+    private const string Version = "2";
+    private readonly IMongoCollection<AppVersion> _appVersionCollection;
+    private readonly IMongoCollection<Tag> _tagCollection;
+    
+    public MyMigration2()
     {
-        var client = new MongoClient(connectionString);
-        _database = client.GetDatabase(dataBaseName);
+        var client = new MongoClient();
+        IMongoDatabase database = client.GetDatabase("mra-assets");
+        _appVersionCollection = database.GetCollection<AppVersion>("version");
+        _tagCollection = database.GetCollection<Tag>("tags");
     }
-    public void ApplyMigrations()
+    public void Up()
     {
-        var collection = _database.GetCollection<BsonDocument>("migrations");
-        var latestMigration = GetLatestMigration(collection);
-
-        // Проверяем, были ли уже применены все миграции
-        if (latestMigration == null)
-        {
-            ApplyInitialMigration(collection);
-            return;
-        }
-
-        // Применяем миграции, начиная с последней примененной
-        if (latestMigration.Version < 1)
-        {
-            ApplyMigration1(collection);
-        }
-        // Добавьте другие миграции по мере необходимости
+        var filter = Builders<Tag>.Filter.Empty;
+        var update = Builders<Tag>.Update.Set("Cod", "");
+        var updateOptions = new UpdateOptions { IsUpsert = false };
+        _tagCollection.UpdateMany(filter, update, updateOptions);
+        SaveVersionToDatabase(Version);
     }
-
-    private BsonDocument? GetLatestMigration(IMongoCollection<BsonDocument> collection)
+    public void Down()
     {
-        return collection.Find(Builders<BsonDocument>.Filter.Empty)
-            .SortByDescending(m => m["version"])
-            .FirstOrDefault();
+        throw new NotImplementedException();
     }
-
-    private void ApplyInitialMigration(IMongoCollection<BsonDocument> collection)
+    private void SaveVersionToDatabase(string version)
     {
-        // Применяем начальную миграцию
-        var migration = new BsonDocument
-        {
-            { "version", 1 },
-            { "description", "Remove Date field from Document entity" },
-            { "date", DateTime.UtcNow },
-            { "changes", new BsonDocument
-                {
-                    { "$unset", new BsonDocument("Date", 1) }
-                }
-            }
-        };
-        collection.InsertOne(migration);
+        var filter = Builders<AppVersion>.Filter.Empty;
+        var update = Builders<AppVersion>.Update.Set(v => v.Version, version);
+        _appVersionCollection.UpdateOne(filter, update, new UpdateOptions { IsUpsert = true });
+    }
+}
+
+public class MyMigration3 : BaseMigration
+{
+    private readonly IMongoCollection<Tag> _tagCollection;
+    public MyMigration3() : base("3")
+    {
+        _tagCollection = _database.GetCollection<Tag>("tags");
     }
 
-    private void ApplyMigration1(IMongoCollection<BsonDocument> collection)
+    public override void Up()
     {
-        // Применяем миграцию версии 1
-        // Добавьте здесь операции миграции для версии 1
+        var filter = Builders<Tag>.Filter.Empty;
+        var update = Builders<Tag>.Update.Unset("Cod"); // Удаляем значение по умолчанию
+        var updateOptions = new UpdateOptions { IsUpsert = false };
+        _tagCollection.UpdateMany(filter, update, updateOptions);
+        SaveVersionToDatabase();
     }
 
-    // Добавьте другие методы ApplyMigrationX() для других миграций по мере необходимости
+    public override void Down()
+    {
+        throw new NotImplementedException();
+    }
 }
