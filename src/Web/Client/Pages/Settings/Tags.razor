@@ -73,8 +73,9 @@
     {
         if (Id is not null)
         {
-            await TagsService.Update(_getTag);
-            MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getTag.ToMenuItem());
+            var response = await TagsService.Update(_getTag);
+            if (response)
+                MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getTag.ToMenuItem());
         }
         else
         {
@@ -84,9 +85,12 @@
                 Color = _getTag.Color
             };
 
-            _getTag = await TagsService.Create(newTag);
-            MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getTag.ToMenuItem());
-            _getTag = new GetTag();
+            var response = await TagsService.Create(newTag);
+            if (response != null)
+            {
+                MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getTag.ToMenuItem());
+                _getTag = new GetTag();
+            }
         }
         StateHasChanged();
     }
