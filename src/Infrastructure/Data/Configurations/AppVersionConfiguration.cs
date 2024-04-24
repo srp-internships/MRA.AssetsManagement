@@ -14,7 +14,7 @@ public class AppVersionConfiguration : BaseConfiguration<AppVersion>
     {
         base.RegisterClassMap(classMap);
 
-        classMap.MapMember(x => x.Version).SetElementName("version");
+        classMap.MapMember(x => x.Version).SetElementName("_versions");
     }
 
     protected override void Configure()

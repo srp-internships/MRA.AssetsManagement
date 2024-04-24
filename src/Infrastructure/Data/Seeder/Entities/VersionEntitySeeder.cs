@@ -7,7 +7,7 @@ public class VersionEntitySeeder : EntitySeeder<AppVersion>
 {
     private readonly IApplicationDbContext _context;
 
-    public VersionEntitySeeder(IApplicationDbContext context) : base(context.AppVersions)
+    public VersionEntitySeeder(IApplicationDbContext context) : base(context.DbVersions)
     {
         _context = context;
     }

@@ -1,6 +1,5 @@
 using AutoMapper;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder.Entities;
@@ -30,7 +29,6 @@ public class MongoDbDataSeeder : IDataSeeder
             new TagEntitySeeder(context.Tags),
             new DocumentEntitySeeder(context),
             new AssetHistoryEntitySeeder(context, mapper),
-            new VersionEntitySeeder(context)
             
         ];
     }

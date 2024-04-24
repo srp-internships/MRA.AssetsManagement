@@ -10,5 +10,5 @@ public interface IApplicationDbContext
     public IRepository<AssetSerial> AssetSerials { get; }
     public IRepository<Asset> Assets { get; }
     public IRepository<AssetHistory> AssetHistories { get; }
-    public IRepository<AppVersion> AppVersions { get; }
+    public IRepository<AppVersion> DbVersions { get; }
 }

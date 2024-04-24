@@ -85,13 +85,7 @@ using (var scope = app.Services.CreateScope())
         var seedService = scope.ServiceProvider.GetService<IDataSeeder>();
         await seedService!.SeedData(development);
     }
-}
-
-using (var scope = app.Services.CreateScope())
-{
-    var version = builder.Configuration.GetValue<int>("MongoDb:AppVersion");
-    var migrationService = scope.ServiceProvider.GetService<MongoDbMigration>();
-    migrationService!.Migrate(version);
+    scope.ServiceProvider.GetService<MongoDbMigration>();
 }
 
 app.UseMiddleware<RequestLogContextMiddleware>();

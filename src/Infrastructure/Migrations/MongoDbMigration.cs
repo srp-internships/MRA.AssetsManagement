@@ -17,6 +17,8 @@ namespace MRA.AssetsManagement.Infrastructure.Migrations
             _client = new MongoClient(options.Value.ConnectionString);
             _migrations = new Dictionary<int, IMigration>();
             AddMigration(1, new DefaultVersion(_client));
+
+            Migrate();
         }
 
         private void AddMigration(int version, IMigration migration)
@@ -27,8 +29,9 @@ namespace MRA.AssetsManagement.Infrastructure.Migrations
             }
         }
 
-        public void Migrate(int version)
+        public void Migrate()
         {
+            var version = _options.Value.Version;
             if (_migrations.TryGetValue(version, out IMigration? migration))
             {
                 migration.Up();
@@ -43,9 +46,11 @@ namespace MRA.AssetsManagement.Infrastructure.Migrations
         private void SaveVersionToDatabase(int version)
         {
             var db = _client.GetDatabase(_options.Value.DatabaseName);
-            var collection = db.GetCollection<AppVersion>("version");
+            var collection = db.GetCollection<AppVersion>("_versions");
             var filter = Builders<AppVersion>.Filter.Empty;
-            var update = Builders<AppVersion>.Update.Set(v => v.Version, version);
+            var update = Builders<AppVersion>.Update
+                .Set(v => v.Version, version)
+                .Set(v=>v.DateTime,DateTime.Now);
             collection.UpdateOne(filter, update, new UpdateOptions { IsUpsert = true });
         }
     }
