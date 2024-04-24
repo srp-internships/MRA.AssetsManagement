@@ -6,7 +6,7 @@ using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[Authorize]
+
 public class AssetTypesController : ApiControllerBase
 {
     [HttpGet]

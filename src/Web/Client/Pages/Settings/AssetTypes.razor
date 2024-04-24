@@ -63,10 +63,31 @@
         }
     </MudForm>
 </MudStack>
+<MudTable Class="ma-3" Items="_getAssetType.Properties" Dense Style="position: relative;">
+    <ToolBarContent>
+        <MudText Typo="Typo.h5">Properties</MudText>
+        <MudButton Style="position:absolute; right: 0;" OnClick=AddRow Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Add">Add Property</MudButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Label</MudTh>
+        <MudTh>Default</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd><MudTextField @bind-Value=context.Label Label="Label" Variant="Variant.Outlined" Margin="Margin.Dense" Immediate /></MudTd>
+        <MudTd>
+            <MudStack Row>
+                <MudTextField @bind-Value=context.Value Label="Default" Variant="Variant.Outlined" Margin="Margin.Dense" Immediate />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => RemoveRow(context))" />
+            </MudStack>
+      </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No properties are set</MudText>
+    </NoRecordsContent>
+</MudTable>
 <SectionContent SectionName="@nameof(MenuItemList)">
     <MenuItemList Service="AssetTypesService" BaseRoute="/settings/asset-types"/>
 </SectionContent>
-
 @code {
     [Parameter] public string? Slug { get; set; }
 
@@ -134,5 +155,15 @@
         var response = await AssetTypesService.Update(_getAssetType);
         if (response)
             MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
+    }
+
+    private void AddRow()
+    {
+        _getAssetType.Properties.Add(new Properties());
+    }
+
+    private void RemoveRow(Properties properties)
+    {
+        _getAssetType.Properties.Remove(properties);
     }
 }

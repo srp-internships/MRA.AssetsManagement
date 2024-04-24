@@ -17,6 +17,7 @@ public class AssetTypeConfiguration : BaseConfiguration<AssetType>
         classMap.MapMember(x => x.Name).SetElementName("name");
         classMap.MapMember(x => x.Slug).SetElementName("slug");
         classMap.MapMember(x => x.ShortName).SetElementName("shortName");
+        classMap.MapMember(x => x.Properties).SetElementName("properties");
         classMap.MapMember(x => x.Icon).SetElementName("icon");
         classMap.MapMember(x => x.Archived).SetElementName("archived");
     }
