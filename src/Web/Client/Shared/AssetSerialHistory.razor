@@ -2,6 +2,7 @@
 @using MRA.AssetsManagement.Web.Shared.AssetSerialHistory
 @using MRA.AssetsManagement.Web.Shared.Enums
 @inject IAssetSerialService AssetSerialService
+@inject IDialogService DialogService
 
 <MudButton FullWidth="true" Variant="Variant.Outlined" OnClick="LoadHistory">
     @if (isLoading)
@@ -14,9 +15,9 @@
         <MudIcon Icon="@Icons.Material.Filled.Refresh" />
         <MudText>Load history</MudText>
     }
-    </MudButton>
+</MudButton>
 
-    @if (ShowHistory)
+@if (ShowHistory)
 {
     @if (isLoading)
     {
@@ -34,6 +35,10 @@
                 <MudTimelineItem Size="Size.Small" Color="@GetTimelineItemColor(history.Status)" TimelineAlign="GetTimelineAlign(history)">
                     <ItemOpposite>
                         <MudText Color="@GetTimelineItemColor(history.Status)" Typo="Typo.subtitle2">@history.Status</MudText>
+                        @if (!string.IsNullOrEmpty(history.Note))
+                        {
+                            <MudIconButton Icon="@Icons.Material.Outlined.Comment" OnClick="@(e => ShowDialog(history))"></MudIconButton>
+                        }
                     </ItemOpposite>
                     <ItemContent>
                         <MudText>@history.Date.ToString("dd MMM yyyy")</MudText>
@@ -45,11 +50,12 @@
                 </MudTimelineItem>
                 counter++;
             }
-            </MudTimeline>
+        </MudTimeline>
     }
 }
 
 @code {
+
     [Parameter] public string Serial { get; set; } = null!;
     [Parameter] public bool ShowHistory { get; set; }
     public bool showTimeLine = false;
@@ -61,22 +67,15 @@
     {
         isLoading = true;
         Histories = (await AssetSerialService.GetAssetSerialHistories(Serial)).ToList();
-        @* Histories = new List<GetAssetSerialHistory>()
-            {
-                new()
-                {
-                    Employee = "Employee",
-                    Status = AssetStatus.Taken,
-                    Date = DateOnly.FromDateTime(DateTime.Now.Date)
-                },
-                new()
-                {
-                    Status = AssetStatus.Available,
-                    Date = DateOnly.FromDateTime(DateTime.Now.Date)
-                }
-            }; *@
         isLoading = false;
         ShowHistory = true;
+    }
+
+    void ShowDialog(GetAssetSerialHistory history)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("AssetSerialHistory", history);
+        DialogService.Show<NoteDialog>("", parameters);
     }
 
     private Color GetTimelineItemColor(AssetStatus status)
@@ -86,7 +85,8 @@
             AssetStatus.Available => Color.Success,
             AssetStatus.Taken => Color.Info,
             AssetStatus.Broken => Color.Error,
-            AssetStatus.Deprecated => Color.Default
+            AssetStatus.Deprecated => Color.Default,
+            _ => Color.Default
         };
     }
 

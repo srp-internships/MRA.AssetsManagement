@@ -104,20 +104,6 @@
     {
         loading = true;
         var result = await AssetsService.GetPagedAssetSerials(state.Page, state.PageSize);
-        @* var pagedList = new PagedList<GetAssetSerial>();
-        pagedList.Data = new List<GetAssetSerial>() {
-            new GetAssetSerial()
-            {
-                Id = "123hjkjhasgh29",
-                Employee = new UserDisplay() {FirstName = "Sue", LastName = "Storm", UserName = "sue"},
-                Status = Web.Shared.Enums.AssetStatus.Taken,
-                Name = "Asus k55a",
-                Serial = "LPT-000004",
-                LastModified = DateTime.Now,
-                From = DateTime.Now.AddDays(-40)
-            }
-        };
-        var result = pagedList; *@
         loading = false;
         return new TableData<GetAssetSerial>() { Items = result.Data, TotalItems = result.TotalCount };
     }

@@ -1,4 +1,6 @@
+@using Blazored.TextEditor
 @using MRA.AssetsManagement.Web.Client.Services.AssetSerials
+@using MRA.AssetsManagement.Web.Shared.AssetSerialHistory
 @using MRA.AssetsManagement.Web.Shared.AssetSerials
 @using MRA.AssetsManagement.Web.Shared.Assets
 @using MRA.AssetsManagement.Web.Shared.Employees
@@ -8,7 +10,7 @@
 
 <MudDialog>
     <DialogContent>
-        <BlazoredTextEditor @ref="@QuillHtml">
+        <BlazoredTextEditor @ref="@QuillHtml" ReadOnly="@(AssetSerialHistory != null)">
             <ToolbarContent>
                 <select class="ql-header">
                     <option selected=""></option>
@@ -37,35 +39,39 @@
                 </span>
             </ToolbarContent>
             <EditorContent>
-                <h4>This Toolbar works with HTML</h4>
-                <a href="http://BlazorHelpWebsite.com">
-                    BlazorHelpWebsite.com
-                </a>
+
             </EditorContent>
         </BlazoredTextEditor>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        @if (AssetSerialHistory == null)
+        {
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        }
+        else
+        {
+            <MudButton OnClick="Cancel">Close</MudButton>
+        }
     </DialogActions>
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Parameter] public GetAssetSerial AssetSerial { get; set; }
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public GetAssetSerial AssetSerial { get; set; } = null!;
+    [Parameter] public GetAssetSerialHistory? AssetSerialHistory { get; set; }
     [Parameter] public EventCallback OnSaveButtonClicked { get; set; }
     BlazoredTextEditor QuillHtml = null!;
 
     async Task Submit()
     {
-        Console.WriteLine(AssetSerial == null);
-        Console.WriteLine(OnSaveButtonClicked.HasDelegate);
-        @* var request = new UpdateAssetSerialRequest()
+        var request = new UpdateAssetSerialRequest()
             {
                 Id = AssetSerial.Id,
                 Status = AssetSerial.Status,
-                UserDisplay = new UserDisplay() { FirstName = "Sue", LastName = "Storm", UserName = "sue" },
-                Note = await QuillHtml.GetContent()
+                UserDisplay = AssetSerial.Employee,
+                Note = string.IsNullOrEmpty((await QuillHtml.GetText())) ? "" : await QuillHtml.GetContent()
             };
 
         await AssetSerialService.UpdateSerial(request);
@@ -73,7 +79,16 @@
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
         Snackbar.Add("Serial succesfully updated", Severity.Success);
         await OnSaveButtonClicked.InvokeAsync();
-        NavigationManager.NavigateTo("/assets"); *@
+        NavigationManager.NavigateTo("/assets");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AssetSerialHistory is not null)
+        {
+            await Task.Delay(100);
+            await QuillHtml.LoadContent(AssetSerialHistory.Note);
+        }
     }
 
     void Cancel() => MudDialog.Cancel();
