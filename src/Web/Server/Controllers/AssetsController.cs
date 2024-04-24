@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Features.Assets.Commands;
 using MRA.AssetsManagement.Application.Features.Assets.Queries;
 using MRA.AssetsManagement.Application.Features.AssetSerials.Commands;
+using MRA.AssetsManagement.Application.Features.AssetSerials.Queries;
 using MRA.AssetsManagement.Application.Features.Documents.Create;
 using MRA.AssetsManagement.Domain.Entities;
 using MRA.AssetsManagement.Web.Shared.Assets;
@@ -29,6 +30,14 @@ public class AssetsController : ApiControllerBase
         return Ok(await Mediator.Send(new GetAssetsByTypeIdQuery(typeId), cancellationToken));
     }
 
+    [HttpGet("page/{currentPage}/{pageSize}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<PagedList<GetAssetSerial>>> GetPagedAssetSerial(int currentPage, int pageSize, CancellationToken cancellationToken)
+    {
+        return Ok(await Mediator.Send(new GetPagedAssetSerialsQuery(currentPage * pageSize, pageSize), cancellationToken));
+    }
+    
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]

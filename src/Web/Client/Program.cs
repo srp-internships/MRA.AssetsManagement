@@ -13,10 +13,11 @@ using MRA.AssetsManagement.Web.Client.Services.Report;
 using MRA.AssetsManagement.Web.Client.Services.ReportService;
 using MRA.AssetsManagement.Web.Client.Services.AssetSerials;
 using MRA.BlazorComponents.HttpClient;
-
 using MudBlazor.Services;
 
+
 using CustomAuthStateProvider = MRA.AssetsManagement.Web.Client.Services.AuthService.CustomAuthStateProvider;
+using MRA.AssetsManagement.Web.Client.Services.HomeService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -32,6 +33,8 @@ builder.Services.AddScoped<IIconService, IconService>();
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 builder.Services.AddAuthorizationCore();
+
+builder.Services.AddScoped<IHomeService, HomeService>();
 
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IAssetTypesService, AssetTypesService>();

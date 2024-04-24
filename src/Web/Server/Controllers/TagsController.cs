@@ -35,12 +35,12 @@ public class TagsController : ApiControllerBase
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
-    public async Task<IActionResult> Update(UpdateTagCommand command, CancellationToken cancellationToken)
+    public async Task<ActionResult<bool>> Update(UpdateTagCommand command, CancellationToken cancellationToken)
     {
-        await Mediator.Send(command, cancellationToken);
-        return NoContent();
+        var result = await Mediator.Send(command, cancellationToken);
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]

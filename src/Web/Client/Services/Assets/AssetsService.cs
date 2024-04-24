@@ -12,6 +12,19 @@ namespace MRA.AssetsManagement.Web.Client.Services.Assets;
 public class AssetsService(IHttpClientService httpClient, ISnackbar snackbar, IWebAssemblyHostEnvironment environment) : IAssetsService
 {
     private readonly string _baseAddress = environment.BaseAddress;
+    public async Task<IEnumerable<GetAssetSerial>> GetAssetSerials()
+    {
+        var response = await httpClient.GetFromJsonAsync<IEnumerable<GetAssetSerial>>($"{_baseAddress}api/assets/serial");
+        snackbar.ShowIfError(response, "Error was occured");
+        return response.Result!;
+    }
+
+    public async Task<PagedList<GetAssetSerial>> GetPagedAssetSerials(int currentPage, int pageSize)
+    {
+        var response = await httpClient.GetFromJsonAsync<PagedList<GetAssetSerial>>($"{_baseAddress}api/assets/page/{currentPage}/{pageSize}");
+        snackbar.ShowIfError(response, "Error was occured.");
+        return response.Result!;
+    }
 
     public async Task<IEnumerable<GetAsset>> GetAssetsByTypeId(string typeId)
     {
