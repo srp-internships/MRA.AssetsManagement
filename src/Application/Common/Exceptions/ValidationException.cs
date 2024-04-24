@@ -10,12 +10,10 @@ public class ValidationException : Exception
         Errors = new Dictionary<string, string[]>();
     }
 
-    public ValidationException(List<ValidationFailure> failures)
+    public ValidationException(Dictionary<string, string[]> failures)
         : this()
     {
-        Errors = failures
-            .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
-            .ToDictionary(g => g.Key, g => g.ToArray());
+        Errors = failures;
     }
 
     public IDictionary<string, string[]> Errors { get; }
