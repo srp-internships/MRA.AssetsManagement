@@ -40,6 +40,14 @@ public class AssetsController : ApiControllerBase
         return Ok(await Mediator.Send(new GetAssetSerialsQuery(), cancellationToken));
     }
 
+    [HttpGet("page/{currentPage}/{pageSize}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<PagedList<GetAssetSerial>>> GetPagedAssetSerial(int currentPage, int pageSize, CancellationToken cancellationToken)
+    {
+        return Ok(await Mediator.Send(new GetPagedAssetSerialsQuery(currentPage * pageSize, pageSize), cancellationToken));
+    }
+
     [HttpGet("serial/{serial}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
