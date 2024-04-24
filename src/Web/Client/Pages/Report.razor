@@ -10,9 +10,9 @@
     <MudCartContent>
         <MudItem>
             <MudStack Row="true" Justify="Justify.SpaceBetween">
-                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowLeft" aria-label="delete" OnClick="MinusTwoDays"/>
+                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowLeft" aria-label="delete" OnClick="SubstractMonth"/>
                 <MudDateRangePicker @bind-DateRange="_dateRange" Variant="Variant.Outlined" Margin="Margin.Dense" MaxDate="DateTime.Today"/>
-                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowRight" aria-label="delete" OnClick="AddTwoDays"/>
+                <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowRight" aria-label="delete" OnClick="AddMonth"/>
                 <MudSelect Margin="Margin.Dense" T="string" Label="Type" Variant="Variant.Outlined" @bind-Value="@SelectedType">
                     @foreach (var type in _types)
                     {
@@ -37,7 +37,12 @@
     </MudCartContent>
 </MudCard>
 
-<MudTable Items="@_purchases" Hover="true" Dense="true" FixedHeader="true">
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+}
+
+<MudTable Items="@_purchases" Hover="true" Dense="true" FixedHeader="true" Class="mt-3">
     <HeaderContent>
         <MudTh>Type</MudTh>
         <MudTh>Name</MudTh>
@@ -79,19 +84,30 @@
         }
     </RowTemplate>
     <FooterContent>
-        <MudTd>
-            <b>Total price</b>
-        </MudTd>
-        <MudTd></MudTd>
-        <MudTd></MudTd>
-        <MudTd></MudTd>
-        <MudTd><b>@TotalPrice</b></MudTd>
+        @if (_purchases.Count != 0)
+        {
+            <MudTd>
+                <b>Total price</b>
+            </MudTd>
+            <MudTd></MudTd>
+            <MudTd></MudTd>
+            <MudTd></MudTd>
+            <MudTd><b>@TotalPrice</b></MudTd>
+        }
+        else
+        {
+            <MudTd></MudTd>
+            <MudTd></MudTd>
+            <MudTd><MudText Style="font-size: 20px;">Nothing found</MudText></MudTd>
+            <MudTd></MudTd>
+            <MudTd></MudTd>
+        }
     </FooterContent>
 </MudTable>
 
 @code {
 
-    private bool _loading = true;
+    private bool _loading = false;
     private DateRange _dateRange = new DateRange(DateTime.Today.AddDays(-2), DateTime.Today);
     private string? SelectedType { get; set; }
     private List<GetAssetType> _types = [];
@@ -103,19 +119,20 @@
     {
         _types.Add(new GetAssetType() { Name = "All", Icon = "circle"});
         SelectedType = _types.FirstOrDefault()?.Name;
-        _types.AddRange(await AssetTypesService.GetAll());
         _loading = true;
+        _types.AddRange(await AssetTypesService.GetAll());
+        _loading = false;
     }
 
-    private void AddTwoDays()
+    private void AddMonth()
     {
-        _dateRange = new DateRange(_dateRange.Start?.AddDays(2), _dateRange.End?.AddDays(2));
+        _dateRange = new DateRange(_dateRange.Start?.AddMonths(1), _dateRange.End?.AddMonths(1));
         StateHasChanged();
     }
 
-    private void MinusTwoDays()
+    private void SubstractMonth()
     {
-        _dateRange = new DateRange(_dateRange.Start?.AddDays(-2), _dateRange.End?.AddDays(-2));
+        _dateRange = new DateRange(_dateRange.Start?.AddMonths(-1), _dateRange.End?.AddMonths(-1));
         StateHasChanged();
     }
 
