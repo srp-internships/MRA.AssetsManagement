@@ -10,6 +10,5 @@ namespace MRA.AssetsManagement.Web.Shared.AssetPurchases
         public string Serials { get; set; } = null!;
         public int Quantity { get; set; }
         public decimal Price { get; set; }
-        public DateTime? Date { get; set; }
     }
 }

@@ -65,8 +65,8 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
                 {
                     Asset = detail.Asset,
                     Status = AssetStatus.Available,
-                    CreatedAt = detail.Date,
-                    LastModifiedAt = detail.Date,
+                    CreatedAt = request.Date,
+                    LastModifiedAt = request.Date,
                     CreatedBy = _currentUserService.GetUserId().ToString()
                 };
                 if (serials[i].Equals("auto", StringComparison.OrdinalIgnoreCase))
@@ -76,7 +76,7 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
                     assetSerial.Serial = serials[i];
                 
                 assetSerials.Add(assetSerial);
-                var history = new AssetHistory
+                var history = new AssetHistory  
                 {
                     HistoryAssetSerial = _mapper.Map<HistoryAssetSerial>(assetSerial),
                     DateTime = DateTime.Now,

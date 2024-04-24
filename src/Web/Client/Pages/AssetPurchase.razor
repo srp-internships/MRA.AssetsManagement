@@ -10,10 +10,16 @@
 
 <MudStack Row="true" Class="d-flex justify-space-between mb-3 pa-1">
     <MudText Typo="Typo.h4">Purchase</MudText>
-    <MudButton Variant="Variant.Filled" @onclick=Create ButtonType=ButtonType.Submit StartIcon="@Icons.Material.Filled.CreateNewFolder" Color="Color.Tertiary" Size="Size.Medium">Create</MudButton>
+    <MudButton Variant="Variant.Filled" @onclick=Create ButtonType=ButtonType.Submit StartIcon="@Icons.Material.Filled.CreateNewFolder" Color="Color.Tertiary" Size="Size.Medium">Enter</MudButton>
 </MudStack>
-<MudStack Row=true Class="d-flex justify-space-between mb-3">    
-    <MudTextField @bind-Value="_vendor" Style="max-width: 450px" T=string Label="Vendor" Variant="Variant.Outlined" Margin="Margin.Dense" Immediate />
+<MudStack Row=true Class="d-flex justify-space-between mb-3 gap-0">    
+    <MudItem lg="7">
+        <MudStack Row >
+            <MudTextField @bind-Value="_vendor" T=string Label="Vendor" Variant="Variant.Outlined" Margin="Margin.Dense" Immediate />
+            <MudDatePicker @bind-Date="_date" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Date" />
+        </MudStack>
+    </MudItem>
+    
     <MudButton @onclick=AddRow StartIcon="@Icons.Material.Filled.Add" Color=Color.Dark Variant="Variant.Text">Add row</MudButton>
 </MudStack>
 
@@ -27,7 +33,6 @@
             </MudStack>
         </MudTh>
         <MudTh>Serials</MudTh>
-        <MudTh>Date</MudTh>
         <MudTh>Price</MudTh>
     </HeaderContent>
     <RowTemplate>
@@ -50,9 +55,6 @@
         <MudTd DataLabel="Serials">
             <MudTextField @bind-Value=context.Serials Margin=Margin.Dense Variant="Variant.Outlined" Immediate />
         </MudTd>
-        <MudTd>
-            <MudDatePicker @bind-Date=context.Date Margin="Margin.Dense" Variant="Variant.Outlined" Label="Date" />
-        </MudTd>
         <MudTd DataLabel="Price">
             <MudStack Row=true>
                 <MudTextField @bind-Value=context.Price Margin=Margin.Dense Variant="Variant.Outlined" Immediate MaxLength="15" />
@@ -62,7 +64,6 @@
     </RowTemplate>
     <FooterContent>
         <MudTh><MudText Typo="Typo.h5">Total:</MudText></MudTh>
-        <MudTh />
         <MudTh />
         <MudTh />
         <MudTh>
@@ -96,6 +97,7 @@
     private Dictionary<string, List<GetAsset>> Assets = new Dictionary<string, List<GetAsset>>();
 
     private string _vendor { get; set; } = null!;
+    private DateTime? _date { get; set; }
     private bool _isOpen = false;
 
     private GetAssetType _selectedAssetType = null!;
@@ -154,8 +156,12 @@
         {
             SnackBar.Add("Vendor is required field!", Severity.Error);
         }
+        else if(_date == null)
+        {
+            SnackBar.Add("Date is required field!", Severity.Error);
+        }
         else if (AssetPurchases.Any(ap => ap.Serials.Trim().Length < 0 || ap.Price < 1 || ap.Asset == null 
-                                   || ap.AssetType == null || ap.Date == null))
+                                   || ap.AssetType == null))
         {
             SnackBar.Add("All fields are required", Severity.Error);
         }
@@ -167,12 +173,11 @@
                     Quantity = ap.Serials.Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries).Length,
                     AssetType = ap.AssetType,
                     Serials = ap.Serials,
-                    Price = ap.Price,
-                    Date = ap.Date!.Value.AddDays(1)
+                    Price = ap.Price
             }).ToList();
             
 
-            CreateAssetPurchaseRequest newAssetPurchase = new() { Vendor = _vendor, Details = details };
+            CreateAssetPurchaseRequest newAssetPurchase = new() { Vendor = _vendor, Date = _date.Value.AddDays(1), Details = details };
             await AssetsService.CreatePurchase(newAssetPurchase);
             NavigationManager.NavigateTo("/assets");
         }
