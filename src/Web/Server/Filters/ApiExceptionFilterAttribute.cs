@@ -80,15 +80,15 @@ namespace MRA.AssetsManagement.Web.Server.Filters
 
         public bool HandleNotFoundException(ExceptionContext context)
         {
-            ProblemDetails details = new()
+            ProblemDetails details = new ProblemDetails
             {
-                Status = StatusCodes.Status404NotFound,
+                Status = StatusCodes.Status400BadRequest,
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
                 Title = "Not Found",
                 Detail = context.Exception.Message,
             };
             
-            context.Result = new NotFoundObjectResult(details);
+            context.Result = new BadRequestObjectResult(details);
 
             return true;
         }

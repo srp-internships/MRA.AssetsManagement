@@ -2,7 +2,9 @@ using AutoMapper;
 
 using MediatR;
 
+using MRA.AssetsManagement.Application.Common.Exceptions;
 using MRA.AssetsManagement.Application.Data;
+using MRA.AssetsManagement.Domain.Entities;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
 namespace MRA.AssetsManagement.Application.Features.AssetTypes.Queries;
@@ -30,6 +32,9 @@ public class GetSingleAssetTypeQueryHandler : IRequestHandler<GetSingleAssetType
     public async Task<GetAssetType> Handle(GetSingleAssetTypeQuery request, CancellationToken cancellationToken)
     {
         var result = await _context.AssetTypes.GetAsync(x => x.Slug == request.Slug, cancellationToken);
+        if (result == null)
+            throw new NotFoundEntityException(nameof(AssetType), request.Slug);
+
         return _mapper.Map<GetAssetType>(result);
     }
 }

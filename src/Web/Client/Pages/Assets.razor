@@ -11,7 +11,7 @@
 @attribute [Authorize]
 
 <PageTitle>Assets</PageTitle>
-<MudTable Items="@Elements" Hover="true" Dense="true" FixedHeader="true" T="GetAssetSerial" OnRowClick="OnSerialSelect">
+<MudTable @ref=_table ServerData="@(new Func<TableState, Task<TableData<GetAssetSerial>>>(LoadSerials))" Items="@Elements" Hover="true" Dense="true" FixedHeader="true" T="GetAssetSerial" OnRowClick="OnSerialSelect">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Assets</MudText>
         <MudChip Href="/assets/purchase" Color="Color.Primary">New</MudChip>
@@ -71,6 +71,9 @@
             <MudTd DataLabel="From">@context.From.ToString("dd MMMM yyyy")</MudTd>
         }
     </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
 </MudTable>
 
 @if (Serial is not null)
@@ -80,17 +83,12 @@
 
 @code {
 
-    [Parameter] public string? Serial { get; set; }
+    [Parameter] 
+    public string? Serial { get; set; }
     private string searchString1 = "";
+    private MudTable<GetAssetSerial> _table = null!;
     private bool loading = false;
     private IEnumerable<GetAssetSerial> Elements = new List<GetAssetSerial>(Enumerable.Range(1, 5).Select(x => new GetAssetSerial()));
-
-    protected override async Task OnInitializedAsync()
-    {
-        loading = true;
-        Elements = await AssetsService.GetAssetSerials();
-        loading = false;
-    }
 
     private void OnSerialSelect(TableRowClickEventArgs<GetAssetSerial> args)
     {
@@ -104,8 +102,14 @@
 
     private async Task OnAssetSerialHasChanged()
     {
-        loading = true;
-        Elements = await AssetsService.GetAssetSerials();
-        loading = false;
+        await _table.ReloadServerData();
     }
-}
+
+    private async Task<TableData<GetAssetSerial>> LoadSerials(TableState state)
+    {
+        loading = true;
+        var result = await AssetsService.GetPagedAssetSerials(state.Page, state.PageSize);
+        loading = false;
+        return new TableData<GetAssetSerial>() { Items = result.Data, TotalItems = result.TotalCount };
+    }
+}   

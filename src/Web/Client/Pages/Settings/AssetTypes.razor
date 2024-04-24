@@ -82,7 +82,11 @@
 
         if (Slug is not null)
         {
-            _getAssetType = await AssetTypesService.GetAssetTypeBySlug(Slug)!;
+            var response = await AssetTypesService.GetAssetTypeBySlug(Slug)!;
+            if (response != null)
+            {
+                _getAssetType = response;
+            }
         }
 
         _loading = false;
@@ -102,8 +106,9 @@
     {
         if (Slug is not null)
         {
-            await AssetTypesService.Update(_getAssetType);
-            MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
+            var response = await AssetTypesService.Update(_getAssetType);
+            if (response)
+                MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
         }
         else
         {
@@ -113,10 +118,12 @@
                 newAssetType.ShortName = _getAssetType.ShortName;
                 newAssetType.Icon = _getAssetType.Icon;
             }
-
-            _getAssetType = await AssetTypesService.Create(newAssetType);
-            MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getAssetType.ToMenuItem());
-            _getAssetType = new GetAssetType();
+            var response = await AssetTypesService.Create(newAssetType);
+            if (response != null)
+            {
+                MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, response.ToMenuItem());
+                _getAssetType = new GetAssetType();
+            }
         }
         StateHasChanged();
     }
@@ -124,7 +131,8 @@
     private async void ArchiveOrRestore()
     {
         _getAssetType.Archived = !_getAssetType.Archived;
-        await AssetTypesService.Update(_getAssetType);
-        MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
+        var response = await AssetTypesService.Update(_getAssetType);
+        if (response)
+            MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
     }
 }
