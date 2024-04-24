@@ -10,5 +10,5 @@ public interface IAssetTypesService : IFetchMenuItemService
     Task<GetAssetType> GetAssetTypeBySlug(string slug);
     Task<List<GetAssetTypeSerial>> GetAssetTypeSerials();
     Task<GetAssetType> Create(CreateAssetTypeRequest newAssetType);
-    Task Update(GetAssetType newGetAssetType);
+    Task<bool> Update(GetAssetType newGetAssetType);
 }

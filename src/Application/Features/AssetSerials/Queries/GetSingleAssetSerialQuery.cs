@@ -6,6 +6,7 @@ using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Web.Shared.Assets;
 using MRA.AssetsManagement.Web.Shared.Employees;
 using MRA.AssetsManagement.Web.Shared.Enums;
+using MRA.AssetsManagement.Web.Shared.Tags;
 
 namespace MRA.AssetsManagement.Application.Features.AssetSerials.Queries;
 
@@ -24,6 +25,7 @@ public class GetSingleAssetSerialQueryHandler(IApplicationDbContext context, IMa
             Status = Enum.Parse<AssetStatus>(serial.Status.ToString()),
             Serial = serial.Serial,
             Name = serial.Asset.Name,
+            Tags = serial.Tags.Select(x => new GetTag {Id = x.Id, Name = x.Name, Color = x.Color!}).ToList(),
             LastModified = serial.LastModifiedAt,
             Employee = mapper.Map<UserDisplay>(serial.Employee),
             AssetSerialType = new(assetTypes.First(at => at.Id == serial.Asset.AssetTypeId).Icon,

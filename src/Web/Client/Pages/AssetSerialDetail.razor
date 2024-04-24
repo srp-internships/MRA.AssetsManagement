@@ -1,9 +1,12 @@
 @using MRA.AssetsManagement.Web.Client.Services.AssetSerials
+@using MRA.AssetsManagement.Web.Shared.AssetSerials
 @using MRA.AssetsManagement.Web.Shared.Assets
 @using MRA.AssetsManagement.Web.Shared.Employees
 @using MRA.AssetsManagement.Web.Shared.Enums
+@using MRA.AssetsManagement.Web.Shared.Tags
 @inject IAssetSerialService AssetSerialService
 @inject IEmployeesService EmployeesService
+@inject ITagsService TagsService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
@@ -44,7 +47,24 @@
             }
             else
             {
-                <MudText Class="pt-4">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Style="flex-wrap: wrap">
+                    <MudText>
+                        <b>Tags: </b>
+                    </MudText>
+                    @foreach (var tag in assetSerial.Tags)
+                    {
+                        <MudChip Style="@($"{GetChipColor(tag.Color)} {GetChipTextColor(tag.Color)}")" OnClose="@(e => AddOrRemoveTag(assetSerial.Id, tag.Id, false))" Size="Size.Small">@tag.Name</MudChip>
+                    }
+                    <MudMenu Icon="@Icons.Material.Filled.Add" TransformOrigin="Origin.TopCenter" AnchorOrigin="Origin.BottomCenter" Dense="true">
+                        @foreach (var tag in Tags.Where(x => !assetSerial.Tags.Any(a => a.Id == x.Id)))
+                        {
+                            <MudMenuItem OnClick="@(e => AddOrRemoveTag(assetSerial.Id, tag.Id, true))">
+                                <MudChip Style="@($"{GetChipColor(tag.Color)} {GetChipTextColor(tag.Color)}")" Size="Size.Small">@tag.Name</MudChip>
+                            </MudMenuItem>
+                        }
+                    </MudMenu>
+                </MudStack>
+                <MudText>
                     <b>Asset: </b>@assetSerial.Name
                 </MudText>
                 <MudStack Row="true" AlignItems="AlignItems.Center">
@@ -78,6 +98,7 @@
     [Parameter] public EventCallback OnSaveButtonClicked { get; set; }
     GetAssetSerial assetSerial = null!;
     private IEnumerable<UserDisplay> UserDisplays = [];
+    private List<GetTag> Tags = [];
     private bool showHistory = false;
     private bool isLoading = true;
     private bool isSerialHasChanged = false;
@@ -90,6 +111,7 @@
             FirstName = x.FullName.Split(" ")[0],
             LastName = x.FullName.Split(" ")[1]
         }).OrderBy(x => x.FirstName);
+        Tags = await TagsService.GetAll();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -149,5 +171,27 @@
         
         value = value.ToUpper().Trim();
         return await Task.FromResult(UserDisplays.Where(x => x.FirstName.ToUpper().Contains(value) || x.LastName.ToUpper().Contains(value)));
+    }
+
+    private string GetChipColor(string color)
+    {
+        return $"background-color: {color};";
+    }
+
+    private async Task AddOrRemoveTag(string assetSerialId, string tagId, bool isAdd)
+    {
+        var tags = await AssetSerialService.SetTagsToAssetSerial(new SetTagsToAssetSerialsRequest() {AssetSerialId = assetSerialId, TagId = tagId, IsAdd = isAdd});
+        assetSerial.Tags = tags;
+    }
+
+    private string GetChipTextColor(string hexColor)
+    {
+        System.Drawing.Color color = System.Drawing.ColorTranslator.FromHtml(hexColor);
+        double luminance = (0.2126 * color.R + 0.7152 * color.G + 0.0722 * color.B) / 255;
+
+        // Set threshold value (0.5 is a common choice)
+        double threshold = 0.5;
+
+        return luminance <= threshold ? "color: white;" : "color: black;";
     }
 }

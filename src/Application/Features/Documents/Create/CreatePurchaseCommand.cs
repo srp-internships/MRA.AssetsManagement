@@ -41,16 +41,14 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
         List<AssetSerial> assetSerials = [];
 
         var assetTypeCountDict = new Dictionary<string, int>();
-        
-        request.Details.Select(x => x.Asset.AssetTypeId).ToList().ForEach(x =>
+
+        var assetTypeIds = request.Details.Select(x => x.Asset.AssetTypeId).ToList();
+
+        foreach (var id in assetTypeIds)
         {
-            Task.Run(async() =>
-            {
-                assetTypeCountDict[x] =
-                    (await _context.AssetSerials.GetAllAsync(a => a.Asset.AssetTypeId == x, cancellationToken)).Count;
-            }, cancellationToken);
-        });
-        
+            assetTypeCountDict[id] = (await _context.AssetSerials.GetAllAsync(a => a.Asset.AssetTypeId == id, cancellationToken)).Count;
+        }
+
         foreach (var detail in request.Details)
         {
             if (string.IsNullOrEmpty(detail.Asset.Id))
@@ -62,18 +60,23 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
             
             for (int i = 0; i < detail.Quantity; i++)
             {
+                var serials = detail.Serials.Split(" ", StringSplitOptions.RemoveEmptyEntries);
                 var assetSerial = new AssetSerial
                 {
                     Asset = detail.Asset,
                     Status = AssetStatus.Available,
-                    Serial = assetType.ShortName + "-" + $"{++assetTypeCountDict[detail.Asset.AssetTypeId]}".PadLeft(6, '0'),
-                    CreatedAt = DateTime.Now,
-                    LastModifiedAt = DateTime.Now,
+                    CreatedAt = request.Date,
+                    LastModifiedAt = request.Date,
                     CreatedBy = _currentUserService.GetUserId().ToString()
                 };
-                assetSerials.Add(assetSerial);
+                if (serials[i].Equals("auto", StringComparison.OrdinalIgnoreCase))
+                    assetSerial.Serial = assetType.ShortName + "-" + $"{++assetTypeCountDict[detail.Asset.AssetTypeId]}".PadLeft(6, '0');
+
+                else
+                    assetSerial.Serial = serials[i];
                 
-                var history = new AssetHistory
+                assetSerials.Add(assetSerial);
+                var history = new AssetHistory  
                 {
                     HistoryAssetSerial = _mapper.Map<HistoryAssetSerial>(assetSerial),
                     DateTime = DateTime.Now,

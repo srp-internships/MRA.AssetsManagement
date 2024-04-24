@@ -10,6 +10,7 @@ public record AssetSerial : IAuditableEntity
     public Asset Asset { get; set; } = null!;
     public AssetStatus Status { get; set; }
     public UserDisplay? Employee { get; set; }
+    public List<Tag> Tags { get; set; } = [];
     public string? CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; }
     public string? LastModifiedBy { get; set; }
