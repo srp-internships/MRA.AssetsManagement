@@ -53,13 +53,5 @@ namespace MRA.AssetsManagement.Web.Client.Services.Tags
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }
-
-        public async Task<List<GetTag>> GetAll()
-        {
-            var response = await httpClient.GetFromJsonAsync<List<GetTag>>($"{_baseAddress}api/tags");
-            snackbar.ShowIfError(response, "Error was occured.");
-            return response.Result!;
-        }
-
     }
 }
