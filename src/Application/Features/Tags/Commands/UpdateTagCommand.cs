@@ -8,14 +8,14 @@ using MRA.AssetsManagement.Domain.Entities;
 
 namespace MRA.AssetsManagement.Application.Features.Tags.Commands;
 
-public class UpdateTagCommand : IRequest
+public class UpdateTagCommand : IRequest<bool>
 {
     public string Id { get; set; } = null!;
     public string Name { get; set; } = null!;
     public string? Color { get; set; }
 }
 
-public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand>
+public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, bool>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand>
         _mapper = mapper;
     }
     
-    public async Task Handle(UpdateTagCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
     {
         var tag = await _context.Tags.GetAsync(request.Id, cancellationToken);
         
@@ -36,5 +36,6 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand>
         _mapper.Map(request, tag);
         
         await _context.Tags.UpdateAsync(tag, cancellationToken);
+        return true;
     }
 }
