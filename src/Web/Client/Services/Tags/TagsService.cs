@@ -34,10 +34,11 @@ namespace MRA.AssetsManagement.Web.Client.Services.Tags
             snackbar.ShowIfError(response, "Error was occured.");
         }
 
-        public async Task Update(GetTag newTag)
+        public async Task<bool> Update(GetTag newTag)
         {
-            var response = await httpClient.PutAsJsonAsync($"{_baseAddress}api/tags", newTag);
+            var response = await httpClient.PutAsJsonAsync<bool>($"{_baseAddress}api/tags", newTag);
             snackbar.ShowIfError(response, "Error was occured.");
+            return response.Result!;
         }
         
         public async Task<List<MenuItem>> Fetch()
@@ -47,5 +48,13 @@ namespace MRA.AssetsManagement.Web.Client.Services.Tags
 
             return response.Result!.Select(mi => mi.ToMenuItem()).ToList();
         }
+
+        public async Task<List<GetTag>> GetAll()
+        {
+            var response = await httpClient.GetFromJsonAsync<List<GetTag>>($"{_baseAddress}api/tags");
+            snackbar.ShowIfError(response, "Error was occured.");
+            return response.Result!;
+        }
+
     }
 }

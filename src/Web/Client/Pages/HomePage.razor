@@ -1,0 +1,45 @@
+﻿@page "/"
+@inject IHomeService HomeService
+@inject IIconService IconService;
+@attribute [Authorize]
+
+
+<PageTitle>Home</PageTitle>
+
+@if (_getAssetType != null)
+{
+    @foreach (var assetType in _getAssetType)
+    {
+        <MudText Typo="Typo.h5">
+            <MudIcon Size="Size.Small" Icon="@IconService.GetIcon(assetType.Icon)" />
+            <strong>@assetType.Name</strong>
+        </MudText>
+
+        @foreach (var asset in assetType.AssetSerials)
+        {
+            <MudCard Class="mt-3 pa-4" Style="max-width: 550px">
+                <MudCardContent>
+                      <MudStack Row=true Class="d-flex justify-space-between mb-5">
+                        <MudText Typo="Typo.body1" Class="mud-primary-text" Style="font-weight: bold">@asset.Name </MudText>
+                        <MudText Typo="Typo.body1" Style="font-weight: bold">@asset.Serial </MudText>
+                    </MudStack>
+                </MudCardContent>
+            </MudCard>
+            <br />
+        }
+    }
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+
+    private IEnumerable<GetAssetTypeSerial>? _getAssetType;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _getAssetType = await HomeService.Get();
+    }
+}

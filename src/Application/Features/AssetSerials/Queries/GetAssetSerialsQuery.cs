@@ -14,7 +14,7 @@ public class GetAssetSerialsQuery : IRequest<IEnumerable<GetAssetSerial>>
 {
 }
 
-public class GetAssetSerialsQueryHandler(IApplicationDbContext context, IEmployeeService employeeService, IMapper mapper)
+public class GetAssetSerialsQueryHandler(IApplicationDbContext context, IMapper mapper)
     : IRequestHandler<GetAssetSerialsQuery, IEnumerable<GetAssetSerial>>
 {
     public async Task<IEnumerable<GetAssetSerial>> Handle(GetAssetSerialsQuery request,

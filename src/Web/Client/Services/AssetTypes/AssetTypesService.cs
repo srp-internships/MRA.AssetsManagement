@@ -29,10 +29,11 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
             return response.Result!;
         }
         
-        public async Task Update(GetAssetType getAssetType)
+        public async Task<bool> Update(GetAssetType getAssetType)
         {
-            var response = await httpClient.PutAsJsonAsync($"{_baseAddress}api/assettypes", getAssetType);
+            var response = await httpClient.PutAsJsonAsync<bool>($"{_baseAddress}api/assettypes", getAssetType);
             snackbar.ShowIfError(response, "Error was occured.");
+            return response.Result!;
         }
 
         public async Task<List<MenuItem>> Fetch()
