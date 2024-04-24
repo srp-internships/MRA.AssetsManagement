@@ -1,4 +1,5 @@
 @using MRA.AssetsManagement.Web.Client.Services.AssetSerials
+@using MRA.AssetsManagement.Web.Shared.AssetSerials
 @using MRA.AssetsManagement.Web.Shared.Assets
 @using MRA.AssetsManagement.Web.Shared.Employees
 @using MRA.AssetsManagement.Web.Shared.Enums
@@ -6,14 +7,16 @@
 @inject IEmployeesService EmployeesService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
-<MudDrawer Open="true" Width="400px" Height="100%" Anchor="Anchor.End" Elevation="1"
-    Variant="@DrawerVariant.Temporary" DisableOverlay="true">
+<MudDrawer Open="true" Width="400px" Height="100%" Anchor="Anchor.End" Elevation="1" Variant="@DrawerVariant.Temporary"
+    DisableOverlay="true">
     <MudDrawerHeader Class="pa-1">
         <div
             style="width: 100%; display: flex; flex-direction: row; justify-content: space-between; align-items: center">
             <div>
-                <MudIconButton Icon="@Icons.Material.Rounded.Close" OnClick="@(() => NavigationManager.NavigateTo("/assets"))"></MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Rounded.Close"
+                    OnClick="@(() => NavigationManager.NavigateTo("/assets"))"></MudIconButton>
             </div>
             @if (isLoading)
             {
@@ -53,43 +56,65 @@
                     </MudText>
                     <MudSelect Value="assetSerial.Status" T="AssetStatus" Margin="Margin.Dense" Variant="Variant.Outlined"
                         ValueChanged="@OnStatusItemChanged">
-                        <MudSelectItem Value="@(AssetStatus.Available)"><MudText Color="Color.Success">@(AssetStatus.Available.ToString())</MudText></MudSelectItem>
-                        <MudSelectItem Value="@(AssetStatus.Taken)"><MudText Color="Color.Info">@(AssetStatus.Taken.ToString())</MudText></MudSelectItem>
-                        <MudSelectItem Value="@(AssetStatus.Broken)"><MudText Color="Color.Error">@(AssetStatus.Broken.ToString())</MudText></MudSelectItem>
-                        <MudSelectItem Value="@(AssetStatus.Deprecated)">@(AssetStatus.Deprecated.ToString())</MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Available)">
+                            <MudText Color="Color.Success">@(AssetStatus.Available.ToString())</MudText>
+                        </MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Taken)">
+                            <MudText Color="Color.Info">@(AssetStatus.Taken.ToString())</MudText>
+                        </MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Broken)">
+                            <MudText Color="Color.Error">@(AssetStatus.Broken.ToString())</MudText>
+                        </MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Deprecated)">@(AssetStatus.Deprecated.ToString())
+                        </MudSelectItem>
                     </MudSelect>
                 </MudStack>
                 <MudStack Row="true" AlignItems="AlignItems.Center">
                     <MudText>
                         <b>Assigned To: </b>
                     </MudText>
-                    <MudAutocomplete Value="@assetSerial.Employee" T="UserDisplay" Margin="Margin.Dense" SearchFunc="@SearchEmployees" Variant="Variant.Outlined" ValueChanged="@(e => OnAssignedPersonChanged(e))"/>
+                    <MudAutocomplete Value="@assetSerial.Employee" T="UserDisplay" Margin="Margin.Dense"
+                        SearchFunc="@SearchEmployees" Variant="Variant.Outlined"
+                        ValueChanged="@(e => OnAssignedPersonChanged(e))" />
                 </MudStack>
             }
-
             <AssetSerialHistory Serial="@Serial" ShowHistory="@showHistory" />
         </MudStack>
     </MudNavMenu>
+
+    <NoteDialog OnSaveButtonClicked="OnSaveButtonClicked" AssetSerial="@assetSerial" />
 </MudDrawer>
 
 @code {
     [Parameter] public string Serial { get; set; } = null!;
     private string prevSerial = string.Empty;
     [Parameter] public EventCallback OnSaveButtonClicked { get; set; }
-    GetAssetSerial assetSerial = null!;
+    public GetAssetSerial assetSerial = null!;
     private IEnumerable<UserDisplay> UserDisplays = [];
     private bool showHistory = false;
     private bool isLoading = true;
     private bool isSerialHasChanged = false;
+    private bool showNoteTextEditor = false;
+    BlazoredTextEditor QuillHtml = null!;
+
+    void Cancel()
+    {
+        showNoteTextEditor = false;
+    }
+
+    async Task Submit()
+    {
+        
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        UserDisplays = (await EmployeesService.GetEmployees()).Select(x => new UserDisplay
-        {
-            UserName = x.UserName,
-            FirstName = x.FullName.Split(" ")[0],
-            LastName = x.FullName.Split(" ")[1]
-        }).OrderBy(x => x.FirstName);
+        @* UserDisplays = (await EmployeesService.GetEmployees()).Select(x => new UserDisplay
+{
+UserName = x.UserName,
+FirstName = x.FullName.Split(" ")[0],
+LastName = x.FullName.Split(" ")[1]
+}).OrderBy(x => x.FirstName); *@
     }
 
     protected override async Task OnParametersSetAsync()
@@ -97,6 +122,16 @@
         if (Serial is not null && prevSerial != Serial)
         {
             assetSerial = await AssetSerialService.GetBySerial(Serial);
+            @* assetSerial = new GetAssetSerial()
+                {
+                    Id = "123hjkjhasgh29",
+                    Employee = new UserDisplay() { FirstName = "Sue", LastName = "Storm", UserName = "sue" },
+                    Status = Web.Shared.Enums.AssetStatus.Taken,
+                    Name = "Asus k55a",
+                    Serial = "LPT-000004",
+                    LastModified = DateTime.Now,
+                    From = DateTime.Now.AddDays(-40)
+                }; *@
             isLoading = false;
             prevSerial = Serial;
             showHistory = false;
@@ -120,7 +155,7 @@
         assetSerial.Status = AssetStatus.Taken;
     }
 
-    private async Task OnSave()
+    private void OnSave()
     {
         if (assetSerial.Status == AssetStatus.Taken && assetSerial.Employee is null)
         {
@@ -129,25 +164,18 @@
             return;
         }
 
-        await AssetSerialService.UpdateSerial(new()
-        {
-            Id = assetSerial.Id,
-            Status = assetSerial.Status,
-            UserDisplay = assetSerial.Employee
-        });
-
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
-        Snackbar.Add("Serial succesfully updated", Severity.Success);
-        await OnSaveButtonClicked.InvokeAsync();
-        NavigationManager.NavigateTo("/assets");
+        DialogParameters parameters = new DialogParameters();
+        parameters.Add("AssetSerial", assetSerial);
+        DialogService.Show<NoteDialog>("", parameters);
     }
 
     private async Task<IEnumerable<UserDisplay>> SearchEmployees(string value)
     {
         if (string.IsNullOrEmpty(value))
             return await Task.FromResult(UserDisplays.ToArray());
-        
+
         value = value.ToUpper().Trim();
-        return await Task.FromResult(UserDisplays.Where(x => x.FirstName.ToUpper().Contains(value) || x.LastName.ToUpper().Contains(value)));
+        return await Task.FromResult(UserDisplays.Where(x => x.FirstName.ToUpper().Contains(value) ||
+        x.LastName.ToUpper().Contains(value)));
     }
 }

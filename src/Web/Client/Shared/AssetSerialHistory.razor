@@ -61,6 +61,20 @@
     {
         isLoading = true;
         Histories = (await AssetSerialService.GetAssetSerialHistories(Serial)).ToList();
+        @* Histories = new List<GetAssetSerialHistory>()
+            {
+                new()
+                {
+                    Employee = "Employee",
+                    Status = AssetStatus.Taken,
+                    Date = DateOnly.FromDateTime(DateTime.Now.Date)
+                },
+                new()
+                {
+                    Status = AssetStatus.Available,
+                    Date = DateOnly.FromDateTime(DateTime.Now.Date)
+                }
+            }; *@
         isLoading = false;
         ShowHistory = true;
     }

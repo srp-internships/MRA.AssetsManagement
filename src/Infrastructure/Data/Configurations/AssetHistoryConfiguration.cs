@@ -17,6 +17,7 @@ public class AssetHistoryConfiguration : BaseConfiguration<AssetHistory>
         classMap.MapMember(x => x.UserId).SetElementName("userId");
         classMap.MapMember(x => x.HistoryAssetSerial).SetElementName("serial");
         classMap.MapMember(x => x.DateTime).SetElementName("dateTime");
+        classMap.MapMember(x => x.Note).SetElementName("note");
 
         BsonClassMap.RegisterClassMap<HistoryAssetSerial>(initializer =>
         {

@@ -4,6 +4,7 @@
 @using MRA.AssetsManagement.Web.Client.Services.AssetSerials
 @using MRA.AssetsManagement.Web.Shared.Assets
 @using MRA.AssetsManagement.Web.Client.Services.Assets
+@using MRA.AssetsManagement.Web.Shared.Employees
 @inject IAssetsService AssetsService
 @inject NavigationManager NavigationManager
 @inject IIconService IconService
@@ -94,11 +95,6 @@
         NavigationManager.NavigateTo($"/assets/{args.Item.Serial}");
     }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        @* Elements = await AssetsService.GetAssetSerials(); *@
-    }
-
     private async Task OnAssetSerialHasChanged()
     {
         await _table.ReloadServerData();
@@ -108,7 +104,21 @@
     {
         loading = true;
         var result = await AssetsService.GetPagedAssetSerials(state.Page, state.PageSize);
+        @* var pagedList = new PagedList<GetAssetSerial>();
+        pagedList.Data = new List<GetAssetSerial>() {
+            new GetAssetSerial()
+            {
+                Id = "123hjkjhasgh29",
+                Employee = new UserDisplay() {FirstName = "Sue", LastName = "Storm", UserName = "sue"},
+                Status = Web.Shared.Enums.AssetStatus.Taken,
+                Name = "Asus k55a",
+                Serial = "LPT-000004",
+                LastModified = DateTime.Now,
+                From = DateTime.Now.AddDays(-40)
+            }
+        };
+        var result = pagedList; *@
         loading = false;
         return new TableData<GetAssetSerial>() { Items = result.Data, TotalItems = result.TotalCount };
     }
-}   
+}

@@ -21,7 +21,8 @@ public class GetAssetHistoryForSerialQueryHandler(IApplicationDbContext context)
         {
             Employee = x.HistoryAssetSerial.Employee?.FullName,
             Date = DateOnly.FromDateTime(x.DateTime),
-            Status = Enum.Parse<AssetStatus>(x.HistoryAssetSerial.Status.ToString())
+            Status = Enum.Parse<AssetStatus>(x.HistoryAssetSerial.Status.ToString()),
+            Note = x.Note
         });
     }
 }

@@ -21,7 +21,6 @@ public class GetAssetSerialsQueryHandler(IApplicationDbContext context, IEmploye
         CancellationToken cancellationToken)
     {
         var serials = await context.AssetSerials.GetAllAsync(cancellationToken);
-        var employees = await employeeService.GetAll();
         var assetTypes = await context.AssetTypes.GetAllAsync(cancellationToken);
 
         return serials.Select(x => new GetAssetSerial
