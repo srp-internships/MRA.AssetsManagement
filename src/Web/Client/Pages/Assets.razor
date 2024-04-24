@@ -125,7 +125,7 @@
 
     [Parameter] public string? Serial { get; set; }
     private bool loading = false;
-
+                               
     private MudTable<GetAssetSerial> _table = null!;
 
     private IEnumerable<GetAssetSerial> Elements = new List<GetAssetSerial>(Enumerable.Range(1, 5).Select(x => new GetAssetSerial()));
