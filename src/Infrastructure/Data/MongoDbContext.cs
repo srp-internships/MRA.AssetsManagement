@@ -32,7 +32,6 @@ public class MongoDbContext : IApplicationDbContext
     public IRepository<AssetSerial> AssetSerials { get; }
     public IRepository<Asset> Assets { get; }
     public IRepository<AssetHistory> AssetHistories { get; }
-    public IRepository<AppVersion> DbVersions { get; }
 
 
     private MongoRepository<TEntity> GetRepository<TConfiguration, TEntity>(string collectionName) where TConfiguration : BaseConfiguration<TEntity>
