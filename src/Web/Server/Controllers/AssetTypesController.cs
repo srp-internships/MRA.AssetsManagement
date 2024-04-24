@@ -32,11 +32,11 @@ public class AssetTypesController : ApiControllerBase
     }
 
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
-    public async Task<IActionResult> Update(UpdateAssetTypeCommand command, CancellationToken cancellationToken)
+    public async Task<ActionResult<bool>> Update(UpdateAssetTypeCommand command, CancellationToken cancellationToken)
     {
-        await Mediator.Send(command, cancellationToken);
-        return NoContent();
+        var result = await Mediator.Send(command, cancellationToken);
+        return Ok(result);
     }
 }
