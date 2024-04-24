@@ -147,11 +147,6 @@
         NavigationManager.NavigateTo($"/assets/{args.Item.Serial}");
     }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        @* Elements = await AssetsService.GetAssetSerials(); *@
-    }
-
     private async Task OnAssetSerialHasChanged()
     {
         await _table.ReloadServerData();
