@@ -5,6 +5,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.Tags
 {
     public interface ITagsService : IFetchMenuItemService
     {
+        Task<List<GetTag>> GetAll();
         Task<GetTag> GetTagById(string id);
         Task<GetTag> Create(CreateTagRequest newTag);
         Task Update(GetTag newTag);
