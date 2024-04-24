@@ -8,7 +8,7 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
-<MudDialog>
+<MudDialog Style="max-width: 700px">
     <DialogContent>
         <BlazoredTextEditor @ref="@QuillHtml" ReadOnly="@(AssetSerialHistory != null)">
             <ToolbarContent>
@@ -66,12 +66,14 @@
 
     async Task Submit()
     {
+        var quillText = await QuillHtml.GetText();
+
         var request = new UpdateAssetSerialRequest()
             {
                 Id = AssetSerial.Id,
                 Status = AssetSerial.Status,
                 UserDisplay = AssetSerial.Employee,
-                Note = string.IsNullOrEmpty((await QuillHtml.GetText())) ? "" : await QuillHtml.GetContent()
+                Note = string.IsNullOrEmpty(quillText) || quillText == "\n" ? null : await QuillHtml.GetContent()
             };
 
         await AssetSerialService.UpdateSerial(request);

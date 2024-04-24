@@ -15,9 +15,9 @@
         <MudIcon Icon="@Icons.Material.Filled.Refresh" />
         <MudText>Load history</MudText>
     }
-</MudButton>
+    </MudButton>
 
-@if (ShowHistory)
+    @if (ShowHistory)
 {
     @if (isLoading)
     {
@@ -32,20 +32,25 @@
         <MudTimeline TimelineAlign="TimelineAlign.Default">
             @foreach (var history in Histories)
             {
-                <MudTimelineItem Size="Size.Small" Color="@GetTimelineItemColor(history.Status)" TimelineAlign="GetTimelineAlign(history)">
+                <MudTimelineItem Size="Size.Small" Color="@GetTimelineItemColor(history.Status)"
+                    TimelineAlign="GetTimelineAlign(history)">
                     <ItemOpposite>
                         <MudText Color="@GetTimelineItemColor(history.Status)" Typo="Typo.subtitle2">@history.Status</MudText>
-                        @if (!string.IsNullOrEmpty(history.Note))
-                        {
-                            <MudIconButton Icon="@Icons.Material.Outlined.Comment" OnClick="@(e => ShowDialog(history))"></MudIconButton>
-                        }
                     </ItemOpposite>
                     <ItemContent>
-                        <MudText>@history.Date.ToString("dd MMM yyyy")</MudText>
-                        @if (history.Employee is not null)
-                        {
-                            <MudText Typo="Typo.body2" Style="color: gray"> by @history.Employee</MudText>
-                        }
+                        <MudStack Row AlignItems="AlignItems.Center">
+                            <MudStack>
+                                <MudText>@history.Date.ToString("dd MMM yyyy")</MudText>
+                                @if (history.Employee is not null)
+                                {
+                                    <MudText Typo="Typo.body2" Style="color: gray"> by @history.Employee</MudText>
+                                }
+                            </MudStack>
+                            @if (!string.IsNullOrEmpty(history.Note))
+                            {
+                                <MudIconButton Icon="@Icons.Material.Outlined.Comment" OnClick="@(e => ShowDialog(history))"></MudIconButton>
+                            }
+                        </MudStack>
                     </ItemContent>
                 </MudTimelineItem>
                 counter++;
@@ -75,7 +80,7 @@
     {
         var parameters = new DialogParameters();
         parameters.Add("AssetSerialHistory", history);
-        DialogService.Show<NoteDialog>("", parameters);
+        DialogService.Show<NoteDialog>("Note", parameters);
     }
 
     private Color GetTimelineItemColor(AssetStatus status)
@@ -90,5 +95,6 @@
         };
     }
 
-    private TimelineAlign GetTimelineAlign(GetAssetSerialHistory history) => history.Employee is not null ? TimelineAlign.End : TimelineAlign.End;
+    private TimelineAlign GetTimelineAlign(GetAssetSerialHistory history) => history.Employee is not null ?
+    TimelineAlign.End : TimelineAlign.End;
 }
