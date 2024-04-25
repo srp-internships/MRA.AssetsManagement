@@ -37,7 +37,6 @@ else if(UserName is null)
             </MudStack>
             <MudStack Row=true>
                 <MudTextField @bind-Value=_createEmployee.Password Label="Password" InputType="InputType.Password" Margin="Margin.Dense" Variant="Variant.Outlined" For=@(() => _createEmployee.Password) />
-                <MudTextField @bind-Value=_createEmployee.ConfirmPassword Label="Confirm password" InputType="InputType.Password" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.ConfirmPassword)" />
             </MudStack>
         </MudStack>
     </EditForm>

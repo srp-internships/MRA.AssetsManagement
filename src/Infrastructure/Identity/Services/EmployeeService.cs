@@ -58,7 +58,7 @@ public class EmployeeService : IEmployeeService
 
     public async Task<string> Create(CreateEmployeeRequest createEmployeeRequest)
     {
-        var response = await _http.PostAsJsonAsync($"{_apiBaseUrl}/Auth/register", createEmployeeRequest);
+        var response = await _http.PostAsJsonAsync($"{_apiBaseUrl}/User/CreateEmployee", createEmployeeRequest);
         var userId = await response.Content.ReadAsStringAsync();
         return userId;
     }
