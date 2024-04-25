@@ -7,6 +7,7 @@ namespace MRA.AssetsManagement.Web.Shared.AssetPurchases
     {
         public GetAssetType AssetType { get; set; } = null!;
         public GetAsset Asset { get; set; } = null!;
+        public string Serials { get; set; } = null!;
         public int Quantity { get; set; }
         public decimal Price { get; set; }
     }
