@@ -8,78 +8,79 @@
 @inject IAssetSerialService AssetSerialService
 @inject IIconService IconService
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
 
 <MudTable T="GetAssetSerials" Class="mt-4" Items="@Elements">
     <HeaderContent>
+        <MudTh>Type</MudTh>
         <MudTh>Serial</MudTh>
         <MudTh>Asset Name</MudTh>
         <MudTh>From</MudTh>
     </HeaderContent>
     <RowTemplate>
+        <MudTd DataLabel="Type">
+            <MudStack Row="true">
+                <MudIcon Icon="@IconService.GetIcon(context.Type.Icon)"></MudIcon>
+                <MudText>@context.Type.Name</MudText>
+            </MudStack>
+        </MudTd>
         <MudTd DataLabel="Serial">@context.Serial</MudTd>
         <MudTd DataLabel="Asset Name">@context.Name</MudTd>
         <MudTd DataLabel="From">@context.From.ToString("dd MMMM yyyy")</MudTd>
     </RowTemplate>
+    <NoRecordsContent>
+        <MudText Style="font-size: 22px">Nothing here</MudText>
+    </NoRecordsContent>
 </MudTable>
 
-<MudMenu 
-    Label="Assign Asset"
-    AnchorOrigin="Origin.BottomCenter"
-    TransformOrigin="Origin.TopCenter"
-    Variant="Variant.Filled"
-    Color="Color.Info"
-    FullWidth="true"
-    Class="mt-3"
-    Dense="true"
-    Style="min-width: 300px"
-    IsOpenChanged="@((e) => showAssetTypes = e)"
->
+<MudMenu Label="Assign Asset" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"
+    Variant="Variant.Filled" Color="Color.Info" FullWidth="true" Class="mt-3" Dense="true" Style="min-width: 300px"
+    IsOpenChanged="@((e) => showAssetTypes = e)">
     @if (showAssetTypes)
     {
-        <MudTextField Placeholder="Filter items" T="string" Margin="Margin.Dense" Variant="Variant.Outlined" Immediate="true" TextChanged="@((e) => filterAssetTypes = e)" Class="ps-2 pe-2"/>
-        @foreach (var assetType in AssetTypeSerials.Where(x => x.Name.Contains(filterAssetTypes, StringComparison.InvariantCultureIgnoreCase)))
+        <MudTextField Placeholder="Filter items" T="string" Margin="Margin.Dense" Variant="Variant.Outlined"
+            Immediate="true" TextChanged="@((e) => filterAssetTypes = e)" Class="ps-2 pe-2" />
+        @foreach (var assetType in AssetTypeSerials.Where(x => x.Name.Contains(filterAssetTypes,
+       StringComparison.InvariantCultureIgnoreCase)))
         {
-            <MudMenuItem Disabled="@(assetType.AssetSerials.Count == 0)" OnClick="@(e => OnAssetTypeSelected(assetType.AssetSerials))" AutoClose="false">
+            <MudMenuItem Disabled="@(assetType.AssetSerials.Count == 0)"
+                OnClick="@(e => OnAssetTypeSelected(assetType.AssetSerials))" AutoClose="false">
                 <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                     <MudStack Row>
                         <MudIcon Icon="@IconService.GetIcon(assetType.Icon)"></MudIcon>
                         <MudText>@assetType.Name</MudText>
                     </MudStack>
-                    @if (assetType.AssetSerials.Count == 0)
-                    {
-                        <MudText>Out of stock</MudText>
-                    }
-                    else
-                    {
-                        <MudText>@assetType.AssetSerials.Count</MudText>
-                    }
+                    <MudText>@assetType.AssetSerials.Count</MudText>
                 </MudStack>
             </MudMenuItem>
         }
     }
     else
     {
-        <MudTextField Placeholder="Filter items" T="string" Margin="Margin.Dense" Variant="Variant.Outlined" Immediate="true" TextChanged="@(e => filterAssets = e)" Class="ps-2 pe-2" />
-        @foreach (var assetSerial in AssetSerials.Where(x => x.Name.Contains(filterAssets, StringComparison.InvariantCultureIgnoreCase) ||
-                                                                x.Serial.Contains(filterAssets, StringComparison.InvariantCultureIgnoreCase)))
+        <MudTextField Placeholder="Filter items" T="string" Margin="Margin.Dense" Variant="Variant.Outlined"
+            Immediate="true" TextChanged="@(e => filterAssets = e)" Class="ps-2 pe-2" />
+        @foreach (var assetSerial in AssetSerials.Where(x => x.Name.Contains(filterAssets,
+       StringComparison.InvariantCultureIgnoreCase) ||
+       x.Serial.Contains(filterAssets, StringComparison.InvariantCultureIgnoreCase)))
         {
-            <MudMenuItem AutoClose="false" OnClick="@(e => OnAssetSerialSelected(assetSerial.Id))">
+            <MudMenuItem AutoClose="true" OnClick="@(e => OnAssetSerialSelected(assetSerial.Id))">
                 <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
                     <MudText>@($"{assetSerial.Serial} {assetSerial.Name}")</MudText>
                 </MudStack>
             </MudMenuItem>
         }
     }
-</MudMenu>
+    </MudMenu>
 
-@code {
-    private List<GetAssetSerials> Elements = new List<GetAssetSerials>();
-    [Parameter] public List<GetAssetTypeSerial> AssetTypeSerials {get; set;} = null!;
-    [Parameter] public Func<Task> UpdateAssetTypeSerials {get; set;} = null!;
-    private List<GetAssetSerials> AssetSerials = [];
+    @code {
 
+    [Parameter] public List<GetAssetTypeSerial> AssetTypeSerials { get; set; } = null!;
+    [Parameter] public Func<Task> UpdateAssetTypeSerials { get; set; } = null!;
     [Parameter] public string UserName { get; set; } = null!;
-    [Parameter] public GetEmployee Employee {get; set;} = null!;
+    [Parameter] public GetEmployee Employee { get; set; } = null!;
+
+    private List<GetAssetSerials> Elements = new List<GetAssetSerials>();
+    private List<GetAssetSerials> AssetSerials = [];
     private string filterAssetTypes = string.Empty;
     private string filterAssets = string.Empty;
     private bool showPopover = false;
@@ -104,22 +105,24 @@
     private async Task OnAssetSerialSelected(string assetSerialId)
     {
         var userDisplay = new UserDisplay()
-        {
-            UserName = Employee.UserName,
-            FirstName = Employee.FullName.Split(" ")[0],
-            LastName = Employee.FullName.Split(" ")[1]
-        };
+            {
+                UserName = Employee.UserName,
+                FirstName = Employee.FullName.Split(" ")[0],
+                LastName = Employee.FullName.Split(" ")[1]
+            };
 
         await AssetSerialService.UpdateSerial(new()
-        {
-            Id = assetSerialId,
-            Status = Web.Shared.Enums.AssetStatus.Taken,
-            UserDisplay = userDisplay
-        });
+            {
+                Id = assetSerialId,
+                Status = Web.Shared.Enums.AssetStatus.Taken,
+                UserDisplay = userDisplay
+            });
 
         Elements = await EmployeesService.GetEmployeeAssetsSerials(UserName);
         await UpdateAssetTypeSerials.Invoke();
         AssetTypeSerials.Remove(AssetTypeSerials.First(x => x.AssetSerials.Any(a => a.Id == assetSerialId)));
         showAssetTypes = true;
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+        Snackbar.Add("Asset successfully assigned", Severity.Success);
     }
 }

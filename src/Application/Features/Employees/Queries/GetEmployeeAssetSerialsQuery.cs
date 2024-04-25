@@ -26,6 +26,7 @@ public class GetEmployeeAssetSerialsQueryHandler(IApplicationDbContext context) 
                 Id = x.Id,
                 Name = x.Asset.Name,
                 Serial = x.Serial,
+                Type = new Web.Shared.Assets.AssetSerialType(assetTypes.First(at => at.Id == x.Asset.AssetTypeId).Icon, assetTypes.First(at => at.Id == x.Asset.AssetTypeId).Name),
                 From = DateOnly.FromDateTime(x.LastModifiedAt),
             }).ToList();
     }
