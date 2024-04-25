@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MRA.AssetsManagement.Application.Data;
+using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
 namespace MRA.AssetsManagement.Application.Features.Assets.Commands
 {
@@ -15,8 +16,11 @@ namespace MRA.AssetsManagement.Application.Features.Assets.Commands
                 .MustAsync(BeUniqueName)
                 .WithMessage("'Name' must be unique.")
                 .WithErrorCode("UNIQUE_NAME");
-        }
             
+            RuleForEach(x => x.Asset.Properties).SetValidator(new PropertiesValidator());
+
+        }
+
         public async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
         {
             var result = await _context.Assets.AnyAsync(x => x.Name == name, cancellationToken);
