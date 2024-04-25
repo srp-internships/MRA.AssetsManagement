@@ -94,7 +94,11 @@ else
         _loading = false;
     }
 
-    public async Task UpdateAssetTypeSerials() => AssetTypeSerials = await AssetTypesService.GetAssetTypeSerials();
+    public async Task UpdateAssetTypeSerials()
+    {
+        AssetTypeSerials = await AssetTypesService.GetAssetTypeSerials();
+        StateHasChanged();
+    }
 
     private async void CreateOrUpdate()
     {

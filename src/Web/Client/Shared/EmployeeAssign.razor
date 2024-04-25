@@ -40,8 +40,7 @@
     {
         <MudTextField Placeholder="Filter items" T="string" Margin="Margin.Dense" Variant="Variant.Outlined"
             Immediate="true" TextChanged="@((e) => filterAssetTypes = e)" Class="ps-2 pe-2" />
-        @foreach (var assetType in AssetTypeSerials.Where(x => x.Name.Contains(filterAssetTypes,
-       StringComparison.InvariantCultureIgnoreCase)))
+        @foreach (var assetType in AssetTypeSerials.Where(x => x.Name.Contains(filterAssetTypes, StringComparison.InvariantCultureIgnoreCase)))
         {
             <MudMenuItem Disabled="@(assetType.AssetSerials.Count == 0)"
                 OnClick="@(e => OnAssetTypeSelected(assetType.AssetSerials))" AutoClose="false">
@@ -120,7 +119,6 @@
 
         Elements = await EmployeesService.GetEmployeeAssetsSerials(UserName);
         await UpdateAssetTypeSerials.Invoke();
-        AssetTypeSerials.Remove(AssetTypeSerials.First(x => x.AssetSerials.Any(a => a.Id == assetSerialId)));
         showAssetTypes = true;
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
         Snackbar.Add("Asset successfully assigned", Severity.Success);
