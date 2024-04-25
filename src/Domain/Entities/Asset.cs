@@ -6,5 +6,6 @@ public class Asset : IEntity
 {
     public string Id { get; set; } = null!;
     public string Name { get; set; } = null!;
+    public List<Properties> Properties { get; set; } = [];
     public string AssetTypeId { get; set; } = null!;
 }

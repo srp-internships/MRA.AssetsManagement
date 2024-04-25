@@ -20,6 +20,12 @@ public class AssetTypeConfiguration : BaseConfiguration<AssetType>
         classMap.MapMember(x => x.Properties).SetElementName("properties");
         classMap.MapMember(x => x.Icon).SetElementName("icon");
         classMap.MapMember(x => x.Archived).SetElementName("archived");
+
+        BsonClassMap.RegisterClassMap<Properties>(initializer =>
+        {
+            initializer.MapMember(x => x.Label).SetElementName("label");
+            initializer.MapMember(x => x.Value).SetElementName("value");
+        });
     }
 
     protected override void Configure()
