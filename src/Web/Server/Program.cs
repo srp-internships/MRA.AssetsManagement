@@ -6,6 +6,7 @@ using MRA.AssetsManagement.Application;
 using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
+using MRA.AssetsManagement.Infrastructure.Data.Migrations;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
 using MRA.AssetsManagement.Infrastructure.Identity.Services;
 using MRA.AssetsManagement.Infrastructure.Migrations;

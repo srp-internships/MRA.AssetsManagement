@@ -1,12 +1,6 @@
 ﻿using MongoDB.Driver;
 
 namespace MRA.AssetsManagement.Infrastructure.Migrations;
-public class DefaultVersion(IMongoClient client) : BaseMigration(client)
+public class DefaultVersion(IMongoDatabase database) : BaseMigration(database)
 {
-    public override void Up()
-    {
-    }
-    public override void Down()
-    {
-    }
 }

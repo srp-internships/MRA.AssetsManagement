@@ -1,4 +1,4 @@
-﻿namespace MRA.AssetsManagement.Infrastructure.Migrations;
+﻿namespace MRA.AssetsManagement.Infrastructure.Data.Migrations;
 
 public interface IMigration
 {

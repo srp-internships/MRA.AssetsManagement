@@ -2,7 +2,7 @@
 
 namespace MRA.AssetsManagement.Domain.Entities;
 
-public class AppVersion : IEntity
+public class DbVersion : IEntity
 {
     public string Id { get; set; } = null!;
     public int Version { get; set; }

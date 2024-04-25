@@ -1,11 +1,13 @@
 ﻿using MongoDB.Driver;
 
+using MRA.AssetsManagement.Infrastructure.Data.Migrations;
+
 namespace MRA.AssetsManagement.Infrastructure.Migrations;
 
-public abstract class BaseMigration(IMongoClient client) : IMigration
+public abstract class BaseMigration(IMongoDatabase database) : IMigration
 {
-    protected readonly IMongoDatabase _database = client.GetDatabase("mra-assets");
+    protected readonly IMongoDatabase _database = database;
 
-    public abstract void Up();
-    public abstract void Down();
+    public virtual void Up() {}
+    public virtual void Down() {}
 }

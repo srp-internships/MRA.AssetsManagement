@@ -13,10 +13,10 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     { 
+        services.AddSingleton<MongoDbMigration>();
         services.AddSingleton<IApplicationDbContext, MongoDbContext>();
         services.AddSingleton<IDataSeeder, MongoDbDataSeeder>();
         services.AddScoped<IEmployeeService, EmployeeService>();
-        services.AddSingleton<MongoDbMigration>();
         
         return services;
     }
