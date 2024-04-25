@@ -43,10 +43,8 @@ namespace MRA.AssetsManagement.Web.Client.Services.Tags
         
         public async Task<List<MenuItem>> Fetch()
         {
-            var response = await httpClient.GetFromJsonAsync<List<GetTag>>($"{_baseAddress}api/tags");
-            snackbar.ShowIfError(response, "Error was occured.");
-
-            return response.Result!.Select(mi => mi.ToMenuItem()).ToList();
+            var result = await GetAll();
+            return result.Select(mi => mi.ToMenuItem()).ToList();
         }
 
         public async Task<List<GetTag>> GetAll()
@@ -55,6 +53,5 @@ namespace MRA.AssetsManagement.Web.Client.Services.Tags
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }
-
     }
 }
