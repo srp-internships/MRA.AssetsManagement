@@ -27,15 +27,16 @@ public class MongoRepository<T> : IRepository<T> where T : IEntity
         return await _collection.Find(filter).ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyCollection<T>> GetPagedListAsync(int skip, int take, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyCollection<T>> GetPagedListAsync(Expression<Func<T, bool>> filter, int? skip, int? take, CancellationToken cancellationToken = default)
     {
+        
         var sort = Builders<T>.Sort.Combine(
             Builders<T>.Sort.Ascending("status"),
             Builders<T>.Sort.Ascending("asset.assetTypeId"),
             Builders<T>.Sort.Ascending("serial")
         );
 
-        return await _collection.Find(_filterBuilder.Empty).Sort(sort).Skip(skip).Limit(take).ToListAsync(cancellationToken);
+        return await _collection.Find(filter).Sort(sort).Skip(skip).Limit(take).ToListAsync(cancellationToken);
     }
 
     public async Task<T> GetAsync(string id, CancellationToken cancellationToken = default)

@@ -4,20 +4,57 @@
 @using MRA.AssetsManagement.Web.Client.Services.AssetSerials
 @using MRA.AssetsManagement.Web.Shared.Assets
 @using MRA.AssetsManagement.Web.Client.Services.Assets
+@using MRA.AssetsManagement.Web.Shared.Enums
+@using MRA.AssetsManagement.Web.Shared.Tags
 @inject IAssetsService AssetsService
 @inject NavigationManager NavigationManager
 @inject IIconService IconService
 @inject IAssetSerialService AssetSerialService
-@attribute [Authorize]
+@inject IAssetTypesService AssetTypeService
+@inject ITagsService TagsService
+
 
 <PageTitle>Assets</PageTitle>
 <MudTable @ref=_table ServerData="@(new Func<TableState, Task<TableData<GetAssetSerial>>>(LoadSerials))" Items="@Elements" Hover="true" Dense="true" FixedHeader="true" T="GetAssetSerial" OnRowClick="OnSerialSelect">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Assets</MudText>
-        <MudChip Href="/assets/purchase" Color="Color.Primary">New</MudChip>
+        <MudIconButton Class="ml-1 mr-5" Href="/assets/purchase" Color="Color.Primary" Icon="@Icons.Material.Filled.Add" />
         <MudSpacer />
-        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start"
-            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudGrid>
+            <MudItem sm="2" />
+            <MudItem sm="2">
+                <MudSelect @bind-Value="_assetsFilterOptions.Status" TextChanged="@OnFilterChange" T="string" Label="Status" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable>
+                    <MudSelectItem Value="@(((int)AssetStatus.Available).ToString())"><MudText Color="Color.Success">@(AssetStatus.Available.ToString())</MudText></MudSelectItem>
+                    <MudSelectItem Value="@(((int)AssetStatus.Taken).ToString())"><MudText Color="Color.Info">@(AssetStatus.Taken.ToString())</MudText></MudSelectItem>
+                    <MudSelectItem Value="@(((int)AssetStatus.Broken).ToString())"><MudText Color="Color.Error">@(AssetStatus.Broken.ToString())</MudText></MudSelectItem>
+                    <MudSelectItem Value="@(((int)AssetStatus.Deprecated).ToString())">@(AssetStatus.Deprecated.ToString())</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+
+            <MudItem sm="2">
+                <MudTextField @bind-Value=_assetsFilterOptions.Serial OnKeyUp="@OnFilterChange" OnClearButtonClick=@OnFilterChange Label="Serial" Margin="Margin.Dense" Variant="Variant.Outlined" Immediate Clearable />
+            </MudItem>
+            <MudItem sm="2">
+                <MudSelect @bind-Value="_assetsFilterOptions.Type" TextChanged="@OnFilterChange" T="string" Label="Type" Margin="Margin.Dense" Variant="Variant.Outlined" Immediate Clearable>
+                    @foreach (var assetTypes in AssetTypes)
+                    {
+                        <MudSelectItem T="string" Value="@assetTypes.Id">@assetTypes.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+
+            <MudItem sm="2">
+                <MudSelect @bind-Text=_assetsFilterOptions.Tags T="string" MultiSelection Label="Tags" ValueChanged="@OnFilterChange" Margin="Margin.Dense" Variant="Variant.Outlined">
+                    @foreach (var tag in Tags)
+                    {
+                        <MudSelectItem Value=@tag.Slug T="string">@tag.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem sm="2">
+                <MudTextField @bind-Value=_assetsFilterOptions.AssetName OnKeyUp="@OnFilterChange" OnClearButtonClick=@OnFilterChange Label="Asset Name" Margin="Margin.Dense" Variant="Variant.Outlined" Immediate Clearable />
+            </MudItem>
+        </MudGrid>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Status</MudTh>
@@ -71,6 +108,9 @@
             <MudTd DataLabel="From">@context.From.ToString("dd MMMM yyyy")</MudTd>
         }
     </RowTemplate>
+    <NoRecordsContent>
+       <MudText>No matching records found</MudText>
+    </NoRecordsContent>
     <PagerContent>
         <MudTablePager />
     </PagerContent>
@@ -83,21 +123,28 @@
 
 @code {
 
-    [Parameter] 
-    public string? Serial { get; set; }
-    private string searchString1 = "";
-    private MudTable<GetAssetSerial> _table = null!;
+    [Parameter] public string? Serial { get; set; }
     private bool loading = false;
+                               
+    private MudTable<GetAssetSerial> _table = null!;
+
     private IEnumerable<GetAssetSerial> Elements = new List<GetAssetSerial>(Enumerable.Range(1, 5).Select(x => new GetAssetSerial()));
+    private List<AssetStatus> AssetStatuses = null!;
+    private List<GetAssetType> AssetTypes = new List<GetAssetType>();
+    private List<GetTag> Tags = new List<GetTag>();
+
+    private AssetsFilterOptions _assetsFilterOptions = new AssetsFilterOptions();
+
+    protected override async Task OnInitializedAsync()
+    {
+        AssetTypes = await AssetTypeService.GetAll();
+        Tags = await TagsService.GetAll();
+    }
+
 
     private void OnSerialSelect(TableRowClickEventArgs<GetAssetSerial> args)
     {
         NavigationManager.NavigateTo($"/assets/{args.Item.Serial}");
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        @* Elements = await AssetsService.GetAssetSerials(); *@
     }
 
     private async Task OnAssetSerialHasChanged()
@@ -105,11 +152,19 @@
         await _table.ReloadServerData();
     }
 
+    private async Task OnFilterChange()
+    {
+        await _table.ReloadServerData();
+    }
+
     private async Task<TableData<GetAssetSerial>> LoadSerials(TableState state)
     {
         loading = true;
-        var result = await AssetsService.GetPagedAssetSerials(state.Page, state.PageSize);
+        _assetsFilterOptions.CurrentPage = state.Page * state.PageSize;
+        _assetsFilterOptions.PageSize = state.PageSize;
+        var result = await AssetsService.GetPagedAssetSerials(_assetsFilterOptions);
         loading = false;
         return new TableData<GetAssetSerial>() { Items = result.Data, TotalItems = result.TotalCount };
     }
+
 }   

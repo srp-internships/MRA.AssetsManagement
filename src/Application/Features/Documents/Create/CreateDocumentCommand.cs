@@ -4,8 +4,10 @@ namespace MRA.AssetsManagement.Application.Features.Documents.Create;
 
 public class CreateDocumentDetailCommand
 {
-    public decimal Price { get; set; }
+    public string Serials { get; set; } = null!;
     public int Quantity { get; set; }
+    public decimal Price { get; set; }
+    public DateTime Date { get; set; }
     public Asset Asset { get; set; } = null!;
 }
 
