@@ -1,3 +1,4 @@
+using MRA.AssetsManagement.Web.Shared.AssetTypes;
 using MRA.AssetsManagement.Web.Shared.Employees;
 using MRA.AssetsManagement.Web.Shared.Enums;
 using MRA.AssetsManagement.Web.Shared.Tags;
@@ -10,6 +11,7 @@ public class GetAssetSerial
     public AssetStatus Status { get; set; }
     public string Serial { get; set; } = null!;
     public List<GetTag> Tags { get; set; } = [];
+    public List<Properties> Properties { get; set; } = [];
     public AssetSerialType AssetSerialType { get; set; } = null!;
     public string Name { get; set; } = null!;
     public UserDisplay? Employee { get; set; }
