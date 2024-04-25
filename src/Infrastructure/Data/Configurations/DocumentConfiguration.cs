@@ -18,6 +18,7 @@ public class DocumentConfiguration : BaseConfiguration<Document>
         classMap.MapMember(x => x.Approved).SetElementName("approved");
         classMap.MapMember(x => x.Date).SetElementName("date");
         classMap.MapMember(x => x.Details).SetElementName("details");
+        classMap.MapMember(x => x.Note).SetElementName("note");
         
         classMap.SetIsRootClass(true);
         classMap.AddKnownType(typeof(PurchaseDocument));

@@ -5,7 +5,6 @@ using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Domain.Entities;
 using MRA.AssetsManagement.Domain.Enums;
-using MRApiCommon.Extensions;
 
 namespace MRA.AssetsManagement.Application.Features.Documents.Create;
 
@@ -34,7 +33,8 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
             Date = request.Date,
             Approved = request.Approved,
             Vendor = request.Vendor,
-            Details = new List<DocumentDetail>()
+            Details = new List<DocumentDetail>(),
+            Note = request.Note
         };
 
         List<AssetHistory> histories = [];
@@ -66,7 +66,7 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
                     Asset = detail.Asset,
                     Status = AssetStatus.Available,
                     CreatedAt = request.Date,
-                    LastModifiedAt = request.Date,
+                    LastModifiedAt = DateTime.Now,
                     CreatedBy = _currentUserService.GetUserId().ToString()
                 };
                 if (serials[i].Equals("auto", StringComparison.OrdinalIgnoreCase))

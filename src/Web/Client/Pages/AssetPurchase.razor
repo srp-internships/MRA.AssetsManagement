@@ -1,4 +1,5 @@
 ﻿@page "/assets/purchase"
+@using Blazored.TextEditor
 @using MRA.AssetsManagement.Web.Shared.AssetPurchases
 @using MRA.AssetsManagement.Web.Shared.Assets
 @using MRA.AssetsManagement.Web.Client.Services.Assets
@@ -10,26 +11,65 @@
 
 <MudStack Row="true" Class="d-flex justify-space-between mb-3 pa-1">
     <MudText Typo="Typo.h4">New Assets</MudText>
-    <MudButton Variant="Variant.Filled" @onclick=Create ButtonType=ButtonType.Submit StartIcon="@Icons.Material.Filled.CreateNewFolder" Color="Color.Tertiary" Size="Size.Medium">Enter</MudButton>
+    <MudButton Variant="Variant.Filled" @onclick=Create ButtonType=ButtonType.Submit
+        StartIcon="@Icons.Material.Filled.CreateNewFolder" Color="Color.Tertiary" Size="Size.Medium">Enter</MudButton>
 </MudStack>
-<MudStack Row=true Class="d-flex justify-space-between mb-3 gap-0">    
+<MudStack Row=true Class="d-flex justify-space-between mb-3 gap-0">
     <MudItem lg="7">
-        <MudStack Row >
-            <MudTextField @bind-Value="_vendor" T=string Label="Vendor" Variant="Variant.Outlined" Margin="Margin.Dense" Immediate />
+        <MudStack Row>
+            <MudTextField @bind-Value="_vendor" T=string Label="Vendor" Variant="Variant.Outlined" Margin="Margin.Dense"
+                Immediate />
             <MudDatePicker @bind-Date="_date" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Date" />
         </MudStack>
     </MudItem>
-    
+</MudStack>
+
+<MudText Typo="Typo.h5">Note</MudText>
+<BlazoredTextEditor @ref="@QuillHtml" Placeholder="Enter note...">
+    <ToolbarContent>
+        <select class="ql-header">
+            <option selected=""></option>
+            <option value="1"></option>
+            <option value="2"></option>
+            <option value="3"></option>
+            <option value="4"></option>
+            <option value="5"></option>
+        </select>
+        <span class="ql-formats">
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+            <button class="ql-strike"></button>
+        </span>
+        <span class="ql-formats">
+            <select class="ql-color"></select>
+            <select class="ql-background"></select>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-list" value="ordered"></button>
+            <button class="ql-list" value="bullet"></button>
+        </span>
+        <span class="ql-formats">
+            <button class="ql-link"></button>
+        </span>
+    </ToolbarContent>
+    <EditorContent>
+
+    </EditorContent>
+</BlazoredTextEditor>
+
+<MudStack Row Justify="Justify.FlexEnd" Class="mt-3">
     <MudButton @onclick=AddRow StartIcon="@Icons.Material.Filled.Add" Color=Color.Dark Variant="Variant.Text">Add row</MudButton>
 </MudStack>
 
-<MudTable Class="mb-3" Items="@AssetPurchases" Dense="true">
+<MudTable Class="mb-3 mt-2" Items="@AssetPurchases" Dense="true">
     <HeaderContent>
         <MudTh>Type</MudTh>
         <MudTh>
             <MudStack Row=true Class="justify-space-between">
                 <MudText>Asset</MudText>
-                <MudIconButton @onclick=OpenDialog Class="pa-0" Disabled=@(_selectedAssetType == null) Icon="@Icons.Material.Filled.Add" Color="Color.Tertiary" />
+                <MudIconButton @onclick=OpenDialog Class="pa-0" Disabled=@(_selectedAssetType == null)
+                    Icon="@Icons.Material.Filled.Add" Color="Color.Tertiary" />
             </MudStack>
         </MudTh>
         <MudTh>Serials</MudTh>
@@ -37,7 +77,9 @@
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Type">
-            <MudSelect @bind-Value=context.AssetType TextChanged="@(async() => {await SetAssets(context.AssetType);})" ToStringFunc=AssetTypeToStirng Label="Select Type" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant="Variant.Outlined" Clearable>
+            <MudSelect @bind-Value=context.AssetType TextChanged="@(async() => {await SetAssets(context.AssetType);})"
+                ToStringFunc=AssetTypeToStirng Label="Select Type" AnchorOrigin="Origin.BottomCenter"
+                Margin=Margin.Dense Variant="Variant.Outlined" Clearable>
                 @foreach (var assetType in AssetTypes)
                 {
                     <MudSelectItem Value="assetType" />
@@ -45,7 +87,9 @@
             </MudSelect>
         </MudTd>
         <MudTd DataLabel="Asset">
-            <MudSelect @ref=_assetSelect @bind-Value=context.Asset Disabled="@(context.AssetType == null)" ToStringFunc=AssetToStirng Label="Select Asset" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant=" Variant.Outlined" Clearable>
+            <MudSelect @ref=_assetSelect @bind-Value=context.Asset Disabled="@(context.AssetType == null)"
+                ToStringFunc=AssetToStirng Label="Select Asset" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense
+                Variant=" Variant.Outlined" Clearable>
                 @foreach (var asset in GetAssets(context.AssetType?.Id! ?? ""))
                 {
                     <MudSelectItem Value="asset" />
@@ -57,13 +101,17 @@
         </MudTd>
         <MudTd DataLabel="Price">
             <MudStack Row=true>
-                <MudTextField @bind-Value=context.Price Margin=Margin.Dense Variant="Variant.Outlined" Immediate MaxLength="15" />
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteRow(context))" />
+                <MudTextField @bind-Value=context.Price Margin=Margin.Dense Variant="Variant.Outlined" Immediate
+                    MaxLength="15" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"
+                    OnClick="@(() => DeleteRow(context))" />
             </MudStack>
         </MudTd>
     </RowTemplate>
     <FooterContent>
-        <MudTh><MudText Typo="Typo.h5">Total:</MudText></MudTh>
+        <MudTh>
+            <MudText Typo="Typo.h5">Total:</MudText>
+        </MudTh>
         <MudTh />
         <MudTh />
         <MudTh>
@@ -78,12 +126,14 @@
         <MudDivider />
     </TitleContent>
     <DialogContent>
-        <EditForm Model="_newAsset" OnValidSubmit="@(() => CreateNewAsset(_selectedAssetType.Id))" Context="editContext">
+        <EditForm Model="_newAsset" OnValidSubmit="@(() => CreateNewAsset(_selectedAssetType.Id))"
+            Context="editContext">
             <FluentValidationValidator />
             <MudText Class="mb-3" Typo="Typo.h6">Type: @_selectedAssetType.Name</MudText>
             <MudTextField @bind-Value=_newAsset.Name Label="Name" Margin="Margin.Dense" Variant="Variant.Outlined" />
             <MudStack Row=true Class="justify-end mt-3">
-                <MudButton Color="Color.Tertiary" Variant=Variant.Filled ButtonType="ButtonType.Submit">Create</MudButton>
+                <MudButton Color="Color.Tertiary" Variant=Variant.Filled ButtonType="ButtonType.Submit">Create
+                </MudButton>
                 <MudButton Variant=Variant.Filled OnClick="OpenDialog">Cancel</MudButton>
             </MudStack>
         </EditForm>
@@ -97,7 +147,7 @@
     private Dictionary<string, List<GetAsset>> Assets = new Dictionary<string, List<GetAsset>>();
 
     private string _vendor { get; set; } = null!;
-    private DateTime? _date { get; set; }
+    private DateTime? _date { get; set; } = DateTime.Today;
     private bool _isOpen = false;
 
     private GetAssetType _selectedAssetType = null!;
@@ -108,11 +158,13 @@
     Func<GetAssetType, string> AssetTypeToStirng = at => at.Name;
     Func<GetAsset, string> AssetToStirng = a => a.Name;
 
+    BlazoredTextEditor QuillHtml = null!;
+
     protected override async Task OnInitializedAsync()
     {
         Assets.Add("", new List<GetAsset>());
         AssetPurchases.Add(new CreateAssetPurchaseDetail());
-        AssetTypes =  await AssetTypesService.GetAll();
+        AssetTypes = await AssetTypesService.GetAll();
     }
 
     private async Task SetAssets(GetAssetType assetType)
@@ -136,7 +188,7 @@
     }
 
     private async Task UpdateAssets(GetAssetType assetType)
-    { 
+    {
         var response = (await AssetsService.GetAssetsByTypeId(assetType.Id)).ToList();
         if (Assets.ContainsKey(assetType.Id))
         {
@@ -156,12 +208,12 @@
         {
             SnackBar.Add("Vendor is required field!", Severity.Error);
         }
-        else if(_date == null)
+        else if (_date == null)
         {
             SnackBar.Add("Date is required field!", Severity.Error);
         }
-        else if (AssetPurchases.Any(ap => ap.Serials.Trim().Length < 0 || ap.Price < 1 || ap.Asset == null 
-                                   || ap.AssetType == null))
+        else if (AssetPurchases.Any(ap => ap.Serials.Trim().Length < 0 || ap.Price < 1 || ap.Asset == null
+        || ap.AssetType == null))
         {
             SnackBar.Add("All fields are required", Severity.Error);
         }
@@ -174,10 +226,17 @@
                     AssetType = ap.AssetType,
                     Serials = ap.Serials,
                     Price = ap.Price
-            }).ToList();
-            
+                }).ToList();
 
-            CreateAssetPurchaseRequest newAssetPurchase = new() { Vendor = _vendor, Date = _date.Value.AddDays(1), Details = details };
+            string quillText = await QuillHtml.GetText();
+
+            CreateAssetPurchaseRequest newAssetPurchase = new()
+                {
+                    Vendor = _vendor,
+                    Date = _date.Value.AddDays(1),
+                    Details = details,
+                    Note = string.IsNullOrEmpty(quillText) || quillText == "\n" ? null : await QuillHtml.GetContent()
+                };
             await AssetsService.CreatePurchase(newAssetPurchase);
             NavigationManager.NavigateTo("/assets");
         }
@@ -190,7 +249,7 @@
         OpenDialog();
         _newAsset = new CreateAssetRequest();
         await UpdateAssets(_selectedAssetType);
-    }   
+    }
 
     private void AddRow()
     {
@@ -206,7 +265,7 @@
 
     private decimal CalculateTotalPrice()
     {
-        var totalPrice =  AssetPurchases.Sum(ap => ap.Price);
+        var totalPrice = AssetPurchases.Sum(ap => ap.Price);
         return totalPrice;
     }
 
