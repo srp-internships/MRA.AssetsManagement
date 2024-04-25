@@ -1,9 +1,9 @@
-@using Blazored.TextEditor
 @using MRA.AssetsManagement.Web.Client.Services.AssetSerials
 @using MRA.AssetsManagement.Web.Shared.AssetSerialHistory
 @using MRA.AssetsManagement.Web.Shared.AssetSerials
 @using MRA.AssetsManagement.Web.Shared.Assets
 @using MRA.AssetsManagement.Web.Shared.Employees
+@using MRA.AssetsManagement.Web.Client.Shared
 @inject IAssetSerialService AssetSerialService
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
@@ -44,14 +44,10 @@
         </BlazoredTextEditor>
     </DialogContent>
     <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
         @if (AssetSerialHistory == null)
         {
-            <MudButton OnClick="Cancel">Cancel</MudButton>
-            <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
-        }
-        else
-        {
-            <MudButton OnClick="Cancel">Close</MudButton>
+            <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
         }
     </DialogActions>
 </MudDialog>

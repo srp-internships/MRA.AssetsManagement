@@ -33,12 +33,12 @@
             @foreach (var history in Histories)
             {
                 <MudTimelineItem Size="Size.Small" Color="@GetTimelineItemColor(history.Status)"
-                    TimelineAlign="GetTimelineAlign(history)">
+                    TimelineAlign="TimelineAlign.End">
                     <ItemOpposite>
                         <MudText Color="@GetTimelineItemColor(history.Status)" Typo="Typo.subtitle2">@history.Status</MudText>
                     </ItemOpposite>
                     <ItemContent>
-                        <MudStack Row AlignItems="AlignItems.Center">
+                        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                             <MudStack>
                                 <MudText>@history.Date.ToString("dd MMM yyyy")</MudText>
                                 @if (history.Employee is not null)
@@ -94,7 +94,4 @@
             _ => Color.Default
         };
     }
-
-    private TimelineAlign GetTimelineAlign(GetAssetSerialHistory history) => history.Employee is not null ?
-    TimelineAlign.End : TimelineAlign.End;
 }
