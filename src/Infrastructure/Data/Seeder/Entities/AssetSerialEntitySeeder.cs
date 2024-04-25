@@ -22,6 +22,10 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
         var nizomjon = new UserDisplay { FirstName = "Nizomjon", LastName = "Rahmonberdiev", UserName = "nizomjon" };
         var shuhrat = new UserDisplay { FirstName = "Shuhrat", LastName = "Rahmonov", UserName = "shuhrat" };
 
+        var outdated = new Tag { Id = "66289567f75fea733fcd7839", Name = "outdated", Slug = "outdated", Color = "#DD0000" };
+        var fast = new Tag { Id = "66289567f75fea733fcd783a", Name = "fast", Slug = "fast", Color = "#007C00" };
+        var issues = new Tag { Id = "66289567f75fea733fcd783b", Name = "issues", Slug = "issues", Color = "#5600AC" };
+
         await _repository.CreateAsync(default, [
             new AssetSerial
             {
@@ -29,6 +33,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 Status = AssetStatus.Broken,
                 Asset = assets.First(x => x.Id == "660510ad00baa1f0e9062261"),
                 Serial = "PC-000001",
+                Tags = [fast, outdated],
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2).AddDays(50),
@@ -40,6 +45,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 Status = AssetStatus.Taken,
                 Asset = assets.First(x => x.Id == "660510ad00baa1f0e9062261"),
                 Serial = "PC-000002",
+                Tags = [fast],
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2).AddDays(7),
@@ -52,6 +58,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 Status = AssetStatus.Available,
                 Asset = assets.First(x => x.Id == "660510ad00baa1f0e9062261"),
                 Serial = "PC-000003",
+                Tags = [issues],
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2),
@@ -63,6 +70,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 Status = AssetStatus.Taken,
                 Asset = assets.First(x => x.Id == "660510ad00baa1f0e9062260"),
                 Serial = "LPT-000001",
+                Tags = [issues, fast],
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2).AddDays(11),
@@ -75,6 +83,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 Status = AssetStatus.Broken,
                 Asset = assets.First(x => x.Id == "660510ad00baa1f0e9062260"),
                 Serial = "LPT-000002",
+                Tags = [outdated, issues],
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2).AddDays(33),
@@ -86,6 +95,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 Status = AssetStatus.Taken,
                 Asset = assets.First(x => x.Id == "660510ad00baa1f0e9062266"),
                 Serial = "MTR-000001",
+                Tags = [fast, outdated, issues],
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2).AddDays(20),
@@ -98,6 +108,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 Status = AssetStatus.Available,
                 Asset = assets.First(x => x.Id == "660510ad00baa1f0e9062266"),
                 Serial = "MTR-000002",
+                Tags = [issues, fast],
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2),
@@ -109,6 +120,7 @@ public class AssetSerialEntitySeeder : EntitySeeder<AssetSerial>
                 Status = AssetStatus.Deprecated,
                 Asset = assets.First(x => x.Id == "6605130500baa1f0e906232a"),
                 Serial = "CHR-000001",
+                Tags = [outdated, fast],
                 CreatedAt = DateTime.Now.AddMonths(-2),
                 CreatedBy = nizomjon.UserName,
                 LastModifiedAt = DateTime.Now.AddMonths(-2).AddDays(57),
