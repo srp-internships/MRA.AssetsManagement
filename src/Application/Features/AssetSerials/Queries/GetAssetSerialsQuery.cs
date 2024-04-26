@@ -2,7 +2,6 @@ using AutoMapper;
 
 using MediatR;
 
-using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Web.Shared.Assets;
 using MRA.AssetsManagement.Web.Shared.Employees;
@@ -29,6 +28,7 @@ public class GetAssetSerialsQueryHandler(IApplicationDbContext context, IMapper 
             Status = Enum.Parse<AssetStatus>(x.Status.ToString()),
             Serial = x.Serial,
             Name = x.Asset.Name,
+            AssetFullName = x.Asset.ToString(),
             LastModified = x.LastModifiedAt,
             From = x.CreatedAt,
             Employee = mapper.Map<UserDisplay>(x.Employee),

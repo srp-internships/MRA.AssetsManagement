@@ -69,6 +69,10 @@
                 <MudText>
                     <b>Asset: </b>@assetSerial.Name
                 </MudText>
+                foreach (var property in assetSerial.Properties)
+                {
+                    <MudText><b>@property.Label:</b> @property.Value</MudText>
+                }
                 <MudStack Row="true" AlignItems="AlignItems.Center">
                     <MudText>
                         <b>Status: </b>

@@ -1,10 +1,9 @@
 ﻿using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using MRA.AssetsManagement.Application.Features.Employees.Queries;
 using MRA.AssetsManagement.Domain.Entities.Employee;
+using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Web.Shared.AssetSerials;
 using MRA.AssetsManagement.Web.Shared.Employees;
 
@@ -37,6 +36,7 @@ public class EmployeesController : ApiControllerBase
     }
     
     [HttpPost]
+    [Authorize(ApplicationPolicies.Administrator)]
     public async Task<ActionResult<GetEmployee>> Create(CreateEmployeeRequest request, CancellationToken cancellationToken)
     {
         return await _mediator.Send(new CreateEmployeeCommand(request),cancellationToken);
