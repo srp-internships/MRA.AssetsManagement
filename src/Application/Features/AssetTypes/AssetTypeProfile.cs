@@ -13,5 +13,6 @@ public class AssetTypeProfile : Profile
         CreateMap<CreateAssetTypeRequest, AssetType>();
         CreateMap<UpdateAssetTypeCommand, AssetType>();
         CreateMap<AssetType, GetAssetType>();
+        CreateMap<Domain.Entities.Properties, Web.Shared.AssetTypes.Properties>().ReverseMap();
     }
 }

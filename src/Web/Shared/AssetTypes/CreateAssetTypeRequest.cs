@@ -6,6 +6,7 @@ public class CreateAssetTypeRequest
 {
     public string Name { get; set; } = null!;
     public string ShortName { get; set; } = null!;
+    public List<Properties> Properties { get; set; } = [];
     public string Icon { get; set; } = null!;
 }
 
