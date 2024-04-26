@@ -29,7 +29,7 @@
     else
     {
         <MudText><b>Logs</b></MudText>
-        <MudTimeline TimelineAlign="TimelineAlign.Default">
+        <MudTimeline TimelineAlign="TimelineAlign.Default" Class="mt-2 mb-2">
             @foreach (var history in Histories)
             {
                 <MudTimelineItem Size="Size.Small" Color="@GetTimelineItemColor(history.Status)"
