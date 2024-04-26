@@ -3,10 +3,17 @@
 @inject IIconService IconService;
 @attribute [Authorize]
 
-
 <PageTitle>Home</PageTitle>
 
-@if (_getAssetType != null)
+@if (_getAssetType == null || _getAssetType.Count() == 0)
+{
+    <MudCard Class="mt-3 pa-4" Style="max-width: 400px">
+        <MudCardContent>
+                <MudText Typo="Typo.h6" Class="mud-primary-text" Style="font-weight: bold"> No assets found! </MudText>
+        </MudCardContent>
+    </MudCard>
+}
+else
 {
     @foreach (var assetType in _getAssetType)
     {
@@ -29,10 +36,7 @@
         }
     }
 }
-else
-{
-    <p>Loading...</p>
-}
+
 
 @code {
 
