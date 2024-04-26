@@ -83,26 +83,9 @@
             <MudTd DataLabel="Price">@context.Price</MudTd>
         }
     </RowTemplate>
-    <FooterContent>
-        @if (_purchases.Count != 0)
-        {
-            <MudTd>
-                <b>Total price</b>
-            </MudTd>
-            <MudTd></MudTd>
-            <MudTd></MudTd>
-            <MudTd></MudTd>
-            <MudTd><b>@TotalPrice</b></MudTd>
-        }
-        else
-        {
-            <MudTd></MudTd>
-            <MudTd></MudTd>
-            <MudTd><MudText Style="font-size: 20px;">Nothing found</MudText></MudTd>
-            <MudTd></MudTd>
-            <MudTd></MudTd>
-        }
-    </FooterContent>
+    <NoRecordsContent>
+        <MudText Style="font-size: 22px">Nothing here</MudText>
+    </NoRecordsContent>
 </MudTable>
 
 @code {
