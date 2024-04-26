@@ -33,7 +33,8 @@ public class DocumentEntitySeeder : EntitySeeder<Document>
                     new() { Id = dellLaptop.Id, Price = 20000, Quantity = 2, Asset = dellLaptop },
                     new() { Id = chair.Id, Price = 1500, Quantity = 1, Asset = chair }
                 ],
-                Vendor = "Tech Mark"
+                Vendor = "Tech Mark",
+                Note = """{"ops":[{"insert":"Here is some note about this purchase."},{"attributes":{"header":2},"insert":"\n"}]}"""
             }
         ]);
     }
