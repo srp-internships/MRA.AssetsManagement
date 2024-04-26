@@ -7,7 +7,7 @@
 @inject IIconService IconService
 
 <MudCard Class="pa-3">
-    <MudCartContent>
+    <MudCardContent>
         <MudItem>
             <MudStack Row="true" Justify="Justify.SpaceBetween">
                 <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowLeft" aria-label="delete" OnClick="SubstractMonth"/>
@@ -34,12 +34,12 @@
         <MudItem Class="mt-3">
             <h5>All units: @_purchases.Count</h5>
         </MudItem>
-    </MudCartContent>
+    </MudCardContent>
 </MudCard>
 
 @if (_loading)
 {
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true"/>
 }
 
 <MudTable Items="@_purchases" Hover="true" Dense="true" FixedHeader="true" Class="mt-3">
@@ -83,6 +83,20 @@
             <MudTd DataLabel="Price">@context.Price</MudTd>
         }
     </RowTemplate>
+    <FooterContent>
+        @if (_purchases.Count != 0)
+        {
+            <MudTd>
+                <b>Total price</b>
+            </MudTd>
+            <MudTd></MudTd>
+            <MudTd></MudTd>
+            <MudTd></MudTd>
+            <MudTd>
+                <b>@TotalPrice</b>
+            </MudTd>
+        }
+    </FooterContent>
     <NoRecordsContent>
         <MudText Style="font-size: 22px">Nothing here</MudText>
     </NoRecordsContent>
@@ -100,7 +114,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _types.Add(new GetAssetType() { Name = "All", Icon = "circle"});
+        _types.Add(new GetAssetType() { Name = "All", Icon = "circle" });
         SelectedType = _types.FirstOrDefault()?.Name;
         _loading = true;
         _types.AddRange(await AssetTypesService.GetAll());
@@ -133,7 +147,9 @@
         {
             _purchases = _purchases.Where(x => x.AssetType == SelectedType).ToList();
         }
+
         _loading = false;
         StateHasChanged();
     }
+
 }
