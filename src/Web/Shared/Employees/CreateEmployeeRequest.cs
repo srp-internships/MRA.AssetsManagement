@@ -8,8 +8,6 @@ public class CreateEmployeeRequest
     public string FirstName { get; set; } = "";
     public string LastName { get; set; } = "";
     public string PhoneNumber { get; set; } = "";
-    public int VerificationCode { get; set; }
-    
     private string _username = null!;
     public string Username
     {
@@ -17,7 +15,6 @@ public class CreateEmployeeRequest
         set { _username = value.Trim(); }
     }
     public string Password { get; set; } = "";
-    public string ConfirmPassword { get; set; } = "";
 }
 public class CreateEmployeeValidator : AbstractValidator<CreateEmployeeRequest>
 {
@@ -30,7 +27,5 @@ public class CreateEmployeeValidator : AbstractValidator<CreateEmployeeRequest>
         RuleFor(s => s.Username).NotEmpty();
         
         RuleFor(s => s.Password).NotEmpty().MinimumLength(6);
-        RuleFor(s => s.ConfirmPassword).Equal(s => s.Password)
-            .WithMessage("Passwords do not match.");
     }
 }
