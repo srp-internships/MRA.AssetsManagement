@@ -14,6 +14,7 @@ public class GetAssetSerial
     public List<Properties> Properties { get; set; } = [];
     public AssetSerialType AssetSerialType { get; set; } = null!;
     public string Name { get; set; } = null!;
+    public string AssetFullName { get; set; } = "";
     public UserDisplay? Employee { get; set; }
     public DateTime LastModified { get; set; }
     public DateTime From { get; set; }

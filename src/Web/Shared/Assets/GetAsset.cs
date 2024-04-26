@@ -8,5 +8,11 @@ namespace MRA.AssetsManagement.Web.Shared.Assets
         public string Name { get; set; } = null!;
         public List<Properties> Properties { get; set; } = [];
         public string AssetTypeId { get; set; } = null!;
+
+        public override string ToString()
+        {
+            var properties = string.Join(" ", Properties.Select(x => x.Value));
+            return $"{Name} {properties}";
+        }
     }
 }

@@ -16,9 +16,6 @@ namespace MRA.AssetsManagement.Application.Features.Assets.Commands
                 .MustAsync(BeUniqueName)
                 .WithMessage("'Name' must be unique.")
                 .WithErrorCode("UNIQUE_NAME");
-            
-            RuleForEach(x => x.Asset.Properties).SetValidator(new PropertiesValidator());
-
         }
 
         public async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)

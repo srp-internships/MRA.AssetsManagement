@@ -25,6 +25,7 @@ public class GetSingleAssetSerialQueryHandler(IApplicationDbContext context, IMa
             Status = Enum.Parse<AssetStatus>(serial.Status.ToString()),
             Serial = serial.Serial,
             Name = serial.Asset.Name,
+            AssetFullName = serial.Asset.ToString(),
             Tags = serial.Tags.Select(x => new GetTag { Id = x.Id, Name = x.Name, Color = x.Color! }).ToList(),
             Properties = serial.Asset.Properties.Select(x => new Web.Shared.AssetTypes.Properties { Label = x.Label, Value = x.Value}).ToList(),
             LastModified = serial.LastModifiedAt,

@@ -16,27 +16,137 @@ public class AssetEntitySeeder : EntitySeeder<Asset>
     {
         if (await _repository.AnyAsync()) return;
 
-        var pcProperties = (await _context.AssetTypes.GetAsync("6602b5508836f41c710e02ed")).Properties;
-        var laptopProperties = (await _context.AssetTypes.GetAsync("6602b5508836f41c710e02ee")).Properties;
-        var monitorProperties = (await _context.AssetTypes.GetAsync("6602b5508836f41c710e02f0")).Properties;
-        var chairProperties = (await _context.AssetTypes.GetAsync("6602b5508836f41c710e02ef")).Properties;
-
         await _repository.CreateAsync(default, [
             // PC
-            new Asset { Id = "660510ad00baa1f0e906225d", Name = "MSI CPU-i9 13300K RAM-32G SSD-1T", Properties = pcProperties, AssetTypeId = "6602b5508836f41c710e02ed" },
-            new Asset { Id = "660510ad00baa1f0e906225f", Name = "MacMini CPU-M2 RAM-8G", Properties = pcProperties, AssetTypeId = "6602b5508836f41c710e02ed" },
-            new Asset { Id = "660510ad00baa1f0e9062261", Name = "Asus CPU-i9 13300K RAM-32G SSD-1T", Properties = pcProperties, AssetTypeId = "6602b5508836f41c710e02ed" },
-            new Asset { Id = "660510ad00baa1f0e9062262", Name = "ASRock", Properties = pcProperties, AssetTypeId = "6602b5508836f41c710e02ed" },
+            new Asset
+            {
+                Id = "660510ad00baa1f0e906225d",
+                Name = "MSI",
+                Properties =
+                [
+                    new Properties { Label = "Model", Value = "Prix" },
+                    new Properties { Label = "RAM", Value = "32Gb" },
+                    new Properties { Label = "CPU", Value = "i9-13300K" },
+                    new Properties { Label = "SSD", Value = "1T" },
+                ],
+                AssetTypeId = "6602b5508836f41c710e02ed"
+            },
+            new Asset
+            {
+                Id = "660510ad00baa1f0e906225f",
+                Name = "MacMini",
+                Properties = [
+                    new Properties { Label = "Model", Value = "Pro" },
+                    new Properties { Label = "RAM", Value = "8Gb" },
+                    new Properties { Label = "CPU", Value = "M2 Pro" },
+                    new Properties { Label = "SSD", Value = "512Gb" },
+                ],
+                AssetTypeId = "6602b5508836f41c710e02ed"
+            },
+            new Asset
+            {
+                Id = "660510ad00baa1f0e9062261",
+                Name = "Asus",
+                Properties = [
+                    new Properties { Label = "Model", Value = "ROG Strix" },
+                    new Properties { Label = "RAM", Value = "32Gb" },
+                    new Properties { Label = "CPU", Value = "i9-13300K" },
+                    new Properties { Label = "SSD", Value = "512Gb" },
+                    new Properties { Label = "GPU", Value = "RTX 3080 10 ГБ" },
+                ],
+                AssetTypeId = "6602b5508836f41c710e02ed"
+            },
+            new Asset
+            {
+                Id = "660510ad00baa1f0e9062262",
+                Name = "Acer",
+                Properties = [
+                    new Properties { Label = "Model", Value = "Aspire" },
+                    new Properties { Label = "RAM", Value = "8Gb" },
+                    new Properties { Label = "CPU", Value = "i3-1215U" },
+                    new Properties { Label = "SSD", Value = "256Gb" },
+                ],
+                AssetTypeId = "6602b5508836f41c710e02ed"
+            },
             // Laptop
-            new Asset { Id = "660510ad00baa1f0e906225e", Name = "Lenovo CPU-i7 8880U RAM-16G SSD-512G", Properties = laptopProperties, AssetTypeId = "6602b5508836f41c710e02ee" },
-            new Asset { Id = "660510ad00baa1f0e9062260", Name = "Dell CPU-i9 112U RAM-16G SSD-1T", Properties = laptopProperties, AssetTypeId = "6602b5508836f41c710e02ee" },
+            new Asset
+            {
+                Id = "660510ad00baa1f0e906225e",
+                Name = "Lenovo",
+                Properties = [
+                    new Properties { Label = "Model", Value = "Thinkpad" },
+                    new Properties { Label = "RAM", Value = "16Gb" },
+                    new Properties { Label = "Size, Inch", Value = "15.6" },
+                    new Properties { Label = "CPU", Value = "i5-8250U" },
+                    new Properties { Label = "SSD", Value = "256Gb" },
+                ],
+                AssetTypeId = "6602b5508836f41c710e02ee"
+            },
+            new Asset
+            {
+                Id = "660510ad00baa1f0e9062260",
+                Name = "Dell",
+                Properties = [
+                    new Properties { Label = "Model", Value = "XPS" },
+                    new Properties { Label = "RAM", Value = "16Gb" },
+                    new Properties { Label = "Size, Inch", Value = "14" },
+                    new Properties { Label = "CPU", Value = "i5-1120U" },
+                    new Properties { Label = "SSD", Value = "1T" },
+                ],
+                AssetTypeId = "6602b5508836f41c710e02ee"
+            },
             // Monitor
-            new Asset { Id = "660510ad00baa1f0e9062263", Name = "Samsung 24", Properties = monitorProperties, AssetTypeId = "6602b5508836f41c710e02f0" },
-            new Asset { Id = "660510ad00baa1f0e9062264", Name = "HP 32", Properties = monitorProperties, AssetTypeId = "6602b5508836f41c710e02f0" },
-            new Asset { Id = "660510ad00baa1f0e9062265", Name = "Dell 32", Properties = monitorProperties, AssetTypeId = "6602b5508836f41c710e02f0" },
-            new Asset { Id = "660510ad00baa1f0e9062266", Name = "LG 27", Properties = monitorProperties, AssetTypeId = "6602b5508836f41c710e02f0" },
+            new Asset
+            {
+                Id = "660510ad00baa1f0e9062263",
+                Name = "Samsung",
+                Properties = [
+                    new Properties { Label = "Model", Value = "Solo"},
+                    new Properties { Label = "Size, Inch", Value = "24"}
+                ],
+                AssetTypeId = "6602b5508836f41c710e02f0"
+            },
+            new Asset
+            {
+                Id = "660510ad00baa1f0e9062264",
+                Name = "HP",
+                Properties = [
+                    new Properties { Label = "Model", Value = "Tatu"},
+                    new Properties { Label = "Size, Inch", Value = "27"}
+                ],
+                AssetTypeId = "6602b5508836f41c710e02f0"
+            },
+            new Asset
+            {
+                Id = "660510ad00baa1f0e9062265",
+                Name = "Dell",
+                Properties = [
+                    new Properties { Label = "Model", Value = "Ultra"},
+                    new Properties { Label = "Size, Inch", Value = "32"}
+                ],
+                AssetTypeId = "6602b5508836f41c710e02f0"
+            },
+            new Asset
+            {
+                Id = "660510ad00baa1f0e9062266",
+                Name = "LG",
+                Properties = [
+                    new Properties { Label = "Model", Value = "Nano"},
+                    new Properties { Label = "Size, Inch", Value = "22"}
+                ],
+                AssetTypeId = "6602b5508836f41c710e02f0"
+            },
             // Chair
-            new Asset { Id = "6605130500baa1f0e906232a", Name = "Dafne China", Properties = chairProperties, AssetTypeId = "6602b5508836f41c710e02ef" }
+            new Asset
+            {
+                Id = "6605130500baa1f0e906232a",
+                Name = "Dafne",
+                Properties = [
+                    new Properties { Label = "Model", Value = "CH9944"},
+                    new Properties { Label = "Color", Value = "Black"}
+                ],
+                AssetTypeId = "6602b5508836f41c710e02ef"
+            }
         ]);
     }
 }

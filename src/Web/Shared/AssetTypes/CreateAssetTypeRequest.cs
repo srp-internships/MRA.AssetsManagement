@@ -25,12 +25,3 @@ public class CreateAssetTypeRequestValidator
     }
 }
 
-public class PropertiesValidator : AbstractValidator<Properties>
-{
-    public PropertiesValidator()
-    {
-        RuleFor(x => x.Label).NotNull().NotEmpty();
-        RuleFor(x => x.Value).NotNull().NotEmpty();
-    }
-}
-

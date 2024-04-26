@@ -45,7 +45,7 @@
             </MudSelect>
         </MudTd>
         <MudTd DataLabel="Asset">
-            <MudSelect @ref=_assetSelect @bind-Value=context.Asset Disabled="@(context.AssetType == null)" ToStringFunc=AssetToStirng Label="Select Asset" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant=" Variant.Outlined" Clearable>
+            <MudSelect @ref=_assetSelect @bind-Value=context.Asset Disabled="@(context.AssetType == null)" Label="Select Asset" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant=" Variant.Outlined" Clearable>
                 @foreach (var asset in GetAssets(context.AssetType?.Id! ?? ""))
                 {
                     <MudSelectItem Value="asset" />
@@ -110,7 +110,6 @@
     private MudSelect<GetAsset> _assetSelect = null!;
 
     Func<GetAssetType, string> AssetTypeToStirng = at => at.Name;
-    Func<GetAsset, string> AssetToStirng = a => a.Name;
 
     protected override async Task OnInitializedAsync()
     {

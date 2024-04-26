@@ -14,24 +14,29 @@ public class AssetTypeEntitySeeder : EntitySeeder<AssetType>
         if (await _repository.AnyAsync()) return;
 
         var pcProperties = new List<Properties> { 
-            new Properties { Label = "Model", Value = "Default" }, 
-            new Properties { Label = "Size", Value = "Default" } 
+            new Properties { Label = "Model", Value = "" }, 
+            new Properties { Label = "RAM", Value = "16Gb" }, 
+            new Properties { Label = "CPU", Value = "" },
+            new Properties { Label = "GPU", Value = "" },
+            new Properties { Label = "SSD", Value = "512Gb" },
         };
 
         var laptopProperties = new List<Properties> {
-            new Properties { Label = "Model", Value = "Default"},
-            new Properties { Label = "Size", Value = "Default"} 
+            new Properties { Label = "Model", Value = ""},
+            new Properties { Label = "Size, Inch", Value = "15.6"},
+            new Properties { Label = "CPU", Value = ""},
+            new Properties { Label = "RAM", Value = ""},
+            new Properties { Label = "SSD", Value = "512Gb" }
         };
 
         var monitorProperties = new List<Properties> {
-            new Properties { Label = "Model", Value = "Default"},
-            new Properties { Label = "Size", Value = "Default"}
+            new Properties { Label = "Model", Value = ""},
+            new Properties { Label = "Size, Inch", Value = "24"}
         };
 
         var chairProperties = new List<Properties> {
-            new Properties { Label = "Model", Value = "Default"},
-            new Properties { Label = "Size", Value = "Default"},
-            new Properties { Label = "Color", Value = "Default"},
+            new Properties { Label = "Model", Value = ""},
+            new Properties { Label = "Color", Value = ""},
         };
 
         await _repository.CreateAsync(default,

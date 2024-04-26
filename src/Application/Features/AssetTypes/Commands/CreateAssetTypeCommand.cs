@@ -33,8 +33,6 @@ public class CreateAssetTypeCommandValidator : AbstractValidator<CreateAssetType
             .MustAsync(BeUniqueShortName)
             .WithMessage("'ShortName' must be unique.")
             .WithErrorCode("UNIQUE_SHORTNAME");
-
-        RuleForEach(x => x.AssetType.Properties).SetValidator(new PropertiesValidator());
     }
 
     public async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
