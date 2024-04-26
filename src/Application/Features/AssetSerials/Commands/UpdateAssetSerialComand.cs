@@ -17,6 +17,7 @@ public class UpdateAssetSerialCommand : IRequest<AssetSerial>
     public string Id { get; set; } = null!;
     public UserDisplay? UserDisplay { get; set; }
     public Web.Shared.Enums.AssetStatus Status { get; set; }
+    public string? Note { get; set; }
 }
 
 public class UpdateAssetSerialComandHandler(IApplicationDbContext context, ICurrentUserService currentUserService, IMapper mapper) : IRequestHandler<UpdateAssetSerialCommand, AssetSerial>
@@ -37,7 +38,8 @@ public class UpdateAssetSerialComandHandler(IApplicationDbContext context, ICurr
         {
             DateTime = DateTime.Now,
             UserId = currentUserService.GetUserId().ToString(),
-            HistoryAssetSerial =  _mapper.Map<HistoryAssetSerial>(assetSerial)
+            HistoryAssetSerial =  _mapper.Map<HistoryAssetSerial>(assetSerial),
+            Note = request.Note
         };
 
         await context.AssetSerials.UpdateAsync(assetSerial, cancellationToken);

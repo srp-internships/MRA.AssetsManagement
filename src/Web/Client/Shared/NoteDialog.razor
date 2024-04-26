@@ -1,0 +1,94 @@
+@using Blazored.TextEditor
+@using MRA.AssetsManagement.Web.Client.Services.AssetSerials
+@using MRA.AssetsManagement.Web.Shared.AssetSerialHistory
+@using MRA.AssetsManagement.Web.Shared.AssetSerials
+@using MRA.AssetsManagement.Web.Shared.Assets
+@using MRA.AssetsManagement.Web.Shared.Employees
+@using MRA.AssetsManagement.Web.Client.Shared
+@inject IAssetSerialService AssetSerialService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+<MudDialog Style="max-width: 700px">
+    <DialogContent>
+        <BlazoredTextEditor @ref="@QuillHtml" ReadOnly="@(AssetSerialHistory != null)">
+            <ToolbarContent>
+                <select class="ql-header">
+                    <option selected=""></option>
+                    <option value="1"></option>
+                    <option value="2"></option>
+                    <option value="3"></option>
+                    <option value="4"></option>
+                    <option value="5"></option>
+                </select>
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                </span>
+                <span class="ql-formats">
+                    <select class="ql-color"></select>
+                    <select class="ql-background"></select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link"></button>
+                </span>
+            </ToolbarContent>
+            <EditorContent>
+
+            </EditorContent>
+        </BlazoredTextEditor>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        @if (AssetSerialHistory == null)
+        {
+            <MudButton Color="Color.Primary" OnClick="Submit">Save</MudButton>
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public GetAssetSerial AssetSerial { get; set; } = null!;
+    [Parameter] public GetAssetSerialHistory? AssetSerialHistory { get; set; }
+    [Parameter] public EventCallback OnSaveButtonClicked { get; set; }
+    BlazoredTextEditor QuillHtml = null!;
+
+    async Task Submit()
+    {
+        var quillText = await QuillHtml.GetText();
+
+        var request = new UpdateAssetSerialRequest()
+            {
+                Id = AssetSerial.Id,
+                Status = AssetSerial.Status,
+                UserDisplay = AssetSerial.Employee,
+                Note = string.IsNullOrEmpty(quillText) || quillText == "\n" ? null : await QuillHtml.GetContent()
+            };
+
+        await AssetSerialService.UpdateSerial(request);
+
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopEnd;
+        Snackbar.Add("Serial succesfully updated", Severity.Success);
+        await OnSaveButtonClicked.InvokeAsync();
+        NavigationManager.NavigateTo("/assets");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AssetSerialHistory is not null)
+        {
+            await Task.Delay(100);
+            await QuillHtml.LoadContent(AssetSerialHistory.Note);
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

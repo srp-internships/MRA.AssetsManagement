@@ -8,4 +8,5 @@ public class UpdateAssetSerialRequest
     public string Id { get; set; } = null!;
     public UserDisplay? UserDisplay { get; set; }
     public AssetStatus Status { get; set; }
+    public string? Note { get; set; }
 }

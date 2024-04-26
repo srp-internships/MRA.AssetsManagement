@@ -8,4 +8,5 @@ public class AssetHistory : IEntity
     public HistoryAssetSerial HistoryAssetSerial { get; set; } = null!;
     public string? UserId { get; set; }
     public DateTime DateTime { get; set; }
+    public string? Note { get; set; }
 }

@@ -55,7 +55,8 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             {
                 HistoryAssetSerial = pc1 with {Status = AssetStatus.Broken },
                 DateTime = DateTime.Now.AddMonths(-2).AddDays(50),
-                UserId = nizomjon.UserName
+                UserId = nizomjon.UserName,
+                Note = """{"ops":[{"insert":"SSD crushed."},{"attributes":{"header":2},"insert":"\n"}]}"""
             },
             // PC-000002
             new AssetHistory
@@ -68,7 +69,8 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             {
                 HistoryAssetSerial = pc2 with {Status = AssetStatus.Taken, Employee = shuhrat },
                 DateTime = DateTime.Now.AddMonths(-2).AddDays(7),
-                UserId = nizomjon.UserName
+                UserId = nizomjon.UserName,
+                Note = """{"ops":[{"insert":"One of the USB-A port doesn't work."},{"attributes":{"header":2},"insert":"\n"}]}"""
             },
             //PC-000003
             new AssetHistory
@@ -82,7 +84,8 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             {
                 HistoryAssetSerial = lpt1 with {Status = AssetStatus.Available },
                 DateTime = DateTime.Now.AddMonths(-2),
-                UserId = nizomjon.UserName
+                UserId = nizomjon.UserName,
+                Note = """{"ops":[{"insert":"Sometimes left speaker stops working."},{"attributes":{"header":2},"insert":"\n"}]}"""
             },
             new AssetHistory
             {
@@ -120,7 +123,8 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             {
                 HistoryAssetSerial = mtr1 with {Status = AssetStatus.Taken, Employee = abbos },
                 DateTime = DateTime.Now.AddMonths(-2).AddDays(20),
-                UserId = nizomjon.UserName
+                UserId = nizomjon.UserName,
+                Note = """{"ops":[{"insert":"Monitor has defective pixels on right top corner."},{"attributes":{"header":2},"insert":"\n"}]}"""
             },
             // MTR-000002
             new AssetHistory
@@ -146,7 +150,8 @@ public class AssetHistoryEntitySeeder : EntitySeeder<AssetHistory>
             {
                 HistoryAssetSerial = chr1 with {Status = AssetStatus.Broken },
                 DateTime = DateTime.Now.AddMonths(-2).AddDays(50),
-                UserId = nizomjon.UserName
+                UserId = nizomjon.UserName,
+                Note = """{"ops":[{"insert":"Chair back is broken"},{"attributes":{"header":2},"insert":"\n"}]}"""
             },
             new AssetHistory
             {
