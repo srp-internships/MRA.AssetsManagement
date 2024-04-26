@@ -45,7 +45,7 @@
             </MudSelect>
         </MudTd>
         <MudTd DataLabel="Asset">
-            <MudSelect @ref=_assetSelect @bind-Value=context.Asset Disabled="@(context.AssetType == null)" ToStringFunc=AssetToStirng Label="Select Asset" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant=" Variant.Outlined" Clearable>
+            <MudSelect @ref=_assetSelect @bind-Value=context.Asset Disabled="@(context.AssetType == null)" Label="Select Asset" AnchorOrigin="Origin.BottomCenter" Margin=Margin.Dense Variant=" Variant.Outlined" Clearable>
                 @foreach (var asset in GetAssets(context.AssetType?.Id! ?? ""))
                 {
                     <MudSelectItem Value="asset" />
@@ -82,7 +82,11 @@
             <FluentValidationValidator />
             <MudText Class="mb-3" Typo="Typo.h6">Type: @_selectedAssetType.Name</MudText>
             <MudTextField @bind-Value=_newAsset.Name Label="Name" Margin="Margin.Dense" Variant="Variant.Outlined" />
-            <MudStack Row=true Class="justify-end mt-3">
+            @foreach (var property in _newAsset.Properties)
+            {
+                <MudTextField Class="mt-3" @bind-Value=property.Value Label="@property.Label" Margin="Margin.Dense" Variant="Variant.Outlined" Immediate />
+            }
+            <MudStack Row=true Class="justify-end mt-5">
                 <MudButton Color="Color.Tertiary" Variant=Variant.Filled ButtonType="ButtonType.Submit">Create</MudButton>
                 <MudButton Variant=Variant.Filled OnClick="OpenDialog">Cancel</MudButton>
             </MudStack>
@@ -106,7 +110,6 @@
     private MudSelect<GetAsset> _assetSelect = null!;
 
     Func<GetAssetType, string> AssetTypeToStirng = at => at.Name;
-    Func<GetAsset, string> AssetToStirng = a => a.Name;
 
     protected override async Task OnInitializedAsync()
     {
@@ -186,10 +189,13 @@
     private async Task CreateNewAsset(string assetTypeId)
     {
         _newAsset.AssetTypeId = assetTypeId;
-        await AssetsService.CreateAsset(_newAsset);
-        OpenDialog();
-        _newAsset = new CreateAssetRequest();
-        await UpdateAssets(_selectedAssetType);
+        var result = await AssetsService.CreateAsset(_newAsset);
+        if (result != null)
+        {
+            OpenDialog();
+            _newAsset = new CreateAssetRequest();
+            await UpdateAssets(_selectedAssetType);
+        }
     }   
 
     private void AddRow()
@@ -212,6 +218,8 @@
 
     private void OpenDialog()
     {
+        _newAsset = new();
+        _newAsset.Properties = _selectedAssetType.Properties.Select(p => new Properties { Label = p.Label, Value = p.Value}).ToList();
         _isOpen = !_isOpen;
     }
 }

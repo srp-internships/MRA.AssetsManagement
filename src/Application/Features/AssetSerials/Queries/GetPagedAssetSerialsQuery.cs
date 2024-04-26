@@ -53,6 +53,7 @@ public class GetPagedAssetSerialsQueryHandler(IApplicationDbContext context, IMa
             Status = Enum.Parse<AssetStatus>(x.Status.ToString()),
             Serial = x.Serial,
             Name = x.Asset.Name,
+            AssetFullName = x.Asset.ToString(),
             LastModified = x.LastModifiedAt,
             From = x.CreatedAt,
             Employee = mapper.Map<Web.Shared.Employees.UserDisplay>(x.Employee),

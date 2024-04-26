@@ -47,7 +47,7 @@ namespace MRA.AssetsManagement.Application.Features.AssetSerials.Queries
                 {
                     assetTypeSerial.AssetSerials.Add(new GetAssetSerials
                     {
-                        Name = userAsset.Asset.Name,
+                        Name = userAsset.Asset.ToString(),
                         Serial = userAsset.Serial,
                         Id = userAsset.Id
                     });

@@ -1,14 +1,16 @@
 ﻿@page "/employees"
-@attribute [Authorize]
 @page "/employees/{userName}"
+
+@attribute [Authorize]
 @using MRA.AssetsManagement.Web.Client.Common.Extensions
 @using MRA.AssetsManagement.Web.Client.Components.MenuItems
 @using MRA.AssetsManagement.Web.Shared.Employees
+@using MRA.AssetsManagement.Web.Shared.AssetSerials
 @using Blazored.FluentValidation
 @layout SettingsLayout
 @inject IEmployeesService EmployeesService
 @inject IMenuItemService MenuItemService
-
+@inject IAssetTypesService AssetTypesService
 
 @if (_loading)
 {
@@ -53,10 +55,9 @@ else
         <MudText>Phone</MudText>
         <MudLink Href="@($"tel:{_getEmployee.PhoneNumber}")">@_getEmployee.PhoneNumber</MudLink>
     </MudStack>
+
+    <EmployeeAssign UserName="@UserName" Employee="@_getEmployee" AssetTypeSerials="@AssetTypeSerials" UpdateAssetTypeSerials="UpdateAssetTypeSerials" />
 }
-
-
-
 
 <SectionContent SectionName="@nameof(MenuItemList)">
     <MenuItemList Service="EmployeesService" BaseRoute="/employees" />
@@ -64,20 +65,37 @@ else
 
 
 @code {
+    
     [Parameter] public string? UserName { get; set; }
-
     GetEmployee _getEmployee = null!;
     CreateEmployeeRequest _createEmployee = new CreateEmployeeRequest();
     bool _loading = false;
 
+    private List<GetAssetTypeSerial> AssetTypeSerials = new List<GetAssetTypeSerial>();
+
     protected override async Task OnParametersSetAsync()
     {
         _loading = true;
+        
         if (UserName is not null)
         {
             _getEmployee = await EmployeesService.GetEmployeeByUserName(UserName!);
         }
+        
         _loading = false;
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        AssetTypeSerials = await AssetTypesService.GetAssetTypeSerials();
+        _loading = false;
+    }
+
+    public async Task UpdateAssetTypeSerials()
+    {
+        AssetTypeSerials = await AssetTypesService.GetAssetTypeSerials();
         StateHasChanged();
     }
 

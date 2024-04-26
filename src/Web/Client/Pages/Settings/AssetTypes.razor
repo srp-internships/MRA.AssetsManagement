@@ -63,10 +63,31 @@
         }
     </MudForm>
 </MudStack>
+<MudTable Class="ma-3" Items="_getAssetType.Properties" Dense Style="position: relative;">
+    <ToolBarContent>
+        <MudText Typo="Typo.h5">Properties</MudText>
+        <MudButton Style="position:absolute; right: 0;" Disabled=_getAssetType.Archived OnClick=AddRow Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Add">Add Property</MudButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Label</MudTh>
+        <MudTh>Default</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd><MudTextField @bind-Value=context.Label Disabled=_getAssetType.Archived Label="Label" Variant="Variant.Outlined" Margin="Margin.Dense" Immediate /></MudTd>
+        <MudTd>
+            <MudStack Row>
+                <MudTextField @bind-Value=context.Value Label="Default" Disabled=_getAssetType.Archived Variant="Variant.Outlined" Margin="Margin.Dense" Immediate />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Disabled=_getAssetType.Archived Color="Color.Error" OnClick="@(() => RemoveRow(context))" />
+            </MudStack>
+      </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No properties are set</MudText>
+    </NoRecordsContent>
+</MudTable>
 <SectionContent SectionName="@nameof(MenuItemList)">
     <MenuItemList Service="AssetTypesService" BaseRoute="/settings/asset-types"/>
 </SectionContent>
-
 @code {
     [Parameter] public string? Slug { get; set; }
 
@@ -117,6 +138,7 @@
                 newAssetType.Name = _getAssetType.Name;
                 newAssetType.ShortName = _getAssetType.ShortName;
                 newAssetType.Icon = _getAssetType.Icon;
+                newAssetType.Properties = _getAssetType.Properties;
             }
             var response = await AssetTypesService.Create(newAssetType);
             if (response != null)
@@ -133,6 +155,19 @@
         _getAssetType.Archived = !_getAssetType.Archived;
         var response = await AssetTypesService.Update(_getAssetType);
         if (response)
+        {
             MenuItemService.OnChangeMenuItem(MenuItemEvent.Update, _getAssetType.ToMenuItem());
+        }
+        StateHasChanged();
+    }
+
+    private void AddRow()
+    {
+        _getAssetType.Properties.Add(new Properties());
+    }
+
+    private void RemoveRow(Properties properties)
+    {
+        _getAssetType.Properties.Remove(properties);
     }
 }
