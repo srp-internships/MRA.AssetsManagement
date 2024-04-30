@@ -30,15 +30,28 @@ else if(UserName is null)
         <MudStack Class="mt-3 pa-4" Style=" max-width: 500px">
             <MudTextField @bind-Value=_createEmployee.Email Label="Email" InputType="InputType.Email" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.Email)" />
             <MudStack Row=true>
-                <MudTextField @bind-Value=_createEmployee.FirstName Label="First name" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.FirstName)" />
-                <MudTextField @bind-Value=_createEmployee.LastName Label="Last name" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.LastName)" />
+                <MudItem sm="6">
+                    <MudTextField @bind-Value=_createEmployee.FirstName Label="First name" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.FirstName)" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTextField @bind-Value=_createEmployee.LastName Label="Last name" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.LastName)" />
+                </MudItem>
             </MudStack>
             <MudStack Row=true>
-                <MudTextField @bind-Value=_createEmployee.Username Label="Username" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.Username)" />
-                <MudTextField @bind-Value=_createEmployee.PhoneNumber Label="Phone" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                <MudItem sm="6">
+                    <MudTextField @bind-Value=_createEmployee.Username Label="Username" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.Username)" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTextField @bind-Value=_createEmployee.PhoneNumber Label="Phone" Margin="Margin.Dense" Variant="Variant.Outlined" />
+                </MudItem>
             </MudStack>
             <MudStack Row=true>
-                <MudTextField @bind-Value=_createEmployee.Password Label="Password" InputType="InputType.Password" Margin="Margin.Dense" Variant="Variant.Outlined" For=@(() => _createEmployee.Password) />
+                <MudItem sm="6">
+                    <MudTextField @bind-Value=_createEmployee.Password Label="Password" InputType="InputType.Password" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.Password)" />
+                </MudItem>
+                <MudItem sm="6">
+                    <MudTextField @bind-Value=_createEmployee.ConfirmPassword Label="Confirm password" InputType="InputType.Password" Margin="Margin.Dense" Variant="Variant.Outlined" For=@(() => _createEmployee.ConfirmPassword) />
+                </MudItem>
             </MudStack>
         </MudStack>
     </EditForm>

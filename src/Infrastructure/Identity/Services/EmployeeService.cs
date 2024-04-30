@@ -86,6 +86,10 @@ public class EmployeeService(
        
         SetAuthorizationHeader();
         var response = await http.PostAsJsonAsync($"{_apiBaseUrl}/User/CreateEmployee", createEmployeeRequest);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception("An error occurred while processing your request!");
+        }
         var userId = await response.Content.ReadAsStringAsync();
         return userId;
     }
