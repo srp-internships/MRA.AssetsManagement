@@ -1,15 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MRA.AssetsManagement.Application;
-using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
-using MRA.AssetsManagement.Infrastructure.Data.Migrations;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
-using MRA.AssetsManagement.Infrastructure.Identity.Services;
 using MRA.AssetsManagement.Infrastructure.Migrations;
 using MRA.AssetsManagement.Web.Server;
 using MRA.AssetsManagement.Web.Server.Filters;
