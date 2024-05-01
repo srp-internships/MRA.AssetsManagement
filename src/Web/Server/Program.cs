@@ -21,7 +21,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews(options => { options.Filters.Add<ApiExceptionFilterAttribute>(); });
 
-builder.Services.AddHttpClient();
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -35,17 +34,6 @@ builder.Services.AddSwaggerGen(c =>
     c.CustomSchemaIds(s => s.FullName?.Replace("+", "."));
 });
 
-builder.Services.Configure<MongoDbOption>(builder.Configuration.GetSection("MongoDb"));
-var corsAllowedHosts = builder.Configuration.GetSection("MraAssetsManagement-CORS").Get<string[]>();
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CORS_POLICY", policyConfig =>
-    {
-        policyConfig.WithOrigins(corsAllowedHosts!)
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
         options.TokenValidationParameters = new TokenValidationParameters
@@ -60,8 +48,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddHttpContextAccessor();
 builder.Services
     .AddApplication()
-    .AddInfrastructure();
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+    .AddInfrastructure(builder.Configuration);
 builder.Host.UseSerilog((context, loggerConfig) =>
     loggerConfig.ReadFrom.Configuration(context.Configuration));
 

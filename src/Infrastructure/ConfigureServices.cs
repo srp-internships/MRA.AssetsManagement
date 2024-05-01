@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Infrastructure.Data;
@@ -15,7 +15,8 @@ namespace MRA.AssetsManagement.Infrastructure;
 
 public static class ConfigureServices
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services,
+        ConfigurationManager configuration)
     { 
         services.AddSingleton<MongoDbMigration>();
         services.AddSingleton<IApplicationDbContext, MongoDbContext>();
@@ -31,7 +32,22 @@ public static class ConfigureServices
             auth.AddPolicy(ApplicationPolicies.Administrator, op => op
                 .RequireRole(ApplicationClaimValues.SuperAdministrator, ApplicationClaimValues.Administrator));
         });
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         
+        
+        services.AddHttpClient();
+        
+        services.Configure<MongoDbOption>(configuration.GetSection("MongoDb"));
+        var corsAllowedHosts = configuration.GetSection("MraAssetsManagement-CORS").Get<string[]>();
+        services.AddCors(options =>
+        {
+            options.AddPolicy("CORS_POLICY", policyConfig =>
+            {
+                policyConfig.WithOrigins(corsAllowedHosts!)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
         return services;
     }
 }
