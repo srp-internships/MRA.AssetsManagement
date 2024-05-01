@@ -25,7 +25,6 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add<ApiExceptionFilterAttribute>();
 });
 
-builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -67,7 +66,6 @@ var app = builder.Build();
 bool development = app.Environment.IsStaging() || app.Environment.IsDevelopment();
 if (development)
 {
-    app.UseWebAssemblyDebugging();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -93,14 +91,11 @@ app.UseMiddleware<RequestLogContextMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
-app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapRazorPages();
 app.MapControllers();
-app.MapFallbackToFile("index.html");
 app.Run();
