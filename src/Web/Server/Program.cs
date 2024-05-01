@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -12,18 +13,13 @@ using MRA.AssetsManagement.Infrastructure.Identity.Services;
 using MRA.AssetsManagement.Infrastructure.Migrations;
 using MRA.AssetsManagement.Web.Server;
 using MRA.AssetsManagement.Web.Server.Filters;
-
 using Serilog;
-
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
-builder.Services.AddControllersWithViews(options =>
-{
-    options.Filters.Add<ApiExceptionFilterAttribute>();
-});
+builder.Services.AddControllersWithViews(options => { options.Filters.Add<ApiExceptionFilterAttribute>(); });
 
 builder.Services.AddHttpClient();
 builder.Services.AddSwaggerGen(c =>
@@ -40,7 +36,16 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.Configure<MongoDbOption>(builder.Configuration.GetSection("MongoDb"));
-
+var corsAllowedHosts = builder.Configuration.GetSection("MraAssetsManagement-CORS").Get<string[]>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CORS_POLICY", policyConfig =>
+    {
+        policyConfig.WithOrigins(corsAllowedHosts!)
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
         options.TokenValidationParameters = new TokenValidationParameters
@@ -84,6 +89,7 @@ using (var scope = app.Services.CreateScope())
         var seedService = scope.ServiceProvider.GetService<IDataSeeder>();
         await seedService!.SeedData(development);
     }
+
     scope.ServiceProvider.GetService<MongoDbMigration>();
 }
 
@@ -93,7 +99,7 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseRouting();
-
+app.UseCors("CORS_POLICY");
 app.UseAuthentication();
 app.UseAuthorization();
 
