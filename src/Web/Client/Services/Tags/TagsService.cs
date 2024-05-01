@@ -10,33 +10,33 @@ using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.Tags
 {
-    public class TagsService(IHttpClientService httpClient, ISnackbar snackbar, IWebAssemblyHostEnvironment environment) : ITagsService
+    public class TagsService(IHttpClientService httpClient, ISnackbar snackbar, IConfiguration configuration) : ITagsService
     {
-        private readonly string _baseAddress = environment.BaseAddress;
+        private readonly string _baseAddress = configuration["AssetsManagementApiBaseAddress"]!;
 
         public async Task<GetTag> GetTagById(string id)
         {
-            var response = await httpClient.GetFromJsonAsync<GetTag>($"{_baseAddress}api/tags/{id}");
+            var response = await httpClient.GetFromJsonAsync<GetTag>($"{_baseAddress}tags/{id}");
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }
 
         public async Task<GetTag> Create(CreateTagRequest newTag)
         {
-            var response = await httpClient.PostAsJsonAsync<GetTag>($"{_baseAddress}api/tags", newTag);
+            var response = await httpClient.PostAsJsonAsync<GetTag>($"{_baseAddress}tags", newTag);
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }
 
         public async Task Delete(string id)
         {
-            var response = await httpClient.DeleteAsync($"{_baseAddress}api/tags/{id}");
+            var response = await httpClient.DeleteAsync($"{_baseAddress}tags/{id}");
             snackbar.ShowIfError(response, "Error was occured.");
         }
 
         public async Task<bool> Update(GetTag newTag)
         {
-            var response = await httpClient.PutAsJsonAsync<bool>($"{_baseAddress}api/tags", newTag);
+            var response = await httpClient.PutAsJsonAsync<bool>($"{_baseAddress}tags", newTag);
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }
@@ -49,7 +49,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.Tags
 
         public async Task<List<GetTag>> GetAll()
         {
-            var response = await httpClient.GetFromJsonAsync<List<GetTag>>($"{_baseAddress}api/tags");
+            var response = await httpClient.GetFromJsonAsync<List<GetTag>>($"{_baseAddress}tags");
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }
