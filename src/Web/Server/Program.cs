@@ -3,30 +3,20 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MRA.AssetsManagement.Application;
-using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
-using MRA.AssetsManagement.Infrastructure.Data.Migrations;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
-using MRA.AssetsManagement.Infrastructure.Identity.Services;
 using MRA.AssetsManagement.Infrastructure.Migrations;
 using MRA.AssetsManagement.Web.Server;
 using MRA.AssetsManagement.Web.Server.Filters;
-
 using Serilog;
-
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
-builder.Services.AddControllersWithViews(options =>
-{
-    options.Filters.Add<ApiExceptionFilterAttribute>();
-});
+builder.Services.AddControllersWithViews(options => { options.Filters.Add<ApiExceptionFilterAttribute>(); });
 
-builder.Services.AddRazorPages();
-builder.Services.AddHttpClient();
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -39,8 +29,6 @@ builder.Services.AddSwaggerGen(c =>
     c.OperationFilter<SecurityRequirementsOperationFilter>();
     c.CustomSchemaIds(s => s.FullName?.Replace("+", "."));
 });
-
-builder.Services.Configure<MongoDbOption>(builder.Configuration.GetSection("MongoDb"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -56,8 +44,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddHttpContextAccessor();
 builder.Services
     .AddApplication()
-    .AddInfrastructure();
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+    .AddInfrastructure(builder.Configuration);
 builder.Host.UseSerilog((context, loggerConfig) =>
     loggerConfig.ReadFrom.Configuration(context.Configuration));
 
@@ -67,7 +54,6 @@ var app = builder.Build();
 bool development = app.Environment.IsStaging() || app.Environment.IsDevelopment();
 if (development)
 {
-    app.UseWebAssemblyDebugging();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -86,6 +72,7 @@ using (var scope = app.Services.CreateScope())
         var seedService = scope.ServiceProvider.GetService<IDataSeeder>();
         await seedService!.SeedData(development);
     }
+
     scope.ServiceProvider.GetService<MongoDbMigration>();
 }
 
@@ -93,14 +80,11 @@ app.UseMiddleware<RequestLogContextMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
-app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseRouting();
-
+app.UseCors("CORS_POLICY");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapRazorPages();
 app.MapControllers();
-app.MapFallbackToFile("index.html");
 app.Run();
