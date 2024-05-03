@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: assets-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assets-api
+  template:
+    metadata:
+      labels:
+        app: assets-api
+    spec:
+      containers:
+        - name: assets-api
+          image: abb0s0088/mra-assets-server:latest
+          ports:
+            - containerPort: 443
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Staging
+            - name: ASPNETCORE_URLS
+              value: "http://+:443"
+            - name: MongoDb__ConnectionString
+              value: mongodb://srpuser:srppass@assets-mongo-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: assets-api-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: assets-api
+  ports:
+    - protocol: TCP
+      port: 8002
+      targetPort: 443
