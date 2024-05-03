@@ -12,27 +12,27 @@ using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.Employees
 {
-    public class EmployeesService(IHttpClientService httpClient, ISnackbar snackbar, IWebAssemblyHostEnvironment environment) : IEmployeesService
+    public class EmployeesService(IHttpClientService httpClient, ISnackbar snackbar, IConfiguration configuration) : IEmployeesService
     {
-        private readonly string _baseAddress = environment.BaseAddress;
+        private readonly string _baseAddress = configuration["AssetsManagementApiBaseAddress"]!;
 
         public async Task<GetEmployee> GetEmployeeByUserName(string userName)
         {
-            var response = await httpClient.GetFromJsonAsync<GetEmployee>($"{_baseAddress}api/employees/{userName}");
+            var response = await httpClient.GetFromJsonAsync<GetEmployee>($"{_baseAddress}employees/{userName}");
 
             return response.Result!;
         }
 
         public async Task<IEnumerable<GetEmployee>> GetEmployees()
         {
-            var response = await httpClient.GetFromJsonAsync<IEnumerable<GetEmployee>>($"{_baseAddress}api/employees");
+            var response = await httpClient.GetFromJsonAsync<IEnumerable<GetEmployee>>($"{_baseAddress}employees");
             snackbar.ShowIfError(response, "Error was occured");
             return response.Result!;
         }
 
         public async Task<List<MenuItem>> Fetch()
         {
-            var response = await httpClient.GetFromJsonAsync<List<GetEmployee>>($"{_baseAddress}api/employees");
+            var response = await httpClient.GetFromJsonAsync<List<GetEmployee>>($"{_baseAddress}employees");
             snackbar.ShowIfError(response, "Error was occured.");
 
             return response.Result!.Select(mi => mi.ToMenuItem()).ToList();
@@ -40,7 +40,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
 
         public async Task<GetEmployee> Create(CreateEmployeeRequest newEmployee)
         {
-            var response = await httpClient.PostAsJsonAsync<GetEmployee>($"{_baseAddress}api/employees", newEmployee);
+            var response = await httpClient.PostAsJsonAsync<GetEmployee>($"{_baseAddress}employees", newEmployee);
             snackbar.ShowIfError(response, "Error was occured.");
 
             return response.Result!;
@@ -48,7 +48,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
 
         public async Task<List<GetAssetSerials>> GetEmployeeAssetsSerials(string userName)
         {
-            var response = await httpClient.GetFromJsonAsync<List<GetAssetSerials>>($"{_baseAddress}api/employees/serials/{userName}");
+            var response = await httpClient.GetFromJsonAsync<List<GetAssetSerials>>($"{_baseAddress}employees/serials/{userName}");
             snackbar.ShowIfError(response, "Occured some errors");
             return response.Result!;
         }
