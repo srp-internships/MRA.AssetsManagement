@@ -43,7 +43,7 @@ public static class ConfigureServices
         {
             options.AddPolicy("CORS_POLICY", policyConfig =>
             {
-                policyConfig.WithOrigins(corsAllowedHosts!)
+                policyConfig.AllowAnyOrigin()
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });
