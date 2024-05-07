@@ -41,10 +41,10 @@ public static class ConfigureServices
         var corsAllowedHosts = configuration.GetSection("MraAssetsManagement-CORS").Get<string[]>();
         services.AddCors(options =>
         {
-            options.AddPolicy("CORS_POLICY", policyConfig =>
+            options.AddDefaultPolicy(policyConfig =>
             {
-                policyConfig.WithOrigins(corsAllowedHosts!)
-                    .AllowAnyHeader().AllowCredentials()
+                policyConfig.AllowAnyOrigin()
+                    .AllowAnyHeader()
                     .AllowAnyMethod();
             });
         });
