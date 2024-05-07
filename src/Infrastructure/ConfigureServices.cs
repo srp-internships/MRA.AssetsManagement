@@ -39,10 +39,6 @@ public static class ConfigureServices
 
         services.Configure<MongoDbOption>(configuration.GetSection("MongoDb"));
         var corsAllowedHosts = configuration.GetSection("MraAssetsManagement-CORS").Get<string[]>();
-        foreach (var corsAllowedHost in corsAllowedHosts)
-        {
-            Console.WriteLine(corsAllowedHost);
-        }
         services.AddCors(options =>
         {
             options.AddPolicy("CORS_POLICY", policyConfig =>
