@@ -1,7 +1,7 @@
-name: Publish image to Azure
+﻿name: Publish image to Azure
 on:
   push:
-    branches: [ "staging" ]
+    branches: [ "client_server_release" ]
 
 jobs:
   publish_image:
@@ -17,10 +17,10 @@ jobs:
           WITH_V: true
           DRY_RUN: true
     
-      - name: build docker image for Identity Service
+      - name: build docker image for mra-asset-management-api Service
         run: |
           docker build -t silkroadprofessionals.azurecr.io/mra-asset-management-api:${{ steps.taggerDryRun.outputs.new_tag }} .
-        working-directory: ./src
+        working-directory: ./
 
       - name: Publish Identity Service to ACR
         run: |
