@@ -33,7 +33,7 @@ jobs:
           event-type: update
           token: ${{ secrets.GH_TOKEN }}
           repository: srp-internships/MRAInfrastructure
-          client-payload: '{"version":"${{ steps.taggerDryRun.outputs.new_tag }}", "environment":"Production", "image":"mra-asset-management-api"}'
+          client-payload: '{"version":"${{ steps.taggerDryRun.outputs.new_tag }}", "environment":"Staging", "image":"mra-asset-management-api"}'
 
       - name: Minor version for each merge
         id: taggerFinal
