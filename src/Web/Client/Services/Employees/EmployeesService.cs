@@ -2,7 +2,6 @@
 
 using MRA.AssetsManagement.Web.Client.Common.Extensions;
 using MRA.AssetsManagement.Web.Client.Components.MenuItems;
-using MRA.AssetsManagement.Web.Shared.Assets;
 using MRA.AssetsManagement.Web.Shared.AssetSerials;
 using MRA.AssetsManagement.Web.Shared.Employees;
 using MRA.BlazorComponents.HttpClient.Services;
@@ -12,9 +11,9 @@ using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.Employees
 {
-    public class EmployeesService(IHttpClientService httpClient, ISnackbar snackbar, IConfiguration configuration) : IEmployeesService
+    public class EmployeesService(IHttpClientService httpClient, ISnackbar snackbar, IWebAssemblyHostEnvironment environment) : IEmployeesService
     {
-        private readonly string _baseAddress = configuration["AssetsManagementApiBaseAddress"]!;
+        private readonly string _baseAddress =  $"{environment.BaseAddress}api/";
 
         public async Task<GetEmployee> GetEmployeeByUserName(string userName)
         {

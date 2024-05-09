@@ -9,9 +9,9 @@ using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.Assets;
 
-public class AssetsService(IHttpClientService httpClient, ISnackbar snackbar, IConfiguration configuration) : IAssetsService
+public class AssetsService(IHttpClientService httpClient, ISnackbar snackbar, IWebAssemblyHostEnvironment environment) : IAssetsService
 {
-    private readonly string _baseAddress = configuration["AssetsManagementApiBaseAddress"]!;
+    private readonly string _baseAddress =  $"{environment.BaseAddress}api/";
     public async Task<IEnumerable<GetAssetSerial>> GetAssetSerials()
     {
         var response = await httpClient.GetFromJsonAsync<IEnumerable<GetAssetSerial>>($"{_baseAddress}assets/serial");
