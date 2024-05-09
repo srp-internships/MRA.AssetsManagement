@@ -30,19 +30,15 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddScoped<IIconService, IconService>();
 
-builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-
 builder.Services.AddAuthorizationCore();
 
 builder.Services.AddScoped<IHomeService, HomeService>();
-
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IAssetTypesService, AssetTypesService>();
 builder.Services.AddScoped<ITagsService, TagsService>();
 builder.Services.AddScoped<IAssetsService, AssetsService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<IReportService, ReportService>();
-
 builder.Services.AddScoped<IEmployeesService, EmployeesService>();
 builder.Services.AddScoped<IAssetSerialService, AssetSerialService>();
 

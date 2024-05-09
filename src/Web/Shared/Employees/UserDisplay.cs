@@ -9,6 +9,6 @@ public class UserDisplay
 
     public override string ToString()
     {
-        return FullName;
+        return string.IsNullOrWhiteSpace(FullName) ? UserName : FullName;
     }
 }

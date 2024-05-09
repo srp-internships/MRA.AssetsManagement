@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -19,21 +17,19 @@ using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ApiExceptionFilterAttribute>();
-})
-.AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddControllersWithViews(options => { options.Filters.Add<ApiExceptionFilterAttribute>(); });
+builder.Services.AddRazorPages();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        Description = """Standard Authorization header using the Bearer scheme. Example: "{token}" """,
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
+    c.AddSecurityDefinition("oauth2",
+        new OpenApiSecurityScheme
+        {
+            Description = """Standard Authorization header using the Bearer scheme. Example: "{token}" """,
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey
+        });
     c.OperationFilter<SecurityRequirementsOperationFilter>();
     c.CustomSchemaIds(s => s.FullName?.Replace("+", "."));
 });
@@ -62,11 +58,14 @@ var app = builder.Build();
 bool development = app.Environment.IsStaging() || app.Environment.IsDevelopment();
 if (development)
 {
+    app.UseWebAssemblyDebugging();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 else
 {
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -86,11 +85,14 @@ app.UseMiddleware<RequestLogContextMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
+app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseCors();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapRazorPages();
 app.MapControllers();
+app.MapFallbackToFile("index.html");
 app.Run();

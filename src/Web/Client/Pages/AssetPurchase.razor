@@ -79,7 +79,7 @@
         <MudTd DataLabel="Type">
             <MudSelect @bind-Value=context.AssetType TextChanged="@(async() => {await SetAssets(context.AssetType);})"
                 ToStringFunc=AssetTypeToStirng Label="Select Type" AnchorOrigin="Origin.BottomCenter"
-                Margin=Margin.Dense Variant="Variant.Outlined" Clearable>
+                Margin=Margin.Dense Variant="Variant.Outlined">
                 @foreach (var assetType in AssetTypes)
                 {
                     <MudSelectItem Value="assetType" />

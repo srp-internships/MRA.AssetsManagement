@@ -9,16 +9,14 @@ using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.AssetSerials;
 
-public class AssetSerialService(IHttpClientService httpClient, ISnackbar snackbar, IConfiguration configuration)
+public class AssetSerialService(IHttpClientService httpClient, ISnackbar snackbar, IWebAssemblyHostEnvironment environment)
     : IAssetSerialService
 {
-    private readonly string _baseAddress = configuration["AssetsManagementApiBaseAddress"]!;
+    private readonly string _baseAddress = $"{environment.BaseAddress}api/";
 
     public async Task<IEnumerable<GetAssetSerialHistory>> GetAssetSerialHistories(string serial)
     {
-        var response =
-            await httpClient.GetFromJsonAsync<IEnumerable<GetAssetSerialHistory>>(
-                $"{_baseAddress}assetserials/histories/{serial}");
+        var response = await httpClient.GetFromJsonAsync<IEnumerable<GetAssetSerialHistory>>($"{_baseAddress}assetserials/histories/{serial}");
         snackbar.ShowIfError(response, "Occured some errors");
         return response.Result!;
     }
