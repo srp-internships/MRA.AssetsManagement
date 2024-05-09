@@ -1,4 +1,4 @@
-﻿namespace MRA.AssetsManagement.Web.Shared.Purchas;
+﻿namespace MRA.AssetsManagement.Web.Shared.Purchase;
 
 public class PurchasedAssetsRequest
 {

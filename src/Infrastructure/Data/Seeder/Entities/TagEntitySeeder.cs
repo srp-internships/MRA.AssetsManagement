@@ -19,4 +19,15 @@ public class TagEntitySeeder : EntitySeeder<Tag>
             new () { Name = "issues", Slug="issues" ,Color = "#5600AC" }
         );
     }
+    
+    public async override Task Production()
+    {
+        if (await _repository.AnyAsync()) return;
+        
+        await _repository.CreateAsync(default,
+            new () { Name = "outdated", Slug="outdated" ,Color = "#DD0000" },
+            new () { Name = "fast", Slug="fast" ,Color = "#007C00" },
+            new () { Name = "issues", Slug="issues" ,Color = "#5600AC" }
+        );
+    }
 }

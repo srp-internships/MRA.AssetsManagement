@@ -14,25 +14,25 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
     public class AssetTypesService(IHttpClientService httpClient, ISnackbar snackbar, IWebAssemblyHostEnvironment environment) : IAssetTypesService
     {
 
-        private readonly string _baseAddress = environment.BaseAddress;
+        private readonly string _baseAddress =  $"{environment.BaseAddress}api/";
 
         public async Task<GetAssetType> GetAssetTypeBySlug(string slug)
         {
-            var response = await httpClient.GetFromJsonAsync<GetAssetType>($"{_baseAddress}api/assettypes/{slug}");
+            var response = await httpClient.GetFromJsonAsync<GetAssetType>($"{_baseAddress}assettypes/{slug}");
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }
 
         public async Task<GetAssetType> Create(CreateAssetTypeRequest newAssetType)
         {
-            var response = await httpClient.PostAsJsonAsync<GetAssetType>($"{_baseAddress}api/assettypes", newAssetType);
+            var response = await httpClient.PostAsJsonAsync<GetAssetType>($"{_baseAddress}assettypes", newAssetType);
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }
         
         public async Task<bool> Update(GetAssetType getAssetType)
         {
-            var response = await httpClient.PutAsJsonAsync<bool>($"{_baseAddress}api/assettypes", getAssetType);
+            var response = await httpClient.PutAsJsonAsync<bool>($"{_baseAddress}assettypes", getAssetType);
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }
@@ -45,7 +45,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 
         public async Task<List<GetAssetType>> GetAll()
         {
-            var response = await httpClient.GetFromJsonAsync<List<GetAssetType>>($"{_baseAddress}api/assettypes");
+            var response = await httpClient.GetFromJsonAsync<List<GetAssetType>>($"{_baseAddress}assettypes");
             snackbar.ShowIfError(response, "Error was occured.");
 
             return response.Result!;
@@ -53,7 +53,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 
         public async Task<List<GetAssetTypeSerial>> GetAssetTypeSerials()
         {
-            var response = await httpClient.GetFromJsonAsync<List<GetAssetTypeSerial>>($"{_baseAddress}api/assettypes/serials");
+            var response = await httpClient.GetFromJsonAsync<List<GetAssetTypeSerial>>($"{_baseAddress}assettypes/serials");
             snackbar.ShowIfError(response, "Error was occured.");
             return response.Result!;
         }

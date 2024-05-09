@@ -2,13 +2,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
 using MRA.AssetsManagement.Application;
-using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Infrastructure;
 using MRA.AssetsManagement.Infrastructure.Data;
-using MRA.AssetsManagement.Infrastructure.Data.Migrations;
 using MRA.AssetsManagement.Infrastructure.Data.Seeder;
-using MRA.AssetsManagement.Infrastructure.Identity.Services;
 using MRA.AssetsManagement.Infrastructure.Migrations;
 using MRA.AssetsManagement.Web.Server;
 using MRA.AssetsManagement.Web.Server.Filters;
@@ -20,27 +18,21 @@ using Swashbuckle.AspNetCore.Filters;
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
-builder.Services.AddControllersWithViews(options =>
-{
-    options.Filters.Add<ApiExceptionFilterAttribute>();
-});
-
+builder.Services.AddControllersWithViews(options => { options.Filters.Add<ApiExceptionFilterAttribute>(); });
 builder.Services.AddRazorPages();
-builder.Services.AddHttpClient();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        Description = """Standard Authorization header using the Bearer scheme. Example: "{token}" """,
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
+    c.AddSecurityDefinition("oauth2",
+        new OpenApiSecurityScheme
+        {
+            Description = """Standard Authorization header using the Bearer scheme. Example: "{token}" """,
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey
+        });
     c.OperationFilter<SecurityRequirementsOperationFilter>();
     c.CustomSchemaIds(s => s.FullName?.Replace("+", "."));
 });
-
-builder.Services.Configure<MongoDbOption>(builder.Configuration.GetSection("MongoDb"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -56,8 +48,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddHttpContextAccessor();
 builder.Services
     .AddApplication()
-    .AddInfrastructure();
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+    .AddInfrastructure(builder.Configuration);
 builder.Host.UseSerilog((context, loggerConfig) =>
     loggerConfig.ReadFrom.Configuration(context.Configuration));
 
@@ -86,6 +77,7 @@ using (var scope = app.Services.CreateScope())
         var seedService = scope.ServiceProvider.GetService<IDataSeeder>();
         await seedService!.SeedData(development);
     }
+
     scope.ServiceProvider.GetService<MongoDbMigration>();
 }
 
