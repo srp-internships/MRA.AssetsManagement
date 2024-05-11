@@ -1,10 +1,9 @@
 ﻿@page "/report"
-@attribute [Authorize]
-@using MRA.AssetsManagement.Web.Client.Services.ReportService
-@using MRA.AssetsManagement.Web.Shared.Purchase
+@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 @inject IReportService ReportService
 @inject IAssetTypesService AssetTypesService
 @inject IIconService IconService
+
 
 <MudCard Class="pa-3">
     <MudCardContent>
@@ -107,6 +106,7 @@
         <MudText Style="font-size: 22px">Nothing here</MudText>
     </NoRecordsContent>
 </MudTable>
+
 
 @code {
 

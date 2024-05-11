@@ -6,7 +6,7 @@
 <MudLayout>
     <NavMenu OnToggle="@(() => open = !open)" />
     <CascadingAuthenticationState>
-        <AuthorizeView Roles="SuperAdmin, ApplicationAdmin" Context="adminAuth">
+        <AuthorizeView Roles="SuperAdmin, ApplicationAdmin">
             <Authorized>
                 <MudDrawer @bind-Open="@open" Elevation="2">
                     <MudDrawerHeader Class="d-flex justify-center">
@@ -29,7 +29,7 @@
                 </MudDrawer>
             </Authorized>
             <NotAuthorized>
-                The User is not authorized
+                <div>You are not authorized to access this page.</div>
             </NotAuthorized>
         </AuthorizeView>
     </CascadingAuthenticationState>

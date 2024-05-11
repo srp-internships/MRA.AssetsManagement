@@ -1,4 +1,5 @@
-﻿@inject IMenuItemService MenuItemService;
+﻿@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
+@inject IMenuItemService MenuItemService;
 @inject IIconService IconService;
 @implements IDisposable;
 
