@@ -1,9 +1,14 @@
-﻿@using Blazored.LocalStorage
-@inject ILocalStorageService LocalStorageService
+﻿@inject ILocalStorageService LocalStorageService
 @inject CustomAuthStateProvider CustomAuthStateProvider
 
 <MudAppBar Elevation="2">
+    <CascadingAuthenticationState>
+        <AuthorizeView Roles="SuperAdmin, ApplicationAdmin" Context="adminAuth">
+            <Authorized>
     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@OnToggleClick" />
+    </Authorized>
+    </AuthorizeView>
+    </CascadingAuthenticationState>
     <MudSpacer />
         <MudMenu FullWidth="true" ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
             <ActivatorContent>

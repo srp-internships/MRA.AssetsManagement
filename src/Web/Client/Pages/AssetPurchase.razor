@@ -1,13 +1,10 @@
 ﻿@page "/assets/purchase"
-@using Blazored.TextEditor
-@using MRA.AssetsManagement.Web.Shared.AssetPurchases
-@using MRA.AssetsManagement.Web.Shared.Assets
-@using MRA.AssetsManagement.Web.Client.Services.Assets
-@using Blazored.FluentValidation
+@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 @inject IAssetTypesService AssetTypesService
 @inject IAssetsService AssetsService
 @inject NavigationManager NavigationManager
 @inject ISnackbar SnackBar
+
 
 <MudStack Row="true" Class="d-flex justify-space-between mb-3 pa-1">
     <MudText Typo="Typo.h4">New Assets</MudText>
