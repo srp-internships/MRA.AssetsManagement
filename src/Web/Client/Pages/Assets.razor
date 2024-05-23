@@ -24,7 +24,7 @@
         <MudGrid>
             <MudItem sm="2" />
             <MudItem sm="2">
-                <MudSelect @bind-Value="_assetsFilterOptions.Status" TextChanged="@OnFilterChange" T="string" Label="Status" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable>
+                <MudSelect @bind-Value="_assetsFilterOptions.Status" TextChanged="@OnFilterChange" T="string" Label="Statuss" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable>
                     <MudSelectItem Value="@(((int)AssetStatus.Available).ToString())"><MudText Color="Color.Success">@(AssetStatus.Available.ToString())</MudText></MudSelectItem>
                     <MudSelectItem Value="@(((int)AssetStatus.Taken).ToString())"><MudText Color="Color.Info">@(AssetStatus.Taken.ToString())</MudText></MudSelectItem>
                     <MudSelectItem Value="@(((int)AssetStatus.Broken).ToString())"><MudText Color="Color.Error">@(AssetStatus.Broken.ToString())</MudText></MudSelectItem>

@@ -76,11 +76,12 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
                     assetSerial.Serial = serials[i];
                 
                 assetSerials.Add(assetSerial);
-                var history = new AssetHistory  
+                var history = new AssetHistory
                 {
                     HistoryAssetSerial = _mapper.Map<HistoryAssetSerial>(assetSerial),
                     DateTime = DateTime.Now,
-                    UserId = _currentUserService.GetUserId().ToString()
+                    UserId = _currentUserService.GetUserId().ToString(),
+                    Note = request.Note
                 };
                 histories.Add(history);
             }
