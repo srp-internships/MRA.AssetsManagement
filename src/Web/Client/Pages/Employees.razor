@@ -1,11 +1,16 @@
 ﻿@page "/employees"
 @page "/employees/{userName}"
 
+
 @attribute [Authorize]
+
+@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
+
 @layout SettingsLayout
 @inject IEmployeesService EmployeesService
 @inject IMenuItemService MenuItemService
 @inject IAssetTypesService AssetTypesService
+
 
 @if (_loading)
 {

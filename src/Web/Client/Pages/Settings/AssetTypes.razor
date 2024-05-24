@@ -1,11 +1,14 @@
 @page "/settings/asset-types"
 @page "/settings/asset-types/{slug}"
+@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 @layout SettingsLayout
 @inject IIconService IconService
 @inject IAssetTypesService AssetTypesService;
 @inject IMenuItemService MenuItemService;
 @inject ISnackbar Snackbar
+
 @attribute [Authorize]
+
 
 <PageTitle>Asset Types</PageTitle>
 

@@ -1,8 +1,13 @@
-﻿@page "/report"
+@page "/report"
+
 @attribute [Authorize]
+
+@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
+
 @inject IReportService ReportService
 @inject IAssetTypesService AssetTypesService
 @inject IIconService IconService
+
 
 <MudCard Class="pa-3">
     <MudCardContent>
@@ -105,6 +110,7 @@
         <MudText Style="font-size: 22px">Nothing here</MudText>
     </NoRecordsContent>
 </MudTable>
+
 
 @code {
 

@@ -8,7 +8,7 @@ using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 public class AssetTypesController : ApiControllerBase
 {
     [HttpGet]

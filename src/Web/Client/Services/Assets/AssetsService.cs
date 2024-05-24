@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-
 using MRA.AssetsManagement.Web.Shared.AssetPurchases;
 using MRA.AssetsManagement.Web.Shared.Assets;
 using MRA.BlazorComponents.HttpClient.Services;
 using MRA.BlazorComponents.Snackbar.Extensions;
-
 using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.Assets;

@@ -6,7 +6,7 @@ using MRA.AssetsManagement.Web.Shared.Purchase;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 public class ReportController : ApiControllerBase
 {
     private readonly IMediator _mediator;

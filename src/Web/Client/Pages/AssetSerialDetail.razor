@@ -1,9 +1,11 @@
+@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 @inject IAssetSerialService AssetSerialService
 @inject IEmployeesService EmployeesService
 @inject ITagsService TagsService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+
 
 <MudDrawer Open="true" Width="500px" Height="100%" Anchor="Anchor.End" Elevation="1" Variant="@DrawerVariant.Temporary"
     DisableOverlay="true">
@@ -107,6 +109,7 @@
     </MudNavMenu>
     <NoteDialog />
 </MudDrawer>
+
 
 @code {
     

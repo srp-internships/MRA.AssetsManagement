@@ -1,8 +1,10 @@
-﻿@page "/assets/purchase"
+@page "/assets/purchase"
+@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 @inject IAssetTypesService AssetTypesService
 @inject IAssetsService AssetsService
 @inject NavigationManager NavigationManager
 @inject ISnackbar SnackBar
+
 
 <MudStack Row="true" Class="d-flex justify-space-between mb-3 pa-1">
     <MudText Typo="Typo.h4">New Assets</MudText>
