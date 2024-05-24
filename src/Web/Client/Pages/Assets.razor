@@ -1,12 +1,5 @@
 @page "/assets"
 @page "/assets/{serial}"
-
-@using MRA.AssetsManagement.Web.Client.Services.AssetSerials
-@using MRA.AssetsManagement.Web.Shared.Assets
-@using MRA.AssetsManagement.Web.Client.Services.Assets
-@using MRA.AssetsManagement.Web.Shared.Employees
-@using MRA.AssetsManagement.Web.Shared.Enums
-@using MRA.AssetsManagement.Web.Shared.Tags
 @inject IAssetsService AssetsService
 @inject NavigationManager NavigationManager
 @inject IIconService IconService
@@ -27,8 +20,9 @@
                 <MudSelect @bind-Value="_assetsFilterOptions.Status" TextChanged="@OnFilterChange" T="string" Label="Statuss" Margin="Margin.Dense" Variant="Variant.Outlined" Clearable>
                     <MudSelectItem Value="@(((int)AssetStatus.Available).ToString())"><MudText Color="Color.Success">@(AssetStatus.Available.ToString())</MudText></MudSelectItem>
                     <MudSelectItem Value="@(((int)AssetStatus.Taken).ToString())"><MudText Color="Color.Info">@(AssetStatus.Taken.ToString())</MudText></MudSelectItem>
-                    <MudSelectItem Value="@(((int)AssetStatus.Broken).ToString())"><MudText Color="Color.Error">@(AssetStatus.Broken.ToString())</MudText></MudSelectItem>
-                    <MudSelectItem Value="@(((int)AssetStatus.Deprecated).ToString())">@(AssetStatus.Deprecated.ToString())</MudSelectItem>
+                    <MudSelectItem Value="@(((int)AssetStatus.Broken).ToString())"><MudText Color="Color.Warning">@(AssetStatus.Broken.ToString())</MudText></MudSelectItem>
+                    <MudSelectItem Value="@(((int)AssetStatus.Deprecated).ToString())"><MudText Color="Color.Dark">@(AssetStatus.Deprecated.ToString())</MudText></MudSelectItem>
+                    <MudSelectItem Value="@(((int)AssetStatus.Sold).ToString())"><MudText Color="Color.Error">@(AssetStatus.Sold.ToString())</MudText></MudSelectItem>
                 </MudSelect>
             </MudItem>
 

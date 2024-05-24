@@ -2,11 +2,6 @@
 @page "/employees/{userName}"
 
 @attribute [Authorize]
-@using MRA.AssetsManagement.Web.Client.Common.Extensions
-@using MRA.AssetsManagement.Web.Client.Components.MenuItems
-@using MRA.AssetsManagement.Web.Shared.Employees
-@using MRA.AssetsManagement.Web.Shared.AssetSerials
-@using Blazored.FluentValidation
 @layout SettingsLayout
 @inject IEmployeesService EmployeesService
 @inject IMenuItemService MenuItemService

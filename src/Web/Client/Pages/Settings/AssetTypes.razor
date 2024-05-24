@@ -2,13 +2,10 @@
 @page "/settings/asset-types/{slug}"
 @layout SettingsLayout
 @inject IIconService IconService
-@using MRA.AssetsManagement.Web.Client.Components.MenuItems
 @inject IAssetTypesService AssetTypesService;
 @inject IMenuItemService MenuItemService;
 @inject ISnackbar Snackbar
 @attribute [Authorize]
-
-
 
 <PageTitle>Asset Types</PageTitle>
 
