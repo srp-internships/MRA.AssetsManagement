@@ -11,10 +11,10 @@ using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.AssetTypes
 {
-    public class AssetTypesService(IHttpClientService httpClient, ISnackbar snackbar, IConfiguration configuration) : IAssetTypesService
+    public class AssetTypesService(IHttpClientService httpClient, ISnackbar snackbar, IWebAssemblyHostEnvironment environment) : IAssetTypesService
     {
 
-        private readonly string _baseAddress = configuration["AssetsManagementApiBaseAddress"]!;
+        private readonly string _baseAddress =  $"{environment.BaseAddress}api/";
 
         public async Task<GetAssetType> GetAssetTypeBySlug(string slug)
         {

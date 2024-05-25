@@ -17,7 +17,9 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,
         ConfigurationManager configuration)
-    { 
+    {         
+        services.Configure<MongoDbOption>(configuration.GetSection("MongoDb"));
+        services.AddHttpClient();
         services.AddSingleton<MongoDbMigration>();
         services.AddSingleton<IApplicationDbContext, MongoDbContext>();
         services.AddSingleton<IDataSeeder, MongoDbDataSeeder>();
@@ -33,21 +35,6 @@ public static class ConfigureServices
                 .RequireRole(ApplicationClaimValues.SuperAdministrator, ApplicationClaimValues.Administrator));
         });
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-        
-        
-        services.AddHttpClient();
-        
-        services.Configure<MongoDbOption>(configuration.GetSection("MongoDb"));
-        var corsAllowedHosts = configuration.GetSection("MraAssetsManagement-CORS").Get<string[]>();
-        services.AddCors(options =>
-        {
-            options.AddPolicy("CORS_POLICY", policyConfig =>
-            {
-                policyConfig.WithOrigins(corsAllowedHosts!)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-        });
         return services;
     }
 }

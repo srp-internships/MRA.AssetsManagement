@@ -10,9 +10,9 @@ using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.Tags
 {
-    public class TagsService(IHttpClientService httpClient, ISnackbar snackbar, IConfiguration configuration) : ITagsService
+    public class TagsService(IHttpClientService httpClient, ISnackbar snackbar, IWebAssemblyHostEnvironment environment) : ITagsService
     {
-        private readonly string _baseAddress = configuration["AssetsManagementApiBaseAddress"]!;
+        private readonly string _baseAddress =  $"{environment.BaseAddress}api/";
 
         public async Task<GetTag> GetTagById(string id)
         {

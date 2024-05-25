@@ -9,23 +9,26 @@ using MRA.AssetsManagement.Infrastructure.Data.Seeder;
 using MRA.AssetsManagement.Infrastructure.Migrations;
 using MRA.AssetsManagement.Web.Server;
 using MRA.AssetsManagement.Web.Server.Filters;
+
 using Serilog;
+
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllersWithViews(options => { options.Filters.Add<ApiExceptionFilterAttribute>(); });
-
+builder.Services.AddRazorPages();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        Description = """Standard Authorization header using the Bearer scheme. Example: "{token}" """,
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
+    c.AddSecurityDefinition("oauth2",
+        new OpenApiSecurityScheme
+        {
+            Description = """Standard Authorization header using the Bearer scheme. Example: "{token}" """,
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey
+        });
     c.OperationFilter<SecurityRequirementsOperationFilter>();
     c.CustomSchemaIds(s => s.FullName?.Replace("+", "."));
 });
@@ -54,6 +57,7 @@ var app = builder.Build();
 bool development = app.Environment.IsStaging() || app.Environment.IsDevelopment();
 if (development)
 {
+    app.UseWebAssemblyDebugging();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -80,11 +84,14 @@ app.UseMiddleware<RequestLogContextMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
+app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseCors("CORS_POLICY");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapRazorPages();
 app.MapControllers();
+app.MapFallbackToFile("index.html");
 app.Run();

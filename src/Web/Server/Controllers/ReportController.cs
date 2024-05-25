@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MRA.AssetsManagement.Application.Features.Purchase.Queries;
-using MRA.AssetsManagement.Web.Shared.Purchas;
+using MRA.AssetsManagement.Web.Shared.Purchase;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 public class ReportController : ApiControllerBase
 {
     private readonly IMediator _mediator;

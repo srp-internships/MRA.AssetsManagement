@@ -6,7 +6,7 @@ using MRA.AssetsManagement.Domain.Entities;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 public class TagsController : ApiControllerBase
 {
     [HttpPost]

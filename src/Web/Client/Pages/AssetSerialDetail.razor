@@ -1,15 +1,11 @@
-@using MRA.AssetsManagement.Web.Client.Services.AssetSerials
-@using MRA.AssetsManagement.Web.Shared.AssetSerials
-@using MRA.AssetsManagement.Web.Shared.Assets
-@using MRA.AssetsManagement.Web.Shared.Employees
-@using MRA.AssetsManagement.Web.Shared.Enums
-@using MRA.AssetsManagement.Web.Shared.Tags
+@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 @inject IAssetSerialService AssetSerialService
 @inject IEmployeesService EmployeesService
 @inject ITagsService TagsService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+
 
 <MudDrawer Open="true" Width="500px" Height="100%" Anchor="Anchor.End" Elevation="1" Variant="@DrawerVariant.Temporary"
     DisableOverlay="true">
@@ -107,6 +103,7 @@
 
     <NoteDialog />
 </MudDrawer>
+
 
 @code {
     

@@ -12,7 +12,7 @@ using MRA.AssetsManagement.Web.Shared.Tags;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 public class AssetSerialsController : ApiControllerBase
 {
     [HttpPatch("set-tag")]

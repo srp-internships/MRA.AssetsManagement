@@ -1,10 +1,9 @@
 ﻿@page "/report"
-@attribute [Authorize]
-@using MRA.AssetsManagement.Web.Client.Services.ReportService
-@using MRA.AssetsManagement.Web.Shared.Purchas
+@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 @inject IReportService ReportService
 @inject IAssetTypesService AssetTypesService
 @inject IIconService IconService
+
 
 <MudCard Class="pa-3">
     <MudCardContent>
@@ -13,12 +12,18 @@
                 <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowLeft" aria-label="delete" OnClick="SubstractMonth"/>
                 <MudDateRangePicker @bind-DateRange="_dateRange" Variant="Variant.Outlined" Margin="Margin.Dense" MaxDate="DateTime.Today"/>
                 <MudIconButton Icon="@Icons.Material.Filled.KeyboardArrowRight" aria-label="delete" OnClick="AddMonth"/>
-                <MudSelect Margin="Margin.Dense" T="string" Label="Type" Variant="Variant.Outlined" @bind-Value="@SelectedType">
+                <MudSelect Margin="Margin.Dense" T="string" Label="Type" Variant="Variant.Outlined" @bind-Value="@SelectedTypeId">
+                    <MudSelectItem T="string" Value="@("all")">
+                        <MudStack Row="true" Spacing="2">
+                            <MudIcon Icon="@Icons.Material.Outlined.Check"/>
+                            <MudText>All</MudText>
+                        </MudStack>
+                    </MudSelectItem>
                     @foreach (var type in _types)
                     {
-                        <MudSelectItem Value="@type.Name">
+                        <MudSelectItem T="string" Value="@type.Id">
                             <MudStack Row="true" Spacing="2">
-                                <MudIcon Icon="@IconService.GetIcon(type.Name)"/>
+                                <MudIcon Icon="@IconService.GetIcon(type.Icon)"/>
                                 <MudText>@type.Name</MudText>
                             </MudStack>
                         </MudSelectItem>
@@ -73,8 +78,8 @@
         {
             <MudTd DataLabel="Type">
                 <MudStack Row="true" Spacing="2">
-                    <MudIcon Icon="@IconService.GetIcon(context.AssetType!)"/>
-                    <MudText>@context.AssetType</MudText>
+                    <MudIcon Icon="@IconService.GetIcon(context.AssetType.Icon!)"/>
+                    <MudText>@context.AssetType.Name</MudText>
                 </MudStack>
             </MudTd>
             <MudTd DataLabel="Name">@context.AssetName</MudTd>
@@ -102,11 +107,12 @@
     </NoRecordsContent>
 </MudTable>
 
+
 @code {
 
     private bool _loading = false;
     private DateRange _dateRange = new DateRange(DateTime.Today.AddDays(-2), DateTime.Today);
-    private string? SelectedType { get; set; }
+    private string SelectedTypeId { get; set; } = "all";
     private List<GetAssetType> _types = [];
     private List<GetPurchasedAssets> _purchases = [];
     private readonly bool _processing = false;
@@ -114,10 +120,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _types.Add(new GetAssetType() { Name = "All", Icon = "circle" });
-        SelectedType = _types.FirstOrDefault()?.Name;
         _loading = true;
-        _types.AddRange(await AssetTypesService.GetAll());
+        _types = await AssetTypesService.GetAll();
         _loading = false;
     }
 
@@ -136,17 +140,12 @@
     private async Task ProcessSomething()
     {
         _loading = true;
-        var id = _types.FirstOrDefault(x => x.Name == SelectedType)?.Id;
         _purchases = await ReportService.GetPurchases(new PurchasedAssetsRequest()
         {
             FromDate = _dateRange.Start!.Value,
             ToDate = _dateRange.End!.Value,
-            AssetTypeId = id
+            AssetTypeId = SelectedTypeId == "all" ? null : SelectedTypeId,
         });
-        if (SelectedType != _types[0].Name)
-        {
-            _purchases = _purchases.Where(x => x.AssetType == SelectedType).ToList();
-        }
 
         _loading = false;
         StateHasChanged();
