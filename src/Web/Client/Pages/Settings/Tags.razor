@@ -2,9 +2,6 @@
 @page "/settings/tags/{id}"
 @attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 @layout SettingsLayout
-
-@attribute [Authorize]
-
 @inject ITagsService TagsService
 @inject IMenuItemService MenuItemService;
 @inject NavigationManager NavigationManager;
