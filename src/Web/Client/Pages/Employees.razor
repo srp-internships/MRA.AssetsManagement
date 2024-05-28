@@ -1,16 +1,11 @@
 ﻿@page "/employees"
 @page "/employees/{userName}"
-
-@attribute [Authorize]
-@using MRA.AssetsManagement.Web.Client.Common.Extensions
-@using MRA.AssetsManagement.Web.Client.Components.MenuItems
-@using MRA.AssetsManagement.Web.Shared.Employees
-@using MRA.AssetsManagement.Web.Shared.AssetSerials
-@using Blazored.FluentValidation
+@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 @layout SettingsLayout
 @inject IEmployeesService EmployeesService
 @inject IMenuItemService MenuItemService
 @inject IAssetTypesService AssetTypesService
+
 
 @if (_loading)
 {

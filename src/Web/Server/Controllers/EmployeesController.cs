@@ -9,7 +9,7 @@ using MRA.AssetsManagement.Web.Shared.Employees;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[Authorize]
+[Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
 public class EmployeesController : ApiControllerBase
 {
     private readonly IMediator _mediator;

@@ -31,8 +31,10 @@
 
         public string GetIcon(string key)
         {
-            if (!_icons.ContainsKey(key)) 
-                return string.Empty;
+            if (!_icons.ContainsKey(key))
+            {
+               return typeof(MudBlazor.Icons.Material.Outlined).GetField(key)?.GetValue(null)?.ToString() ?? string.Empty;
+            }
             return _icons[key];
         }
     }

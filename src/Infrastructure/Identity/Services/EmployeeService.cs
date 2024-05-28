@@ -24,7 +24,7 @@ public class EmployeeService(
     : IEmployeeService
 {
     private readonly string _apiBaseUrl = configuration["IdentityServer"]!;
-    
+
     public async Task<List<Employee>> GetAll()
     {
         var httpClient = httpClientFactory.CreateClient("MraAssetsManagement");
@@ -36,18 +36,14 @@ public class EmployeeService(
         };
 
         var response = await httpClient.PostAsJsonAsync($"{_apiBaseUrl}/User/GetListUsersCommand/ByFilter", command);
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            var result = await response.Content.ReadFromJsonAsync<List<EmployeeResponse>>();
-            if (result is not null)
-            {
-                var employees = mapper.Map<List<Employee>>(result);
-                return employees;
-            }
-        }
+        response.EnsureSuccessStatusCode();
 
-        if (response.StatusCode == HttpStatusCode.InternalServerError)
-            throw new Exception("Server is not responding");
+        var result = await response.Content.ReadFromJsonAsync<List<EmployeeResponse>>();
+        if (result is not null)
+        {
+            var employees = mapper.Map<List<Employee>>(result);
+            return employees;
+        }
 
         return new List<Employee>();
     }
@@ -63,14 +59,9 @@ public class EmployeeService(
         };
         SetAuthorizationHeader();
         var response = await httpClient.PostAsJsonAsync($"{_apiBaseUrl}/User/{userName}", command);
-        var employee = new Employee();
-        if (response.StatusCode != HttpStatusCode.OK)
-            return employee;
-
+        response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<EmployeeResponse>();
-        employee = mapper.Map<Employee>(result);
-
-        return employee;
+        return mapper.Map<Employee>(result);
     }
 
     public async Task<Employee?> GetByEmail(string email)
@@ -83,7 +74,7 @@ public class EmployeeService(
 
     public async Task<string> Create(CreateEmployeeRequest createEmployeeRequest)
     {
-       
+
         SetAuthorizationHeader();
         var response = await http.PostAsJsonAsync($"{_apiBaseUrl}/User/CreateEmployee", createEmployeeRequest);
         if (!response.IsSuccessStatusCode)

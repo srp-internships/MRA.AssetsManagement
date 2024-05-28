@@ -34,7 +34,6 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             return true;
         }
 
-
         public bool HandleUnknownException(ExceptionContext context)
         {
             ProblemDetails details = new ProblemDetails
@@ -49,7 +48,6 @@ namespace MRA.AssetsManagement.Web.Server.Filters
 
             return true;
         }
-
 
         private bool HandleInvalidModelStateException(ExceptionContext context)
         {
@@ -84,7 +82,7 @@ namespace MRA.AssetsManagement.Web.Server.Filters
             {
                 Status = StatusCodes.Status400BadRequest,
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-                Title = "Not Found",
+                Title = "Not Founddfdfd",
                 Detail = context.Exception.Message,
             };
             
