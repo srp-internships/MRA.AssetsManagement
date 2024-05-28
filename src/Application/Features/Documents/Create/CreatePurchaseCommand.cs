@@ -70,7 +70,7 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
                     CreatedBy = _currentUserService.GetUserId().ToString()
                 };
                 if (serials[i].Equals("auto", StringComparison.OrdinalIgnoreCase))
-                    assetSerial.Serial = assetType.ShortName + "-" + $"{++assetTypeCountDict[detail.Asset.AssetTypeId]}".PadLeft(6, '0');
+                    assetSerial.Serial = assetType.ShortName + "-" + $"{++assetTypeCountDict[detail.Asset.AssetTypeId]}";
 
                 else
                     assetSerial.Serial = serials[i];
