@@ -15,6 +15,7 @@ public class CreateEmployeeRequest
         set { _username = value.Trim(); }
     }
     public string Password { get; set; } = "";
+    public string ConfirmPassword { get; set; } = "";
 }
 public class CreateEmployeeValidator : AbstractValidator<CreateEmployeeRequest>
 {
@@ -27,5 +28,6 @@ public class CreateEmployeeValidator : AbstractValidator<CreateEmployeeRequest>
         RuleFor(s => s.Username).NotEmpty();
         
         RuleFor(s => s.Password).NotEmpty().MinimumLength(6);
+        RuleFor(s => s.ConfirmPassword).NotEmpty().Equal(x => x.Password).WithMessage("'Confirm password' must be equal to the 'Password' field!!");
     }
 }
