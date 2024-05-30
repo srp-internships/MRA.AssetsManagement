@@ -70,17 +70,18 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
                     CreatedBy = _currentUserService.GetUserId().ToString()
                 };
                 if (serials[i].Equals("auto", StringComparison.OrdinalIgnoreCase))
-                    assetSerial.Serial = assetType.ShortName + "-" + $"{++assetTypeCountDict[detail.Asset.AssetTypeId]}".PadLeft(6, '0');
+                    assetSerial.Serial = assetType.ShortName + "-" + $"{++assetTypeCountDict[detail.Asset.AssetTypeId]}";
 
                 else
                     assetSerial.Serial = serials[i];
                 
                 assetSerials.Add(assetSerial);
-                var history = new AssetHistory  
+                var history = new AssetHistory
                 {
                     HistoryAssetSerial = _mapper.Map<HistoryAssetSerial>(assetSerial),
                     DateTime = DateTime.Now,
-                    UserId = _currentUserService.GetUserId().ToString()
+                    UserId = _currentUserService.GetUserId().ToString(),
+                    Note = request.Note
                 };
                 histories.Add(history);
             }

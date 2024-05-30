@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-
 using MRA.AssetsManagement.Web.Client.Common.Extensions;
 using MRA.AssetsManagement.Web.Client.Components.MenuItems;
 using MRA.AssetsManagement.Web.Shared.AssetSerials;

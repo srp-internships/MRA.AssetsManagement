@@ -5,5 +5,6 @@ public enum AssetStatus
     Available,
     Taken,
     Broken,
-    Deprecated
+    Deprecated,
+    Sold
 }

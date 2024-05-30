@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-
 using MRA.AssetsManagement.Web.Shared.AssetSerials;
 using MRA.BlazorComponents.HttpClient.Services;
 using MRA.BlazorComponents.Snackbar.Extensions;
-
 using MudBlazor;
 
 namespace MRA.AssetsManagement.Web.Client.Services.HomeService

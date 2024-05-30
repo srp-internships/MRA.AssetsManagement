@@ -74,7 +74,7 @@
                         <b>Status: </b>
                     </MudText>
                     <MudSelect Value="assetSerial.Status" T="AssetStatus" Margin="Margin.Dense" Variant="Variant.Outlined"
-                        ValueChanged="@OnStatusItemChanged">
+                               ValueChanged="@OnStatusItemChanged" Disabled="@(IsReadOnly)">
                         <MudSelectItem Value="@(AssetStatus.Available)">
                             <MudText Color="Color.Success">@(AssetStatus.Available.ToString())</MudText>
                         </MudSelectItem>
@@ -82,25 +82,31 @@
                             <MudText Color="Color.Info">@(AssetStatus.Taken.ToString())</MudText>
                         </MudSelectItem>
                         <MudSelectItem Value="@(AssetStatus.Broken)">
-                            <MudText Color="Color.Error">@(AssetStatus.Broken.ToString())</MudText>
+                            <MudText Color="Color.Warning">@(AssetStatus.Broken.ToString())</MudText>
                         </MudSelectItem>
-                        <MudSelectItem Value="@(AssetStatus.Deprecated)">@(AssetStatus.Deprecated.ToString())
+                        <MudSelectItem Value="@(AssetStatus.Deprecated)">
+                            <MudText Color="Color.Dark">@(AssetStatus.Deprecated.ToString())</MudText>
+                        </MudSelectItem>
+                        <MudSelectItem Value="@(AssetStatus.Sold)">
+                            <MudText Color="Color.Error">@(AssetStatus.Sold.ToString())</MudText>
                         </MudSelectItem>
                     </MudSelect>
                 </MudStack>
-                <MudStack Row="true" AlignItems="AlignItems.Center">
-                    <MudText>
-                        <b>Assigned To: </b>
-                    </MudText>
-                    <MudAutocomplete Value="@assetSerial.Employee" T="UserDisplay" Margin="Margin.Dense"
-                        SearchFunc="@SearchEmployees" Variant="Variant.Outlined"
-                        ValueChanged="@(e => OnAssignedPersonChanged(e))" />
-                </MudStack>
+                @if (!IsReadOnly)
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center">
+                        <MudText>
+                            <b>Assigned To: </b>
+                        </MudText>
+                        <MudAutocomplete Value="@assetSerial.Employee" T="UserDisplay" Margin="Margin.Dense"
+                                         SearchFunc="@SearchEmployees" Variant="Variant.Outlined"
+                                         ValueChanged="@(e => OnAssignedPersonChanged(e))" />
+                    </MudStack>
+                }
             }
             <AssetSerialHistory Serial="@Serial" ShowHistory="@showHistory" />
         </MudStack>
     </MudNavMenu>
-
     <NoteDialog />
 </MudDrawer>
 
@@ -116,6 +122,7 @@
     private bool showHistory = false;
     private bool isLoading = true;
     private bool isSerialHasChanged = false;
+    private bool IsReadOnly => assetSerial?.Status == AssetStatus.Sold || assetSerial?.Status == AssetStatus.Deprecated;
 
     protected override async Task OnInitializedAsync()
     {
