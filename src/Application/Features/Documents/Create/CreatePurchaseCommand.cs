@@ -61,21 +61,32 @@ public class CreatePurchaseCommandHandler : IRequestHandler<CreatePurchaseComman
             for (int i = 0; i < detail.Quantity; i++)
             {
                 var serials = detail.Serials.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                string serial;
+
+                if (serials[i].Equals("auto", StringComparison.OrdinalIgnoreCase))
+                    serial = assetType.ShortName + "-" + $"{++assetTypeCountDict[detail.Asset.AssetTypeId]}";
+
+                else
+                    serial = serials[i];
+
+                var existingSerial = await _context.AssetSerials.GetAsync(x => x.Serial == serial, cancellationToken);
+                if (existingSerial != null)
+                {
+                    throw new InvalidOperationException($"Duplicate serial found: {serial}");
+                }
+
                 var assetSerial = new AssetSerial
                 {
                     Asset = detail.Asset,
                     Status = AssetStatus.Available,
                     CreatedAt = request.Date,
                     LastModifiedAt = DateTime.Now,
-                    CreatedBy = _currentUserService.GetUserId().ToString()
+                    CreatedBy = _currentUserService.GetUserId().ToString(),
+                    Serial = serial
                 };
-                if (serials[i].Equals("auto", StringComparison.OrdinalIgnoreCase))
-                    assetSerial.Serial = assetType.ShortName + "-" + $"{++assetTypeCountDict[detail.Asset.AssetTypeId]}";
 
-                else
-                    assetSerial.Serial = serials[i];
-                
                 assetSerials.Add(assetSerial);
+
                 var history = new AssetHistory
                 {
                     HistoryAssetSerial = _mapper.Map<HistoryAssetSerial>(assetSerial),

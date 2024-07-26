@@ -1,11 +1,7 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
-
 using AutoMapper;
-
 using Microsoft.Extensions.Configuration;
-
 using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
 using MRA.AssetsManagement.Application.Features.Employees;

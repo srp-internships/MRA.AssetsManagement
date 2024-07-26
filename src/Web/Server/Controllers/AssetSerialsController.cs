@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using MRA.AssetsManagement.Application.Features.AssetHistories.Queries;
-
 using MRA.AssetsManagement.Application.Features.AssetSerials.Commands;
 using MRA.AssetsManagement.Application.Features.AssetSerials.Queries;
 using MRA.AssetsManagement.Web.Shared.Assets;
