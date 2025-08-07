@@ -1,6 +1,6 @@
 @page "/settings/tags"
 @page "/settings/tags/{id}"
-@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
+@attribute [Authorize]
 @layout SettingsLayout
 @inject ITagsService TagsService
 @inject IMenuItemService MenuItemService;

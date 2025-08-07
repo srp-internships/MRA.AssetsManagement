@@ -30,9 +30,6 @@ public static class ConfigureServices
             auth.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
                 .RequireAuthenticatedUser()
                 .Build();
-            
-            auth.AddPolicy(ApplicationPolicies.Administrator, op => op
-                .RequireRole(ApplicationClaimValues.SuperAdministrator, ApplicationClaimValues.Administrator));
         });
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         return services;

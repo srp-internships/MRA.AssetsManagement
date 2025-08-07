@@ -5,6 +5,8 @@ using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 using MRA.AssetsManagement.Application.Common.Behaviors;
+using MRA.AssetsManagement.Application.Common.Services.JwtService;
+using MRA.AssetsManagement.Application.Common.Services.PasswordService;
 using MRA.AssetsManagement.Application.Common.Services.SlugGeneratorService;
 using MRA.AssetsManagement.Web.Shared.AssetTypes;
 
@@ -21,6 +23,8 @@ public static class ConfigureServices
         services.AddValidatorsFromAssembly(assembly);
         services.AddAutoMapper(assembly);
         services.AddSingleton<ISlugGeneratorService, SlugGeneratorService>();
+        services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IPasswordService, PasswordService>();
 
         services.AddMediatR(configuration =>
         {

@@ -1,5 +1,5 @@
-@page "/assets/purchase"
-@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
+@page "/asset-purchase"
+@attribute [Authorize]
 @inject IAssetTypesService AssetTypesService
 @inject IAssetsService AssetsService
 @inject NavigationManager NavigationManager

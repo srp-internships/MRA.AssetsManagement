@@ -16,6 +16,7 @@ public class CreateEmployeeRequest
     }
     public string Password { get; set; } = "";
     public string ConfirmPassword { get; set; } = "";
+    public bool CanLogin { get; set; } = true;
 }
 public class CreateEmployeeValidator : AbstractValidator<CreateEmployeeRequest>
 {

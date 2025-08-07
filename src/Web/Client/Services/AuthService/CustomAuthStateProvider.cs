@@ -6,14 +6,12 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.WebUtilities;
-using MRA.Identity.Application.Contract.User.Responses;
 
 namespace MRA.AssetsManagement.Web.Client.Services.AuthService;
 
 public class CustomAuthStateProvider(
     ILocalStorageService localStorageService,
     HttpClient http,
-    IConfiguration configuration,
     IWebAssemblyHostEnvironment environment,
     NavigationManager navigationManager)
     : AuthenticationStateProvider
@@ -22,54 +20,48 @@ public class CustomAuthStateProvider(
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        await ProcessAuthTokens();
         var authToken = await GetTokenAsync();
         var identity = new ClaimsIdentity();
 
-        if (authToken != null)
+        if (authToken != null && !string.IsNullOrEmpty(authToken.AccessToken))
         {
-            identity = new ClaimsIdentity(ParseClaimsFromJwt(authToken.AccessToken), "jwt");
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
-                authToken.AccessToken.Replace("\"", ""));
+            try
+            {
+                // Check if token is expired
+                if (authToken.AccessTokenValidateTo <= DateTime.UtcNow)
+                {
+                    // Token is expired, clear it
+                    await localStorageService.RemoveItemAsync("authToken");
+                    await localStorageService.RemoveItemAsync("userName");
+                }
+                else
+                {
+                    var claims = ParseClaimsFromJwt(authToken.AccessToken);
+                    
+                    // Create ClaimsIdentity with proper authentication type
+                    identity = new ClaimsIdentity(claims, "jwt", ClaimTypes.Name, ClaimTypes.Email);
+                    
+                    // Set authorization header for HTTP requests
+                    http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                        authToken.AccessToken.Replace("\"", ""));
+                }
+            }
+            catch (Exception)
+            {
+                // Token is invalid, clear it
+                await localStorageService.RemoveItemAsync("authToken");
+                await localStorageService.RemoveItemAsync("userName");
+            }
+        }
+        else
+        {
+            // No token found
         }
 
         var user = new ClaimsPrincipal(identity);
         var state = new AuthenticationState(user);
 
-        if (!state.User.Identity?.IsAuthenticated ?? true)
-        {
-            NavigateToLoginPage();
-        }
-
         return state;
-    }
-
-    private async Task ProcessAuthTokens()
-    {
-        var currentUri = navigationManager.ToAbsoluteUri(navigationManager.Uri);
-        var query = QueryHelpers.ParseQuery(currentUri.Query);
-        JwtTokenResponse token = new();
-        if (query.TryGetValue("atoken", out var atoken))
-        {
-            token.AccessToken = atoken;
-        }
-
-        if (query.TryGetValue("rtoken", out var rtoken))
-        {
-            token.RefreshToken = rtoken;
-        }
-
-        if (query.TryGetValue("vdate", out var vdate))
-        {
-            DateTime oDate = Convert.ToDateTime(vdate);
-            token.AccessTokenValidateTo = oDate;
-            await localStorageService.SetItemAsync("authToken", token);
-            var userName = await GetUserNameFromToken();
-            await localStorageService.SetItemAsync("userName", userName);
-            var uriWithoutQuery =
-                new UriBuilder(currentUri.Scheme, currentUri.Host, currentUri.Port, currentUri.AbsolutePath).Uri;
-            navigationManager.NavigateTo(uriWithoutQuery.ToString(), forceLoad: true);
-        }
     }
 
     private async Task<JwtTokenResponse?> GetTokenAsync()
@@ -80,33 +72,80 @@ public class CustomAuthStateProvider(
 
     private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
     {
-        var jwtObject = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
-        return jwtObject.Claims;
+        if (string.IsNullOrEmpty(jwt))
+            return Enumerable.Empty<Claim>();
+            
+        try
+        {
+            var jwtObject = new JwtSecurityTokenHandler().ReadJwtToken(jwt);
+            var claims = new List<Claim>();
+            
+            foreach (var claim in jwtObject.Claims)
+            {
+                // Map JWT claim types to .NET claim types
+                var claimType = claim.Type switch
+                {
+                    // Standard JWT claim names
+                    "nameid" => ClaimTypes.NameIdentifier,
+                    "unique_name" => ClaimTypes.Name,
+                    "email" => ClaimTypes.Email,
+                    
+                    // .NET ClaimTypes (these are the actual names in the JWT)
+                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier" => ClaimTypes.NameIdentifier,
+                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name" => ClaimTypes.Name,
+                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress" => ClaimTypes.Email,
+                    
+                    // Fallback to original type
+                    _ => claim.Type
+                };
+                
+                claims.Add(new Claim(claimType, claim.Value));
+            }
+            
+            return claims;
+        }
+        catch (Exception)
+        {
+            return Enumerable.Empty<Claim>();
+        }
     }
 
     private void NavigateToLoginPage()
     {
-        navigationManager.NavigateTo(
-            $"{configuration["IdentityClient"]}/login?applicationId={configuration["Application:Id"]}&callback={_baseAddress}",
-            forceLoad: true);
+        navigationManager.NavigateTo("/login", forceLoad: true);
     }
 
     public async Task<string?> GetUserNameFromToken()
     {
         var token = await localStorageService.GetItemAsync<JwtTokenResponse>("authToken");
-        var handler = new JwtSecurityTokenHandler();
-        var jsonToken = handler.ReadToken(token!.AccessToken) as JwtSecurityToken;
-        var claimList = jsonToken!.Claims.ToList();
-        var username = claimList.FirstOrDefault(cl => cl.Type.Contains("username"))?.Value;
+        if (token == null || string.IsNullOrEmpty(token.AccessToken)) return null;
+        
+        try
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token.AccessToken) as JwtSecurityToken;
+            var claimList = jsonToken?.Claims.ToList() ?? new List<Claim>();
+            var username = claimList.FirstOrDefault(cl => cl.Type.Contains("name"))?.Value;
 
-        return username;
+            return username;
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public async Task LogoutUser()
     {
         await localStorageService.RemoveItemAsync("authToken");
         await localStorageService.RemoveItemAsync("userName");
-        navigationManager.NavigateTo(
-            $"{configuration["IdentityClient"]}/logout?callback={_baseAddress}");
+        http.DefaultRequestHeaders.Authorization = null;
+        NotifyAuthenticationStateChanged();
+        navigationManager.NavigateTo("/login", forceLoad: true);
+    }
+
+    public void NotifyAuthenticationStateChanged()
+    {
+        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 }

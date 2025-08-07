@@ -10,26 +10,31 @@ public class EmployeeProfile : Profile
     {
         CreateMap<CreateEmployeeRequest, Employee>();
         CreateMap<Employee, CreateEmployeeRequest>();
-        CreateMap<Employee, EmployeeResponse>();
+        CreateMap<Employee, EmployeeResponse>()
+            .ForMember(d => d.FullName, o => o.MapFrom(s => $"{s.FirstName} {s.LastName}"));
+        CreateMap<Employee, GetEmployee>()
+            .ForMember(d => d.FullName, o => o.MapFrom(s => $"{s.FirstName} {s.LastName}"))
+            .ForMember(d => d.CanLogin, o => o.MapFrom(s => s.CanLogin));
+        CreateMap<GetEmployee, Employee>()
+            .ForMember(d => d.FirstName, o => o.MapFrom(s => GetFirstName(s.FullName)))
+            .ForMember(d => d.LastName, o => o.MapFrom(s => GetLastName(s.FullName)))
+            .ForMember(d => d.CanLogin, o => o.MapFrom(s => s.CanLogin));
         CreateMap<CreateEmployeeRequest, GetEmployee>()
-            .ForMember(d => d.FullName, o
-                => o.MapFrom(s => $"{s.FirstName} {s.LastName}"));
-        CreateMap<EmployeeResponse, Employee>()
-            .ForMember(d=>d.FirstName,o
-                =>o.MapFrom(s=>GetSubStringBeforeSpace(s.FullName)))
-            .ForMember(d=>d.LastName,o
-                =>o.MapFrom(s=>GetSubStringAfterSpace(s.FullName)))
-            .ForMember(d=>d.FullName,o
-                =>o.MapFrom(s=>s.FullName));
+            .ForMember(d => d.FullName, o => o.MapFrom(s => $"{s.FirstName} {s.LastName}"));
+        CreateMap<UpdateEmployeeRequest, Employee>()
+            .ForMember(d => d.CanLogin, o => o.MapFrom(s => s.CanLogin));
     }
-    private string GetSubStringBeforeSpace(string input)
+
+    private static string GetFirstName(string fullName)
     {
-        string[] parts = input.Split(' ');
-        return parts[0];
+        if (string.IsNullOrWhiteSpace(fullName)) return string.Empty;
+        var parts = fullName.Split(' ');
+        return parts.Length > 0 ? parts[0] : string.Empty;
     }
-    private string GetSubStringAfterSpace(string input)
+    private static string GetLastName(string fullName)
     {
-        string[] parts = input.Split(' ');
-        return parts[1];
+        if (string.IsNullOrWhiteSpace(fullName)) return string.Empty;
+        var parts = fullName.Split(' ');
+        return parts.Length > 1 ? string.Join(" ", parts.Skip(1)) : string.Empty;
     }
 }

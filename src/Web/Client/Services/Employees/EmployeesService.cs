@@ -43,6 +43,13 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
             return response.Result!;
         }
 
+        public async Task<GetEmployee> Update(UpdateEmployeeRequest employee)
+        {
+            var response = await httpClient.PutAsJsonAsync<GetEmployee>($"{_baseAddress}employees/{employee.Id}", employee);
+            snackbar.ShowIfError(response, "Error updating employee.");
+            return response.Result!;
+        }
+
         public async Task<List<GetAssetSerials>> GetEmployeeAssetsSerials(string userName)
         {
             var response = await httpClient.GetFromJsonAsync<List<GetAssetSerials>>($"{_baseAddress}employees/serials/{userName}");

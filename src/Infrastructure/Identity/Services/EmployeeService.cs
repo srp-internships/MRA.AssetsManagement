@@ -1,103 +1,125 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-
-using AutoMapper;
-
+﻿using AutoMapper;
 using Microsoft.Extensions.Configuration;
-
-using MRA.AssetsManagement.Application.Common.Security;
 using MRA.AssetsManagement.Application.Common.Services.Identity.Employee;
-using MRA.AssetsManagement.Application.Features.Employees;
+using MRA.AssetsManagement.Application.Common.Services.PasswordService;
+using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Domain.Entities.Employee;
 using MRA.AssetsManagement.Web.Shared.Employees;
-using MRA.Identity.Application.Contract.User.Commands.UsersByApplications;
 
 namespace MRA.AssetsManagement.Infrastructure.Identity.Services;
 
 public class EmployeeService(
-    HttpClient http,
-    IHttpClientFactory httpClientFactory,
-    ICurrentUserService currentUserService,
-    IConfiguration configuration,
+    IApplicationDbContext context,
+    IPasswordService passwordService,
     IMapper mapper)
     : IEmployeeService
 {
-    private readonly string _apiBaseUrl = configuration["IdentityServer"]!;
-
     public async Task<List<Employee>> GetAll()
     {
-        var httpClient = httpClientFactory.CreateClient("MraAssetsManagement");
-        SetAuthorizationHeader();
-        var command = new GetListUsersCommand()
-        {
-            ApplicationId = Guid.Parse(configuration["Application:Id"]),
-            ApplicationClientSecret = configuration["Application:ClientSecret"]
-        };
-
-        var response = await httpClient.PostAsJsonAsync($"{_apiBaseUrl}/User/GetListUsersCommand/ByFilter", command);
-        response.EnsureSuccessStatusCode();
-
-        var result = await response.Content.ReadFromJsonAsync<List<EmployeeResponse>>();
-        if (result is not null)
-        {
-            var employees = mapper.Map<List<Employee>>(result);
-            return employees;
-        }
-
-        return new List<Employee>();
+        var employees = await context.Employees.GetAllAsync();
+        return employees.ToList();
     }
 
     public async Task<Employee?> GetByUserName(string userName)
     {
-        var httpClient = httpClientFactory.CreateClient("MraAssetsManagement");
-        var command = new GetUserByKeyCommand
-        {
-            ApplicationId = Guid.Parse(configuration["Application:Id"]),
-            ApplicationClientSecret = configuration["Application:ClientSecret"],
-            Key = userName
-        };
-        SetAuthorizationHeader();
-        var response = await httpClient.PostAsJsonAsync($"{_apiBaseUrl}/User/{userName}", command);
-        response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<EmployeeResponse>();
-        return mapper.Map<Employee>(result);
+        var employee = await context.Employees.GetAsync(e => e.UserName == userName, CancellationToken.None);
+        return employee;
     }
 
     public async Task<Employee?> GetByEmail(string email)
     {
-        SetAuthorizationHeader();
-        var response = await http.GetFromJsonAsync<List<EmployeeResponse>>(
-            $"{_apiBaseUrl}/User/GetListUsers/ByFilter?Email={email}");
-        return response is null ? null : mapper.Map<Employee>(response.FirstOrDefault());
+        var employee = await context.Employees.GetAsync(e => e.Email == email, CancellationToken.None);
+        return employee;
+    }
+
+    public async Task<Employee?> GetById(string id)
+    {
+        return await context.Employees.GetAsync(e => e.Id == id, CancellationToken.None);
     }
 
     public async Task<string> Create(CreateEmployeeRequest createEmployeeRequest)
     {
-
-        SetAuthorizationHeader();
-        var response = await http.PostAsJsonAsync($"{_apiBaseUrl}/User/CreateEmployee", createEmployeeRequest);
-        if (!response.IsSuccessStatusCode)
+        // Check if username already exists
+        var existingUser = await context.Employees.GetAsync(e => e.UserName == createEmployeeRequest.Username, CancellationToken.None);
+        if (existingUser != null)
         {
-            throw new Exception("An error occurred while processing your request!");
+            throw new InvalidOperationException("Username already exists");
         }
-        var userId = await response.Content.ReadAsStringAsync();
-        return userId;
+
+        // Check if email already exists
+        var existingEmail = await context.Employees.GetAsync(e => e.Email == createEmployeeRequest.Email, CancellationToken.None);
+        if (existingEmail != null)
+        {
+            throw new InvalidOperationException("Email already exists");
+        }
+
+        // Hash password
+        var hashedPassword = passwordService.HashPassword(createEmployeeRequest.Password);
+
+        // Create new employee
+        var employee = new Employee
+        {
+            Id = Guid.NewGuid().ToString(),
+            UserName = createEmployeeRequest.Username,
+            Email = createEmployeeRequest.Email,
+            Password = hashedPassword,
+            FirstName = createEmployeeRequest.FirstName,
+            LastName = createEmployeeRequest.LastName,
+            PhoneNumber = createEmployeeRequest.PhoneNumber,
+            CanLogin = createEmployeeRequest.CanLogin // <-- FIX: Respect UI value
+        };
+
+        // Save to database
+        await context.Employees.CreateAsync(CancellationToken.None, employee);
+
+        return employee.Id;
     }
 
-    private void SetAuthorizationHeader()
+    public async Task<Employee> Update(MRA.AssetsManagement.Web.Shared.Employees.UpdateEmployeeRequest updatedEmployee)
     {
-        var token = currentUserService.GetAuthToken().Replace("Bearer ", "");
-        if (!string.IsNullOrEmpty(token))
-        {
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        }
+        var employee = await context.Employees.GetAsync(e => e.Id == updatedEmployee.Id, CancellationToken.None);
+        if (employee == null)
+            throw new InvalidOperationException("Employee not found");
+        employee.FirstName = updatedEmployee.FirstName;
+        employee.LastName = updatedEmployee.LastName;
+        employee.UserName = updatedEmployee.UserName;
+        employee.Email = updatedEmployee.Email;
+        employee.PhoneNumber = updatedEmployee.PhoneNumber;
+        employee.CanLogin = updatedEmployee.CanLogin;
+        await context.Employees.UpdateAsync(employee);
+        return employee;
     }
-}
 
-public class GetUserByKeyCommand
-{
-    public string Key { get; set; }
-    public Guid? ApplicationId { get; set; }
-    public string ApplicationClientSecret { get; set; }
+    public async Task<Employee> Update(MRA.AssetsManagement.Web.Shared.Employees.GetEmployee updatedEmployee)
+    {
+        // Map GetEmployee to UpdateEmployeeRequest
+        var updateRequest = new MRA.AssetsManagement.Web.Shared.Employees.UpdateEmployeeRequest
+        {
+            Id = updatedEmployee.Id,
+            FirstName = updatedEmployee.FirstName,
+            LastName = updatedEmployee.LastName,
+            UserName = updatedEmployee.UserName,
+            Email = updatedEmployee.Email,
+            PhoneNumber = updatedEmployee.PhoneNumber,
+            CanLogin = updatedEmployee.CanLogin
+        };
+        return await Update(updateRequest);
+    }
+
+    public async Task Update(Employee employee)
+    {
+        await context.Employees.UpdateAsync(employee);
+    }
+    private static string GetFirstName(string fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return string.Empty;
+        var parts = fullName.Split(' ');
+        return parts.Length > 0 ? parts[0] : string.Empty;
+    }
+    private static string GetLastName(string fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return string.Empty;
+        var parts = fullName.Split(' ');
+        return parts.Length > 1 ? string.Join(" ", parts.Skip(1)) : string.Empty;
+    }
 }

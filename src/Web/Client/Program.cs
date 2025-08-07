@@ -27,6 +27,12 @@ builder.Services.AddMudServices();
 builder.Services.AddHttpClientService();
 builder.Services.AddBlazoredLocalStorage();
 
+// Configure HttpClient for API calls
+builder.Services.AddHttpClient("API", client =>
+{
+    client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+});
+
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddScoped<IIconService, IconService>();
 

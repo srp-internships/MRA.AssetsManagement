@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using MRA.AssetsManagement.Application.Data;
 using MRA.AssetsManagement.Domain.Common;
 using MRA.AssetsManagement.Domain.Entities;
+using MRA.AssetsManagement.Domain.Entities.Employee;
 using MRA.AssetsManagement.Infrastructure.Data.Configurations;
 
 using Tag = MRA.AssetsManagement.Domain.Entities.Tag;
@@ -24,6 +25,7 @@ public class MongoDbContext : IApplicationDbContext
         AssetSerials = GetRepository<AssetSerialConfiguration, AssetSerial>("asset-serials");
         Assets = GetRepository<AssetConfiguration, Asset>("assets");
         AssetHistories = GetRepository<AssetHistoryConfiguration, AssetHistory>("asset-histories");
+        Employees = GetRepository<EmployeeConfiguration, Employee>("employees");
     }
 
     public IRepository<AssetType> AssetTypes { get; }
@@ -32,6 +34,7 @@ public class MongoDbContext : IApplicationDbContext
     public IRepository<AssetSerial> AssetSerials { get; }
     public IRepository<Asset> Assets { get; }
     public IRepository<AssetHistory> AssetHistories { get; }
+    public IRepository<Employee> Employees { get; }
 
 
     private MongoRepository<TEntity> GetRepository<TConfiguration, TEntity>(string collectionName) where TConfiguration : BaseConfiguration<TEntity>

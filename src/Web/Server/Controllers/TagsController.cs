@@ -1,20 +1,30 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
 using MRA.AssetsManagement.Application.Features.Tags.Commands;
 using MRA.AssetsManagement.Application.Features.Tags.Queries;
 using MRA.AssetsManagement.Domain.Entities;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
-public class TagsController : ApiControllerBase
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+public class TagsController : ControllerBase
 {
+    private readonly IMediator _mediator;
+
+    public TagsController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesDefaultResponseType]
     public async Task<ActionResult<Tag>> Create(CreateTagCommand command, CancellationToken cancellationToken)
     {
-        var createdTag = await Mediator.Send(command, cancellationToken);
+        var createdTag = await _mediator.Send(command, cancellationToken);
         return CreatedAtAction(nameof(GetBySlug), new {createdTag.Slug} ,createdTag);
     }
 
@@ -23,7 +33,7 @@ public class TagsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<ActionResult<IEnumerable<Tag>>> GetAll(CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetTagsQuery(), cancellationToken));
+        return Ok(await _mediator.Send(new GetTagsQuery(), cancellationToken));
     }
 
     [HttpGet("{slug}")]
@@ -31,7 +41,7 @@ public class TagsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<ActionResult<IEnumerable<Tag>>> GetBySlug(string slug, CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetSingleTagQuery(slug), cancellationToken));
+        return Ok(await _mediator.Send(new GetSingleTagQuery(slug), cancellationToken));
     }
 
     [HttpPut]
@@ -39,7 +49,7 @@ public class TagsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<ActionResult<bool>> Update(UpdateTagCommand command, CancellationToken cancellationToken)
     {
-        var result = await Mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, cancellationToken);
         return Ok(result);
     }
 
@@ -49,7 +59,7 @@ public class TagsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {
-        await Mediator.Send(new DeleteTagCommand(id), cancellationToken);
+        await _mediator.Send(new DeleteTagCommand(id), cancellationToken);
 
         return NoContent();
     }

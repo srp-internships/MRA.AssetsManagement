@@ -1,4 +1,5 @@
-@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
+@page "/assets/{serial}"
+@attribute [Authorize]
 @inject IAssetSerialService AssetSerialService
 @inject IEmployeesService EmployeesService
 @inject ITagsService TagsService

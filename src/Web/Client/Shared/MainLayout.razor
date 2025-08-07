@@ -1,38 +1,42 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
 
 <MudThemeProvider />
 <MudDialogProvider FullWidth=true MaxWidth="MaxWidth.ExtraSmall" DisableBackdropClick="true" />
 <MudSnackbarProvider />
 <MudLayout>
     <NavMenu OnToggle="@(() => open = !open)" />
-    <CascadingAuthenticationState>
-        <AuthorizeView Roles="SuperAdmin, ApplicationAdmin">
-            <Authorized>
-                <MudDrawer @bind-Open="@open" Elevation="2">
-                    <MudDrawerHeader Class="d-flex justify-center">
-                        <MudLink Href="/" Underline="Underline.None" Typo="Typo.h5">MRA Assets</MudLink>
-                    </MudDrawerHeader>
-                    <MudDrawerContainer>
-                        <MudDivider />
-                    </MudDrawerContainer>
-                    <MudPaper Width="250px" Elevation="0" Class="py-3">
-                        <MudNavMenu Color="Color.Info">
-                            <MudNavLink Href="/assets" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Assignment">Assets</MudNavLink>
-                            <MudNavLink Href="/employees" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AssignmentInd">Employees</MudNavLink>
-                            <MudNavLink Href="/report" Match="NavLinkMatch.Prefix" Icon="@Icons.Custom.FileFormats.FileDocument">Reports</MudNavLink>
-                            <MudNavGroup Icon="@Icons.Material.Filled.Settings" Title="Settings" Expanded="true">
-                                <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Category" Href="/settings/asset-types">Asset types</MudNavLink>
-                                <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Tag" Href="/settings/tags">Tags</MudNavLink>
-                            </MudNavGroup>
-                        </MudNavMenu>
-                    </MudPaper>
-                </MudDrawer>
-            </Authorized>
-            <NotAuthorized>
-                <div>You are not authorized to access this page.</div>
-            </NotAuthorized>
-        </AuthorizeView>
-    </CascadingAuthenticationState>
+    
+    <AuthorizeView>
+        <Authorized>
+            <MudDrawer @bind-Open="@open" Elevation="2">
+                <MudDrawerHeader Class="d-flex justify-center">
+                    <MudLink Href="/" Underline="Underline.None" Typo="Typo.h5">MRA Assets</MudLink>
+                </MudDrawerHeader>
+                <MudDrawerContainer>
+                    <MudDivider />
+                </MudDrawerContainer>
+                <MudPaper Width="250px" Elevation="0" Class="py-3">
+                    <MudNavMenu Color="Color.Info">
+                        <MudNavLink Href="/assets" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Assignment">Assets</MudNavLink>
+                        <MudNavLink Href="/employees" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AssignmentInd">Employees</MudNavLink>
+                        <MudNavLink Href="/report" Match="NavLinkMatch.Prefix" Icon="@Icons.Custom.FileFormats.FileDocument">Reports</MudNavLink>
+                        <MudNavGroup Icon="@Icons.Material.Filled.Settings" Title="Settings" Expanded="true">
+                            <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Category" Href="/settings/asset-types">Asset types</MudNavLink>
+                            <MudNavLink Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Tag" Href="/settings/tags">Tags</MudNavLink>
+                        </MudNavGroup>
+                    </MudNavMenu>
+                </MudPaper>
+            </MudDrawer>
+        </Authorized>
+        <NotAuthorized>
+            <div style="padding: 20px; text-align: center; color: red;">
+                <h3>❌ You are not authorized to access this page.</h3>
+                <p>Please <a href="/login">login</a> with proper credentials.</p>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
     <MudMainContent Class="pt-16">
         <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="mt-4">
             @Body
@@ -42,5 +46,4 @@
 
 @code {
     bool open = true;
-
 }

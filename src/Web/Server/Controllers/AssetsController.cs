@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
 
 using MRA.AssetsManagement.Application.Features.Assets.Commands;
 using MRA.AssetsManagement.Application.Features.Assets.Queries;
@@ -11,15 +12,24 @@ using MRA.AssetsManagement.Web.Shared.Assets;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
-public class AssetsController : ApiControllerBase
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+public class AssetsController : ControllerBase
 {
+    private readonly IMediator _mediator;
+
+    public AssetsController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
     public async Task<ActionResult<IEnumerable<Asset>>> Get(CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetAssetsQuery(), cancellationToken));
+        return Ok(await _mediator.Send(new GetAssetsQuery(), cancellationToken));
     }
 
     [HttpGet("{typeId}")]
@@ -27,7 +37,7 @@ public class AssetsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<ActionResult<IEnumerable<Asset>>> GetAssetsByTypeId(string typeId, CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetAssetsByTypeIdQuery(typeId), cancellationToken));
+        return Ok(await _mediator.Send(new GetAssetsByTypeIdQuery(typeId), cancellationToken));
     }
 
     [HttpGet("page")]
@@ -35,7 +45,7 @@ public class AssetsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<ActionResult<PagedList<GetAssetSerial>>> GetPagedAssetSerial([FromQuery] AssetsFilterOptions assetsFilterOptions, CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetPagedAssetSerialsQuery(assetsFilterOptions), cancellationToken));
+        return Ok(await _mediator.Send(new GetPagedAssetSerialsQuery(assetsFilterOptions), cancellationToken));
     }
     
     [HttpPut]
@@ -43,7 +53,7 @@ public class AssetsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<ActionResult<AssetSerial>> UpdateAssetSerial(UpdateAssetSerialCommand command, CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(command, cancellationToken));
+        return Ok(await _mediator.Send(command, cancellationToken));
     }
     
     [HttpPost("purchase")]
@@ -52,7 +62,7 @@ public class AssetsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<ActionResult<Document>> CreatePurchase(CreatePurchaseCommand command)
     {
-        var document = await Mediator.Send(command);
+        var document = await _mediator.Send(command);
         return Ok(document);
     }
 
@@ -61,7 +71,7 @@ public class AssetsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<ActionResult<GetAsset>> CreateAsset(CreateAssetRequest request, CancellationToken cancellationToken)
     {
-        var asset = await Mediator.Send(new CreateAssetCommand(request));
+        var asset = await _mediator.Send(new CreateAssetCommand(request));
         return CreatedAtAction(nameof(CreateAsset), asset);
     }
 }

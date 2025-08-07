@@ -1,6 +1,5 @@
 @page "/assets"
-@page "/assets/{serial}"
-@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
+@attribute [Authorize]
 @inject IAssetsService AssetsService
 @inject NavigationManager NavigationManager
 @inject IIconService IconService

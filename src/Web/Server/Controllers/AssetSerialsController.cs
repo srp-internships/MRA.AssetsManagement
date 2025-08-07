@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
 
 using MRA.AssetsManagement.Application.Features.AssetHistories.Queries;
 
@@ -12,13 +13,22 @@ using MRA.AssetsManagement.Web.Shared.Tags;
 
 namespace MRA.AssetsManagement.Web.Server.Controllers;
 
-[Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
-public class AssetSerialsController : ApiControllerBase
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+public class AssetSerialsController : ControllerBase
 {
+    private readonly IMediator _mediator;
+
+    public AssetSerialsController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
     [HttpPatch("set-tag")]
     public async Task<ActionResult<IEnumerable<GetTag>>> SetTagToAssetSerial(SetTagsToAssetSerialsRequest request)
     {
-        return Ok(await Mediator.Send(new SetTagsToAssetSerialCommand(request)));
+        return Ok(await _mediator.Send(new SetTagsToAssetSerialCommand(request)));
     }
 
     [HttpGet("serial")]
@@ -26,7 +36,7 @@ public class AssetSerialsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<ActionResult<IEnumerable<GetAssetSerial>>> GetAssetSerials(CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetAssetSerialsQuery(), cancellationToken));
+        return Ok(await _mediator.Send(new GetAssetSerialsQuery(), cancellationToken));
     }
 
     [HttpGet("{serial}")]
@@ -34,7 +44,7 @@ public class AssetSerialsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<ActionResult<IEnumerable<GetAssetSerial>>> GetAssetSerials(string serial, CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetSingleAssetSerialQuery(serial), cancellationToken));
+        return Ok(await _mediator.Send(new GetSingleAssetSerialQuery(serial), cancellationToken));
     }
 
     [HttpGet("histories/{serial}")]
@@ -42,6 +52,6 @@ public class AssetSerialsController : ApiControllerBase
     [ProducesDefaultResponseType]
     public async Task<ActionResult<IEnumerable<GetAssetSerialHistory>>> GetAssetSerialHistories(string serial, CancellationToken cancellationToken)
     {
-        return Ok(await Mediator.Send(new GetAssetHistoryForSerialQuery(serial), cancellationToken));
+        return Ok(await _mediator.Send(new GetAssetHistoryForSerialQuery(serial), cancellationToken));
     }
 }

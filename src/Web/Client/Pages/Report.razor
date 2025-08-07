@@ -1,5 +1,5 @@
 @page "/report"
-@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
+@attribute [Authorize]
 @inject IReportService ReportService
 @inject IAssetTypesService AssetTypesService
 @inject IIconService IconService

@@ -1,6 +1,6 @@
 @page "/settings/asset-types"
 @page "/settings/asset-types/{slug}"
-@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
+@attribute [Authorize]
 @layout SettingsLayout
 @inject IIconService IconService
 @inject IAssetTypesService AssetTypesService;

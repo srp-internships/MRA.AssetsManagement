@@ -1,10 +1,13 @@
 ﻿@page "/employees"
 @page "/employees/{userName}"
-@attribute [Authorize(Roles = "SuperAdmin, ApplicationAdmin")]
+@attribute [Authorize]
 @layout SettingsLayout
 @inject IEmployeesService EmployeesService
 @inject IMenuItemService MenuItemService
 @inject IAssetTypesService AssetTypesService
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
+@using MudBlazor
 
 
 @if (_loading)
@@ -13,109 +16,128 @@
     <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px" />
     <MudSkeleton Class="mt-3" SkeletonType="SkeletonType.Rectangle" Animation=Animation.Wave Width="400px" Height="40px" />
 }
-else if(UserName is null)
+else if (_isAdmin)
 {
-    <EditForm Model="_createEmployee" OnValidSubmit="CreateOrUpdate">
-        <FluentValidationValidator />
-        <MudStack Row=true Class="d-flex justify-space-between mb-5">
-            <MudText Typo="Typo.h4">Employee</MudText>
-            <MudButton ButtonType=ButtonType.Submit Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Tertiary" Size="Size.Medium">Save</MudButton>
-        </MudStack>
-        <MudDivider />
-        <MudStack Class="mt-3 pa-4" Style=" max-width: 500px">
-            <MudTextField @bind-Value=_createEmployee.Email Label="Email" InputType="InputType.Email" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.Email)" />
-            <MudStack Row=true>
-                <MudItem sm="6">
-                    <MudTextField @bind-Value=_createEmployee.FirstName Label="First name" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.FirstName)" />
-                </MudItem>
-                <MudItem sm="6">
-                    <MudTextField @bind-Value=_createEmployee.LastName Label="Last name" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.LastName)" />
-                </MudItem>
-            </MudStack>
-            <MudStack Row=true>
-                <MudItem sm="6">
-                    <MudTextField @bind-Value=_createEmployee.Username Label="Username" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.Username)" />
-                </MudItem>
-                <MudItem sm="6">
-                    <MudTextField @bind-Value=_createEmployee.PhoneNumber Label="Phone" Margin="Margin.Dense" Variant="Variant.Outlined" />
-                </MudItem>
-            </MudStack>
-            <MudStack Row=true>
-                <MudItem sm="6">
-                    <MudTextField @bind-Value=_createEmployee.Password Label="Password" InputType="InputType.Password" Margin="Margin.Dense" Variant="Variant.Outlined" For="@(() => _createEmployee.Password)" />
-                </MudItem>
-                <MudItem sm="6">
-                    <MudTextField @bind-Value=_createEmployee.ConfirmPassword Label="Confirm password" InputType="InputType.Password" Margin="Margin.Dense" Variant="Variant.Outlined" For=@(() => _createEmployee.ConfirmPassword) />
-                </MudItem>
-            </MudStack>
-        </MudStack>
+    <MudSelect T="GetEmployee" Label="Select Employee" @bind-Value="_selectedEmployee" Dense="true" Style="width:300px; margin-bottom: 24px;" @bind-Value:event="onchange">
+        @foreach (var emp in _allEmployees)
+        {
+            <MudSelectItem Value="@emp">@emp.UserName (@emp.Email)</MudSelectItem>
+        }
+    </MudSelect>
+    @if (_editEmployee != null)
+    {
+        <EditForm Model="_editEmployee" OnValidSubmit="UpdateEmployee">
+            <DataAnnotationsValidator />
+            <MudTextField @bind-Value="_editEmployee.FirstName" Label="First name" Margin="Margin.Dense" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="_editEmployee.LastName" Label="Last name" Margin="Margin.Dense" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="_editEmployee.UserName" Label="Username" Margin="Margin.Dense" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="_editEmployee.Email" Label="Email" InputType="InputType.Email" Margin="Margin.Dense" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="_editEmployee.PhoneNumber" Label="Phone" Margin="Margin.Dense" Variant="Variant.Outlined" />
+            <MudSwitch @bind-Checked="_editEmployee.CanLogin" Color="Color.Primary" Label="Allow this user to log in" Class="mt-2" />
+            @if (!_editEmployee.CanLogin)
+            {
+                <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Class="mt-2">
+                    This user will not be able to log in until re-enabled.
+                </MudAlert>
+            }
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" ButtonType="ButtonType.Submit">Save</MudButton>
+        </EditForm>
+    }
+}
+else if (_editEmployee != null)
+{
+    <EditForm Model="_editEmployee" OnValidSubmit="UpdateEmployee">
+        <DataAnnotationsValidator />
+        <MudTextField @bind-Value="_editEmployee.FirstName" Label="First name" Margin="Margin.Dense" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="_editEmployee.LastName" Label="Last name" Margin="Margin.Dense" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="_editEmployee.UserName" Label="Username" Margin="Margin.Dense" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="_editEmployee.Email" Label="Email" InputType="InputType.Email" Margin="Margin.Dense" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="_editEmployee.PhoneNumber" Label="Phone" Margin="Margin.Dense" Variant="Variant.Outlined" />
+        <MudSwitch @bind-Checked="_editEmployee.CanLogin" Color="Color.Primary" Label="Allow this user to log in" Class="mt-2" />
+        @if (!_editEmployee.CanLogin)
+        {
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Class="mt-2">
+                This user will not be able to log in until re-enabled.
+            </MudAlert>
+        }
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" ButtonType="ButtonType.Submit">Save</MudButton>
     </EditForm>
 }
-else
-{
-    <MudText Typo="Typo.h5">@_getEmployee.FullName</MudText>
-    <MudDivider />
-    <MudStack Class="mt-3 mb-3" Row=true>
-        <MudText>Email</MudText>
-        <MudLink Href=@($"mailto:{_getEmployee.Email}")>@_getEmployee.Email</MudLink>
-    </MudStack>
-    <MudStack Row=true>
-        <MudText>Phone</MudText>
-        <MudLink Href="@($"tel:{_getEmployee.PhoneNumber}")">@_getEmployee.PhoneNumber</MudLink>
-    </MudStack>
-
-    <EmployeeAssign UserName="@UserName" Employee="@_getEmployee" AssetTypeSerials="@AssetTypeSerials" UpdateAssetTypeSerials="UpdateAssetTypeSerials" />
-}
-
-<SectionContent SectionName="@nameof(MenuItemList)">
-    <MenuItemList Service="EmployeesService" BaseRoute="/employees" />
-</SectionContent>
-
 
 @code {
     
     [Parameter] public string? UserName { get; set; }
-    GetEmployee _getEmployee = null!;
-    CreateEmployeeRequest _createEmployee = new CreateEmployeeRequest();
-    bool _loading = false;
-
-    private List<GetAssetTypeSerial> AssetTypeSerials = new List<GetAssetTypeSerial>();
-
-    protected override async Task OnParametersSetAsync()
+    private bool _loading = false;
+    private string _currentUserName = "";
+    private bool _isAdmin = false;
+    private List<GetEmployee> _allEmployees = new();
+    private GetEmployee? _selectedEmployee
     {
-        _loading = true;
-        
-        if (UserName is not null)
+        get => _selectedEmployeeBacking;
+        set
         {
-            _getEmployee = await EmployeesService.GetEmployeeByUserName(UserName!);
+            if (_selectedEmployeeBacking != value)
+            {
+                _selectedEmployeeBacking = value;
+                if (value != null)
+                    _ = LoadEmployeeForEdit(value.UserName);
+            }
         }
-        
-        _loading = false;
-        StateHasChanged();
     }
+    private GetEmployee? _selectedEmployeeBacking;
+    private UpdateEmployeeRequest? _editEmployee;
 
     protected override async Task OnInitializedAsync()
     {
         _loading = true;
-        AssetTypeSerials = await AssetTypesService.GetAssetTypeSerials();
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        _currentUserName = user.Identity?.Name ?? "";
+        _isAdmin = user.IsInRole("Administrator") || user.Claims.Any(c => c.Type.Contains("role") && c.Value == "Administrator");
+        if (_isAdmin)
+        {
+            _allEmployees = (await EmployeesService.GetEmployees()).ToList();
+            if (_allEmployees.Any())
+            {
+                _selectedEmployee = _allEmployees.First();
+                await LoadEmployeeForEdit(_selectedEmployee.UserName);
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(_currentUserName))
+            {
+                await LoadEmployeeForEdit(_currentUserName);
+            }
+        }
         _loading = false;
     }
 
-    public async Task UpdateAssetTypeSerials()
+    private async Task LoadEmployeeForEdit(string userName)
     {
-        AssetTypeSerials = await AssetTypesService.GetAssetTypeSerials();
-        StateHasChanged();
-    }
-
-    private async void CreateOrUpdate()
-    {
-        if (UserName is null)
+        var employee = await EmployeesService.GetEmployeeByUserName(userName);
+        _editEmployee = new UpdateEmployeeRequest
         {
-            _getEmployee = await EmployeesService.Create(_createEmployee);
-            MenuItemService.OnChangeMenuItem(MenuItemEvent.Add, _getEmployee.ToMenuItem());
-            _createEmployee = new CreateEmployeeRequest();
-        }
+            Id = employee.Id ?? string.Empty,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            UserName = employee.UserName,
+            Email = employee.Email,
+            PhoneNumber = employee.PhoneNumber,
+            CanLogin = employee.CanLogin
+        };
         StateHasChanged();
     }
 
+    private async Task UpdateEmployee()
+    {
+        if (_editEmployee == null || string.IsNullOrWhiteSpace(_editEmployee.Id))
+            return;
+        await EmployeesService.Update(_editEmployee);
+        if (_isAdmin && _selectedEmployee != null)
+        {
+            // Refresh the selected employee's info after update
+            await LoadEmployeeForEdit(_selectedEmployee.UserName);
+        }
+    }
 }

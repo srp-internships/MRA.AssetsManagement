@@ -29,7 +29,7 @@ public class MongoDbDataSeeder : IDataSeeder
             new TagEntitySeeder(context.Tags),
             new DocumentEntitySeeder(context),
             new AssetHistoryEntitySeeder(context, mapper),
-            
+            new EmployeeEntitySeeder(context.Employees),
         ];
     }
     public async Task SeedData(bool isDevelopment)

@@ -40,8 +40,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8
                 .GetBytes(builder.Configuration.GetSection("JWT:Secret").Value!)),
-            ValidateIssuer = false,
-            ValidateAudience = false
+            ValidateIssuer = true,
+            ValidIssuer = "MRA.AssetsManagement",
+            ValidateAudience = true,
+            ValidAudience = "MRA.AssetsManagement.Client",
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
         });
 
 builder.Services.AddHttpContextAccessor();
