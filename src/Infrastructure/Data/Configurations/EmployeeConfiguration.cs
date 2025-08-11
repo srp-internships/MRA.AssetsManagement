@@ -20,5 +20,6 @@ public class EmployeeConfiguration : BaseConfiguration<Employee>
         classMap.MapMember(x => x.Email).SetElementName("email");
         classMap.MapMember(x => x.Password).SetElementName("password");
         classMap.MapMember(x => x.PhoneNumber).SetElementName("phoneNumber");
+        classMap.MapMember(x => x.CanLogin).SetElementName("canLogin");
     }
 } 

@@ -30,6 +30,24 @@ public class EmployeesController : ControllerBase
         return await _mediator.Send(new GetEmployeesQuery(),cancellationToken);
     }
     
+    [HttpGet("debug")]
+    public async Task<ActionResult<object>> Debug(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var employees = await _mediator.Send(new GetEmployeesQuery(), cancellationToken);
+            return Ok(new { 
+                message = "Backend is working!", 
+                employeeCount = employees.Count,
+                timestamp = DateTime.UtcNow
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message, stackTrace = ex.StackTrace });
+        }
+    }
+    
     [HttpGet("{userName}")]
     public async Task<ActionResult<Employee?>> GetByUserName(string userName, CancellationToken cancellationToken)
     {
@@ -56,19 +74,41 @@ public class EmployeesController : ControllerBase
         CancellationToken cancellationToken)
     {
         if (request.Id != id)
-            return BadRequest();
+            return BadRequest("ID mismatch");
+            
+        var employee = await employeeService.GetById(id);
+        if (employee == null)
+            return NotFound("Employee not found");
+            
+        try
+        {
+            // Use the service method which handles validation
+            var updatedEmployee = await employeeService.Update(request);
+            var getEmployee = mapper.Map<GetEmployee>(updatedEmployee);
+            return Ok(getEmployee);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { error = "An error occurred while updating the employee" });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(
+        string id,
+        [FromServices] IEmployeeService employeeService,
+        CancellationToken cancellationToken)
+    {
         var employee = await employeeService.GetById(id);
         if (employee == null)
             return NotFound();
-        employee.FirstName = request.FirstName;
-        employee.LastName = request.LastName;
-        employee.UserName = request.UserName;
-        employee.Email = request.Email;
-        employee.PhoneNumber = request.PhoneNumber;
-        employee.CanLogin = request.CanLogin;
-        await employeeService.Update(employee);
-        var getEmployee = mapper.Map<GetEmployee>(employee);
-        return Ok(getEmployee);
+        
+        await employeeService.Delete(id);
+        return NoContent();
     }
 
     [HttpGet("serials/{userName}")]

@@ -1,46 +1,39 @@
-﻿version: '3.4'
-
-services:
+﻿services:
   api:
-    image: abb0s0088/mra-assets-server:latest
+    image: shuhrat/mra-assets-server:latest
     container_name: assets-api
     build:
       context: .
       dockerfile: ./Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Staging
-      - ASPNETCORE_URLS=http://+:443
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
       - ASPNETCORE_HTTP_PORT=8002
-    volumes:
-      - ${HOME}/.aspnet/https:/https/
+      - MongoDb__ConnectionString=mongodb://host.docker.internal:27017
+      - MongoDb__DatabaseName=mra-assets
+      - MongoDb__Seeder=true
+      - MongoDb__Version=1
     ports:
-      - "8002:443"
+      - "8002:80"
     depends_on:
-      - mongodb
-      - mongo-express
       - seq
-  
-  mongodb:
-    image: mongo:latest
-    container_name: assets-db
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   
   mongo-express:
     image: mongo-express
     container_name: assets-db-express
     ports:
-      - 8081:8081
+      - "8081:8081"
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongodb:27017/
-      ME_CONFIG_BASICAUTH: true
-      ME_CONFIG_BASICAUTH_USERNAME: MongoSrp
-      ME_CONFIG_BASICAUTH_PASSWORD: Mongo1234$
+      ME_CONFIG_MONGODB_ADMINUSERNAME: 
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 
+      ME_CONFIG_MONGODB_URL: mongodb://host.docker.internal:27017/
+      ME_CONFIG_BASICAUTH: false
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   
   seq:
     image: datalust/seq:latest
@@ -50,3 +43,9 @@ services:
     ports:
       - "5341:5341"
       - "8000:80"
+    volumes:
+      - seq_data:/data
+    restart: unless-stopped
+
+volumes:
+  seq_data:

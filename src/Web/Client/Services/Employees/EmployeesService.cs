@@ -16,21 +16,21 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
         public async Task<GetEmployee> GetEmployeeByUserName(string userName)
         {
             var response = await httpClient.GetFromJsonAsync<GetEmployee>($"{_baseAddress}employees/{userName}");
-
+            snackbar.ShowIfError(response, "Error occurred while fetching employee");
             return response.Result!;
         }
 
         public async Task<IEnumerable<GetEmployee>> GetEmployees()
         {
             var response = await httpClient.GetFromJsonAsync<IEnumerable<GetEmployee>>($"{_baseAddress}employees");
-            snackbar.ShowIfError(response, "Error was occured");
+            snackbar.ShowIfError(response, "Error occurred while fetching employees");
             return response.Result!;
         }
 
         public async Task<List<MenuItem>> Fetch()
         {
             var response = await httpClient.GetFromJsonAsync<List<GetEmployee>>($"{_baseAddress}employees");
-            snackbar.ShowIfError(response, "Error was occured.");
+            snackbar.ShowIfError(response, "Error occurred while fetching employee menu items");
 
             return response.Result!.Select(mi => mi.ToMenuItem()).ToList();
         }
@@ -38,7 +38,7 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
         public async Task<GetEmployee> Create(CreateEmployeeRequest newEmployee)
         {
             var response = await httpClient.PostAsJsonAsync<GetEmployee>($"{_baseAddress}employees", newEmployee);
-            snackbar.ShowIfError(response, "Error was occured.");
+            snackbar.ShowIfError(response, "Error occurred while creating employee");
 
             return response.Result!;
         }
@@ -46,14 +46,20 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
         public async Task<GetEmployee> Update(UpdateEmployeeRequest employee)
         {
             var response = await httpClient.PutAsJsonAsync<GetEmployee>($"{_baseAddress}employees/{employee.Id}", employee);
-            snackbar.ShowIfError(response, "Error updating employee.");
+            snackbar.ShowIfError(response, "Error occurred while updating employee");
             return response.Result!;
+        }
+
+        public async Task Delete(string employeeId)
+        {
+            var response = await httpClient.DeleteAsync($"{_baseAddress}employees/{employeeId}");
+            snackbar.ShowIfError(response, "Error occurred while deleting employee");
         }
 
         public async Task<List<GetAssetSerials>> GetEmployeeAssetsSerials(string userName)
         {
             var response = await httpClient.GetFromJsonAsync<List<GetAssetSerials>>($"{_baseAddress}employees/serials/{userName}");
-            snackbar.ShowIfError(response, "Occured some errors");
+            snackbar.ShowIfError(response, "Error occurred while fetching employee asset serials");
             return response.Result!;
         }
     }

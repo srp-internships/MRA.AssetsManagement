@@ -66,7 +66,7 @@ public class EmployeeService(
             FirstName = createEmployeeRequest.FirstName,
             LastName = createEmployeeRequest.LastName,
             PhoneNumber = createEmployeeRequest.PhoneNumber,
-            CanLogin = createEmployeeRequest.CanLogin // <-- FIX: Respect UI value
+            CanLogin = createEmployeeRequest.CanLogin
         };
 
         // Save to database
@@ -80,12 +80,31 @@ public class EmployeeService(
         var employee = await context.Employees.GetAsync(e => e.Id == updatedEmployee.Id, CancellationToken.None);
         if (employee == null)
             throw new InvalidOperationException("Employee not found");
+        
+        // Check if username is being changed and if it already exists
+        if (employee.UserName != updatedEmployee.UserName)
+        {
+            var existingUser = await context.Employees.GetAsync(e => e.UserName == updatedEmployee.UserName, CancellationToken.None);
+            if (existingUser != null)
+                throw new InvalidOperationException("Username already exists");
+        }
+        
+        // Check if email is being changed and if it already exists
+        if (employee.Email != updatedEmployee.Email)
+        {
+            var existingEmail = await context.Employees.GetAsync(e => e.Email == updatedEmployee.Email, CancellationToken.None);
+            if (existingEmail != null)
+                throw new InvalidOperationException("Email already exists");
+        }
+        
+        // Update all fields
         employee.FirstName = updatedEmployee.FirstName;
         employee.LastName = updatedEmployee.LastName;
         employee.UserName = updatedEmployee.UserName;
         employee.Email = updatedEmployee.Email;
         employee.PhoneNumber = updatedEmployee.PhoneNumber;
         employee.CanLogin = updatedEmployee.CanLogin;
+        
         await context.Employees.UpdateAsync(employee);
         return employee;
     }
@@ -110,16 +129,13 @@ public class EmployeeService(
     {
         await context.Employees.UpdateAsync(employee);
     }
-    private static string GetFirstName(string fullName)
+
+    public async Task Delete(string employeeId)
     {
-        if (string.IsNullOrWhiteSpace(fullName)) return string.Empty;
-        var parts = fullName.Split(' ');
-        return parts.Length > 0 ? parts[0] : string.Empty;
-    }
-    private static string GetLastName(string fullName)
-    {
-        if (string.IsNullOrWhiteSpace(fullName)) return string.Empty;
-        var parts = fullName.Split(' ');
-        return parts.Length > 1 ? string.Join(" ", parts.Skip(1)) : string.Empty;
+        var employee = await context.Employees.GetAsync(e => e.Id == employeeId, CancellationToken.None);
+        if (employee == null)
+            throw new InvalidOperationException("Employee not found");
+        
+        await context.Employees.RemoveAsync(employeeId, CancellationToken.None);
     }
 }

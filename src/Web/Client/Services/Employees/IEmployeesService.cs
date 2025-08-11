@@ -11,5 +11,6 @@ namespace MRA.AssetsManagement.Web.Client.Services.Employees
         Task<List<GetAssetSerials>> GetEmployeeAssetsSerials(string userName);
         Task<IEnumerable<GetEmployee>> GetEmployees();
         Task<GetEmployee> Update(UpdateEmployeeRequest employee);
+        Task Delete(string employeeId);
     }
 }
